@@ -1,0 +1,7 @@
+{
+  "name": "DevProbe",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
