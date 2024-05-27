@@ -18,3 +18,5 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEVPROBE_89481 }}
           projectId: devprobe-89481
+
+
