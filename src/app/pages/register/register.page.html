@@ -1,0 +1,40 @@
+<!--
+This is the main content of the registration page.
+
+The page is divided into two main sections, each taking up half of the screen on large devices and the full screen on smaller devices.
+
+The first section contains a logo image.
+
+The second section contains a form for user registration. The form includes fields for the user's name, organization name, email, and password. There is also a 'Register' button that triggers the registration process when clicked.
+-->
+
+<ion-content [fullscreen]="true" class="">
+    <ion-grid class="h-full">
+      <ion-row class="h-full">
+        <!-- This column contains the logo image -->
+        <ion-col size="12" size-sm="12" size-md="12" size-lg="6" size-xl="6" class="">
+          <div class="flex flex-col  items-center h-full justify-end  lg:justify-center md:justify-center">
+            <img class="h-52 lg:h-96"  src="https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Login-Register%2Flogin.avif?alt=media&token=392ce685-399e-4a20-ae9d-2053d1368535" alt="login-ios-logo">
+          </div>
+        </ion-col>
+        <!-- This column contains the registration form -->
+        <ion-col size="12" size-sm="12" size-md="12" size-lg="6" size-xl="6" class="">
+          <div class="flex flex-col justify-center items-center lg:h-full md:h-full">
+            <div class="flex flex-col justify-center items-center lg:min-w-20 bg-gray-800 p-10 lg:p-32 rounded-2xl">
+              <h1 class="font-bold text-6xl text-white mb-6">Sign Up</h1>
+              <!-- User's name input field -->
+              <ion-input class="" label="Name" placeholder="Enter your name" type="text" labelPlacement="stacked"[(ngModel)]="name"></ion-input>
+              <!-- Organization name input field -->
+              <ion-input class="" label="Team Name" placeholder="Enter the org name" type="text" labelPlacement="stacked"[(ngModel)]="orgName"></ion-input>
+              <!-- Email input field -->
+              <ion-input class="" label="Email" placeholder="Enter your email" type="email" labelPlacement="stacked"[(ngModel)]="email"></ion-input>
+              <!-- Password input field -->
+              <ion-input class="" label="Password" placeholder="Enter your password" type="password" labelPlacement="stacked"[(ngModel)]="password"></ion-input>
+              <!-- Register button -->
+              <ion-button class="mt-4" (click)="registerUser()">Register</ion-button>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+</ion-content>
