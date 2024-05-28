@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {User} from "../../interfaces/user";
 import {AuthService} from "../../services/auth.service";
-import {AlertController, NavController} from "@ionic/angular";
+import {AlertController, LoadingController, NavController} from "@ionic/angular";
 
 /**
  * RegisterPage is a component that provides the user registration functionality.
@@ -48,7 +48,8 @@ export class RegisterPage implements OnInit {
   constructor(
     private authService:AuthService,
     private alertCtrl:AlertController,
-    private navCtrl:NavController
+    private navCtrl:NavController,
+    private loadingCtrl:LoadingController
   ) { }
 
   /**
@@ -65,6 +66,7 @@ export class RegisterPage implements OnInit {
    * If not all the fields are filled, it logs "Please enter your email and password".
    */
   registerUser = async () => {
+    await this.showLoading();
     if(this.email && this.password && this.name && this.orgName){
       const user:User = {
         name: this.name,
@@ -74,17 +76,17 @@ export class RegisterPage implements OnInit {
       }
       const result = await this.authService.registerUser(user);
       if(result){
-        console.log("User registered successfully!");
+        await this.hideLoading();
         // Redirect to the login page
         await this.navCtrl.navigateRoot('/login')
         await this.showAlert("User registered successfully! Please Login.","Registration Successful");
 
       }else{
-        console.log("There was an error registering the user");
+        await this.hideLoading();
         await this.showAlert("Registration failed. Please check the form data.");
       }
     }else{
-      console.log("Please enter your email and password");
+      await this.hideLoading();
       await this.showAlert("Please enter all the required fields.");
     }
   }
@@ -102,6 +104,23 @@ export class RegisterPage implements OnInit {
       buttons: ['OK']
     });
     await alert.present();
+  }
+
+
+  /**
+   * Show a loading spinner.
+   */
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+    });
+    await loading.present();
+  }
+
+  /**
+   * Hide the loading spinner.
+   */
+  async hideLoading() {
+    await this.loadingCtrl.dismiss();
   }
 
 }

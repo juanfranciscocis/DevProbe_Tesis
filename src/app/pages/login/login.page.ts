@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {User} from "../../interfaces/user";
-import {AlertController, NavController} from "@ionic/angular";
+import {AlertController, LoadingController, NavController} from "@ionic/angular";
 
 @Component({
   selector: 'app-login',
@@ -22,13 +22,15 @@ export class LoginPage implements OnInit {
    */
   @Input() password:string="";
 
+
   /**
    * LoginPage constructor.
    */
   constructor(
     private authService:AuthService,
     private alertCtrl:AlertController,
-    private navCtrl:NavController
+    private navCtrl:NavController,
+    private loadingCtrl:LoadingController
   ) { }
 
   /**
@@ -45,6 +47,7 @@ export class LoginPage implements OnInit {
    * If not all the fields are filled, it logs "Please enter your email and password".
    */
   loginUser = async () => {
+    await this.showLoading();
     if(this.email && this.password){
       const user:User = {
         email: this.email,
@@ -52,19 +55,19 @@ export class LoginPage implements OnInit {
       }
       const userCredential = await this.authService.loginUser(user);
       if(userCredential){
-        console.log("User logged in successfully!");
+        await this.hideLoading();
         // Redirect to the home page
         await this.navCtrl.navigateRoot('/home')
       } else {
-        console.log("There was an error logging in the user");
-        this.showAlert("Login failed. Please check your email and password.");
+        await this.hideLoading();
+        await this.showAlert("Login failed. Please check your email and password.");
       }
     } else {
-      console.log("Please enter your email and password");
-      this.showAlert("Please enter your email and password.");
+      await this.hideLoading();
+      await this.showAlert("Please enter your email and password.");
     }
-
   }
+
 
   /**
    * Show an alert with the given message.
@@ -78,6 +81,22 @@ export class LoginPage implements OnInit {
       buttons: ['OK']
     });
     await alert.present();
+  }
+
+  /**
+   * Show a loading spinner.
+   */
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+    });
+    await loading.present();
+  }
+
+  /**
+   * Hide the loading spinner.
+   */
+  async hideLoading() {
+    await this.loadingCtrl.dismiss();
   }
 
 }
