@@ -13,8 +13,8 @@ The second section contains a form for user registration. The form includes fiel
       <ion-row class="h-full">
         <!-- This column contains the logo image -->
         <ion-col size="12" size-sm="12" size-md="12" size-lg="6" size-xl="6" class="">
-          <div class="flex flex-col  items-center h-full justify-end  lg:justify-center md:justify-center">
-            <img class="h-52 lg:h-96"  src="https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Login-Register%2Flogin.avif?alt=media&token=392ce685-399e-4a20-ae9d-2053d1368535" alt="login-ios-logo">
+          <div class="flex flex-col  items-center h-full justify-end  lg:justify-center md:justify-end">
+            <img class="h-48 lg:h-96"  src="https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Login-Register%2Flogin.avif?alt=media&token=392ce685-399e-4a20-ae9d-2053d1368535" alt="login-ios-logo">
           </div>
         </ion-col>
         <!-- This column contains the registration form -->
@@ -31,7 +31,12 @@ The second section contains a form for user registration. The form includes fiel
               <!-- Password input field -->
               <ion-input class="" label="Password" placeholder="Enter your password" type="password" labelPlacement="stacked"[(ngModel)]="password"></ion-input>
               <!-- Register button -->
-              <ion-button class="mt-4" (click)="registerUser()">Register</ion-button>
+              <ion-button class="m-4" (click)="registerUser()">Register</ion-button>
+              <!-- Link to the login page -->
+              <div class="flex flex-col lg:flex-row md:flex-row justify-center items-center">
+                <p class="text-white text-xs lg:text-lg">Already have an account?</p>
+                <a [routerLink]="['/login']" class="text-sm lg:text-lg text-blue-500 lg:ml-2">Login</a>
+              </div>
             </div>
           </div>
         </ion-col>
