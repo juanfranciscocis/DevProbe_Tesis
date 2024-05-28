@@ -1,4 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {AuthService} from "../../services/auth.service";
+import {User} from "../../interfaces/user";
+import {AlertController, NavController} from "@ionic/angular";
 
 @Component({
   selector: 'app-login',
@@ -22,7 +25,11 @@ export class LoginPage implements OnInit {
   /**
    * LoginPage constructor.
    */
-  constructor() { }
+  constructor(
+    private authService:AuthService,
+    private alertCtrl:AlertController,
+    private navCtrl:NavController
+  ) { }
 
   /**
    * A lifecycle hook that is called after Angular has initialized all data-bound properties of a directive.
@@ -37,7 +44,40 @@ export class LoginPage implements OnInit {
    * If there is an error, it logs "There was an error logging in the user".
    * If not all the fields are filled, it logs "Please enter your email and password".
    */
-  loginUser() {
+  loginUser = async () => {
+    if(this.email && this.password){
+      const user:User = {
+        email: this.email,
+        password: this.password
+      }
+      const userCredential = await this.authService.loginUser(user);
+      if(userCredential){
+        console.log("User logged in successfully!");
+        // Redirect to the home page
+        await this.navCtrl.navigateRoot('/home')
+      } else {
+        console.log("There was an error logging in the user");
+        this.showAlert("Login failed. Please check your email and password.");
+      }
+    } else {
+      console.log("Please enter your email and password");
+      this.showAlert("Please enter your email and password.");
+    }
 
   }
+
+  /**
+   * Show an alert with the given message.
+   *
+   * @param {string} message - The message to show in the alert.
+   */
+  async showAlert(message:string) {
+    const alert = await this.alertCtrl.create({
+      header: 'Login Failed!',
+      message:message,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
 }

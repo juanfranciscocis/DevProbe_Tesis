@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {User} from "../../interfaces/user";
 import {AuthService} from "../../services/auth.service";
+import {AlertController, NavController} from "@ionic/angular";
 
 /**
  * RegisterPage is a component that provides the user registration functionality.
@@ -44,7 +45,11 @@ export class RegisterPage implements OnInit {
    *
    * @param {AuthService} authService - The AuthService instance.
    */
-  constructor(private authService:AuthService) { }
+  constructor(
+    private authService:AuthService,
+    private alertCtrl:AlertController,
+    private navCtrl:NavController
+  ) { }
 
   /**
    * A lifecycle hook that is called after Angular has initialized all data-bound properties of a directive.
@@ -70,11 +75,33 @@ export class RegisterPage implements OnInit {
       const result = await this.authService.registerUser(user);
       if(result){
         console.log("User registered successfully!");
+        // Redirect to the login page
+        await this.navCtrl.navigateRoot('/login')
+        await this.showAlert("User registered successfully! Please Login.","Registration Successful");
+
       }else{
         console.log("There was an error registering the user");
+        await this.showAlert("Registration failed. Please check the form data.");
       }
     }else{
       console.log("Please enter your email and password");
+      await this.showAlert("Please enter all the required fields.");
     }
   }
+
+  /**
+   * Show an alert with the given message.
+   *
+   * @param {string} header - The header of the alert. Defaults to 'Registration Failed!'.
+   * @param {string} message - The message to show in the alert.
+   */
+  async showAlert(message:string,header?:string) {
+    const alert = await this.alertCtrl.create({
+      header: header || 'Registration Failed!',
+      message:message,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
 }
