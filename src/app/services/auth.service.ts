@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import {Auth, UserCredential, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "@angular/fire/auth";
+import {
+  Auth,
+  UserCredential,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  deleteUser
+} from "@angular/fire/auth";
 import {User} from "../interfaces/user";
 import {doc, Firestore, getDoc, setDoc} from "@angular/fire/firestore";
 
@@ -36,7 +42,7 @@ export class AuthService {
    */
   async registerUser(user: User): Promise<UserCredential | null> {
     try {
-      const userCredential = await createUserWithEmailAndPassword(this.auth, user.email, user.password);
+      const userCredential = await createUserWithEmailAndPassword(this.auth, user.email!, user.password!);
 
       if (!userCredential.user) {
         return null;
@@ -53,7 +59,7 @@ export class AuthService {
       //Create a new Team where the user is the owner
       await setDoc(doc(this.firestore, 'teams', `${user.orgName}`), {
         name: user.orgName,
-        members: [user.email]
+        members: [userCredential.user.uid]
       });
 
       return userCredential;
@@ -71,7 +77,7 @@ export class AuthService {
    */
 async loginUser(user:User):Promise<UserCredential | null>{
   try {
-    const logged = await signInWithEmailAndPassword(this.auth, user.email, user.password);
+    const logged = await signInWithEmailAndPassword(this.auth, user.email!, user.password!);
     if(logged.user?.uid){
       const userDoc = await getDoc(doc(this.firestore, 'users', logged.user.uid));
       if(userDoc.exists()){
@@ -96,5 +102,28 @@ async loginUser(user:User):Promise<UserCredential | null>{
   /**
    * Add a new member to the team.
    */
+  async addMember(user:User):Promise<User | false>{
 
+    try {
+
+      const userCredential = await createUserWithEmailAndPassword(this.auth, user.email!, user.password!);
+      if (!userCredential.user) {
+        return false;
+      }
+
+      const newMember: User = {
+        email: user.email,
+        name: user.name,
+        orgName: user.orgName,
+        uid: userCredential.user.uid
+      }
+
+      // Save user data to Firestore
+      await setDoc(doc(this.firestore, 'users', userCredential.user.uid), newMember);
+
+      return newMember;
+    } catch (error) {
+      return false;
+    }
+  }
 }

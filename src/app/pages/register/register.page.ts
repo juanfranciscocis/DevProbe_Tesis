@@ -79,8 +79,6 @@ export class RegisterPage implements OnInit {
         await this.hideLoading();
         // Redirect to the login page
         await this.navCtrl.navigateRoot('/login')
-        await this.showAlert("User registered successfully! Please Login.","Registration Successful");
-
       }else{
         await this.hideLoading();
         await this.showAlert("Registration failed. Please check the form data.");

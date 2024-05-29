@@ -1,0 +1,18 @@
+<!--
+The HeaderComponent of the application.
+
+<ion-header> is a container for the header of the content. The '[translucent]' attribute makes the header translucent.
+
+<ion-toolbar> is a container for the header tools. It can contain title, buttons, back button, etc.
+
+<ion-menu-button> is a button that opens the side menu. The 'slot' attribute is used to position the button on the start of the toolbar. The 'menu' attribute should match the 'menu-id' of the ion-menu.
+
+<ion-title> is the title of the header. The '{{title}}' is an Angular interpolation binding that binds the 'title' property from the component to the title of the header.
+-->
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-menu-button slot="start" menu="menu-id">
+    </ion-menu-button>
+    <ion-title >{{title}}</ion-title>
+  </ion-toolbar>
+</ion-header>

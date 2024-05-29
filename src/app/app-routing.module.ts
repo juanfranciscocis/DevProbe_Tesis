@@ -27,6 +27,10 @@ const routes: Routes = [
     ...canActivate(redirectLoggedInToHome)
 
   },
+  {
+    path: 'myteam',
+    loadChildren: () => import('./pages/myteam/myteam.module').then( m => m.MyteamPageModule)
+  },
 ];
 
 @NgModule({

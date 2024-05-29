@@ -1,0 +1,39 @@
+
+<app-header [title]="'My Team'"></app-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <app-title [title]="'My Team'"></app-title>
+    <ion-row class="lg:m-10">
+      @for (member of members; track member){
+      <ion-col size="6" size-md="4" size-lg="4" class="">
+          <div class="flex flex-col  h-full justify-between bg-gray-600 rounded-2xl">
+            <ion-card-header>
+              <h1 class="text-2xl">{{member.name}}</h1>
+            </ion-card-header>
+            <ion-card-content class="flex flex-col ">
+              <ion-button (click)="removeMember(member.uid!)" class="m-4" color="danger">Remove</ion-button>
+            </ion-card-content>
+          </div>
+      </ion-col>
+      }
+    </ion-row>
+    <app-title [title]="'Add Team Member'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <ion-input class="" label="Team Member Name" placeholder="Enter a name" type="text" labelPlacement="stacked" [(ngModel)]="teamMemberName"></ion-input>
+      </ion-col>
+      <ion-col size="12" size-md="4" size-lg="4">
+        <ion-input class="" label="Team Member Email" placeholder="Enter an email" type="email" labelPlacement="stacked" [(ngModel)]="teamMemberEmail"></ion-input>
+      </ion-col>
+      <ion-col size="12" size-md="4" size-lg="4">
+        <ion-input class="" label="Team Member Password" placeholder="Enter a password for the account" type="password" labelPlacement="stacked" [(ngModel)]="teamMemberPassword"></ion-input>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="flex flex-row justify-end">
+        <ion-button class="" (click)="addMember()" color="primary">Add Member</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
