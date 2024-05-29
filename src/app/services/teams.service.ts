@@ -67,7 +67,7 @@ export class TeamsService {
     }
   }
 
-  async addMember(user:User):Promise<boolean> {
+  async addMember(user:User):Promise<string | boolean> {
 
     try {
 
@@ -95,7 +95,7 @@ export class TeamsService {
       });
 
 
-      return true;
+      return success.uid as string;
     } catch (error) {
       return false;
     }

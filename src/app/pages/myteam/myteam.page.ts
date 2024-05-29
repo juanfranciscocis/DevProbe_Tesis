@@ -81,7 +81,8 @@ export class MyteamPage implements OnInit {
     }
 
     const success = await this.teamsService.addMember(user);
-    if (success) {
+    if (typeof success === 'string') {
+      user.uid = success;
       this.members.push(user);
       this.teamMemberName = '';
       this.teamMemberEmail = '';
