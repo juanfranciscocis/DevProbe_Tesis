@@ -89,6 +89,9 @@ async loginUser(user:User):Promise<UserCredential | null>{
   /**
    * Logout the current user.
    */
+  async logoutUser():Promise<void>{
+    await this.auth.signOut();
+  }
 
   /**
    * Add a new member to the team.

@@ -1,3 +1,35 @@
+<!--
+The root component of the application.
+
+<ion-app> is a container element for an Ionic application.
+
+<ion-split-pane> is a component that splits the layout into two sections.
+The 'when' attribute determines when the split-pane should be shown, in this case, it's shown when the screen size is 'md' or larger.
+The 'contentId' attribute is the id of the main content. It should match the id of the ion-router-outlet.
+
+<ion-menu> is a side menu navigation drawer.
+The 'content-id' attribute should match the 'contentId' of the ion-split-pane.
+The 'menu-id' attribute is a unique id for the menu.
+The 'side' attribute determines which side the menu is placed. 'start' places the menu on the start, which is left in LTR, and right in RTL.
+The 'type' attribute is the type of the menu. 'overlay' type will overlay the menu over the content.
+
+<ion-header>, <ion-toolbar>, and <ion-title> are used for the header of the menu.
+
+<ion-content> contains the content of the menu.
+
+<ion-list> is a list of items in the menu.
+
+<ion-menu-toggle> is a component that toggles the menu open or closed. It's used inside an ion-item.
+The '*ngFor' directive is used to loop over the 'menuItems' array and create a menu item for each object in the array.
+
+<ion-item> is a single item in the list. The '[routerLink]' attribute is used to navigate to the url of the item when it's clicked.
+
+<ion-icon> is an icon in the item. The '[name]' attribute is the name of the icon.
+
+<ion-label> is the title of the item.
+
+<ion-router-outlet> is a placeholder that Angular dynamically fills based on the current router state.
+-->
 <ion-app>
   <ion-split-pane when="md" contentId="menu-content"   >
     <ion-menu content-id="menu-content" menu-id="menu-id" side="start" type="overlay">

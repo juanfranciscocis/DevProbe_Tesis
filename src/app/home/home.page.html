@@ -7,9 +7,9 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div id="container">
+  <div id="container" class="flex flex-col items-center justify-center h-full">
     <strong>Ready to create an app?</strong>
     <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-    <ion-button class="bg-amber-200 min-w-96">Hola</ion-button>
+    <button class="min-w-96 bg-red-600 p-2 rounded-2xl" (click)="logout()">Logout</button>
   </div>
 </ion-content>
