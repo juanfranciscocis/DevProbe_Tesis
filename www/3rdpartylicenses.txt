@@ -113,6 +113,8 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 ionic-loader
 
+ionicons/icons
+
 rxfire/auth
 
 rxjs
