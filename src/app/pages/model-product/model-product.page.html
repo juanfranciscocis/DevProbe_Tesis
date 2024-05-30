@@ -1,0 +1,42 @@
+<app-header [title]="'Model The Product'"></app-header>
+
+<ion-content [fullscreen]="true">
+
+
+  <ion-grid>
+    <app-title [title]="'Products'"></app-title>
+    <ion-row class="lg:m-10">
+      <ion-col size="12">
+        <ion-list [inset]="true" class="bg-white">
+          <ion-item color="dark" [routerLink]="['/new-product']">
+            <ion-label >Pokémon Yellow</ion-label>
+          </ion-item>
+          <ion-item color="dark" >
+            <ion-label >Pokémon Yellow</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <app-title [title]="'Model A New Product'"></app-title>
+    <ion-row class="m-6 lg:m-10 md:m-10">
+      <p>"People use a product to achieve a real-world objective.
+        To help product teams build products and services that facilitate
+        user goals, you need to understand what the product's users are
+        trying to accomplish." (Google SRE Workbook,2023)</p>
+      <div class="flex flex-row justify-center items-center flex-grow m-2">
+        <ion-button size="" color="primary" routerLink="/new-product">Model A New Product</ion-button>
+      </div>
+    </ion-row>
+  </ion-grid>
+
+
+
+
+
+
+
+
+
+
+
+</ion-content>

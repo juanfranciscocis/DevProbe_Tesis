@@ -1,0 +1,56 @@
+<app-header [title]="'New Product'"></app-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-grid>
+    <app-title [title]="'New Product Objective'"></app-title>
+    <ion-row class="lg:m-10">
+      <ion-col size="12">
+        <ion-input class="" label="Product Objective" placeholder="Enter a objective *example(compose mail)" type="text" labelPlacement="stacked"></ion-input>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="lg:m-10">
+      <ion-col size="12" size-lg="6" size-md="6">
+        <h3 class="text-4xl lg:text-6xl font-bold">Product Steps</h3>
+        <ion-input class="" label="Product Step" placeholder="Enter a step *example(open compose dialog)" type="text" labelPlacement="stacked"></ion-input>
+        <div class="flex flex-row justify-center items-center flex-grow m-2">
+          <ion-button size="small" color="primary" routerLink="/new-product">Add Step</ion-button>
+        </div>
+        <ion-list class="bg-white">
+          <ion-item color="dark">
+            <ion-label>Open Compose Dialog</ion-label>
+          </ion-item>
+          <ion-item color="dark">
+            <ion-label>Compose Mail</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+      <ion-col size="12" size-lg="6" size-md="6">
+        <h3 class="text-4xl lg:text-6xl font-bold">Product Services</h3>
+        <ion-input class="" label="Product Services" placeholder="Enter a service *example(outlook api)" type="text" labelPlacement="stacked"></ion-input>
+        <div class="flex flex-row justify-center items-center flex-grow m-2">
+          <ion-button size="small" color="primary" routerLink="/new-product">Add Service</ion-button>
+        </div>
+        <ion-list class="bg-white">
+          <ion-item color="dark">
+            <ion-label> Outlook API</ion-label>
+          </ion-item>
+          <ion-item color="dark">
+            <ion-label> Gmail API</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10">
+      <ion-col size="12">
+        <div class="flex flex-row justify-center items-center flex-grow m-2">
+          <!-- make a huge button that is 100% width -->
+          <ion-button size="" color="success" routerLink="/new-product">Model The Product</ion-button>
+        </div>
+      </ion-col>
+    </ion-row>
+
+
+  </ion-grid>
+</ion-content>

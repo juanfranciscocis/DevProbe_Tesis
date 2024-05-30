@@ -31,6 +31,14 @@ const routes: Routes = [
     path: 'myteam',
     loadChildren: () => import('./pages/myteam/myteam.module').then( m => m.MyteamPageModule)
   },
+  {
+    path: 'model-product',
+    loadChildren: () => import('./pages/model-product/model-product.module').then( m => m.ModelProductPageModule)
+  },
+  {
+    path: 'new-product',
+    loadChildren: () => import('./pages/new-product/new-product.module').then( m => m.NewProductPageModule)
+  },
 ];
 
 @NgModule({

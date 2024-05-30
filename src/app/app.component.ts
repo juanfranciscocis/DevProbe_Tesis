@@ -29,6 +29,11 @@ export class AppComponent implements OnInit {
       url: '/myteam',
       icon: 'people'
     },
+    {
+      title: 'Model The Product',
+      url: '/model-product',
+      icon: 'cube'
+    }
   ];
 
   /**
