@@ -39,18 +39,24 @@ export class NewProductPage implements OnInit {
   }
 
   async addProductStep() {
-    this.new_product!.productSteps!.push(this.productStep);
-    this.productStep = '';
+    if (this.productStep) {
+      this.new_product!.productSteps!.push(this.productStep);
+      this.productStep = '';
+    }
   }
 
   async addProductService() {
-    this.new_product!.productServices!.push(this.productServices);
-    this.productServices = '';
+    if (this.productServices) {
+      this.new_product!.productServices!.push(this.productServices);
+      this.productServices = '';
+    }
   }
 
   async addProductSLO() {
-    this.new_product!.productSLOs!.push(this.productSLO);
-    this.productSLO = '';
+    if (this.productSLO) {
+      this.new_product!.productSLOs!.push(this.productSLO);
+      this.productSLO = '';
+    }
   }
 
   async createProduct() {
@@ -67,6 +73,13 @@ export class NewProductPage implements OnInit {
     if (this.new_product.productSteps!.length < 1 || this.new_product.productServices!.length < 1 || this.new_product.productSLOs!.length < 1) {
       await this.hideLoading();
       await this.showAlert('Please add at least one step, service, and SLO');
+      return;
+    }
+
+    //Check if there is the same amount of steps, services, and SLOs
+    if (this.new_product.productSteps!.length !== this.new_product.productServices!.length || this.new_product.productServices!.length !== this.new_product.productSLOs!.length) {
+      await this.hideLoading();
+      await this.showAlert('Please make sure there is the same amount of Steps, Services, and SLOs. Remember that each step should have a corresponding Service and SLO');
       return;
     }
 
@@ -98,6 +111,8 @@ export class NewProductPage implements OnInit {
       productSLOs: []
     }
 
+    this.productObjective = '';
+
 
 
 
@@ -112,7 +127,7 @@ export class NewProductPage implements OnInit {
    */
   async showAlert(message:string,header?:string) {
     const alert = await this.alertCtrl.create({
-      header: header || 'Registration Failed!',
+      header: header || 'Error Creating Product',
       message:message,
       buttons: ['OK']
     });

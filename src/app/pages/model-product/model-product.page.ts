@@ -22,8 +22,8 @@ export class ModelProductPage implements OnInit {
 
   ) { }
 
-  ngOnInit() {
-    this.getProducts();
+  async ngOnInit() {
+    await this.getProducts();
   }
 
 
@@ -39,6 +39,16 @@ export class ModelProductPage implements OnInit {
       const user: User = JSON.parse(userString);
       const orgName:string = user.orgName!;
       this.products = await this.productService.getProducts(orgName);
+
+      //if no products, add a default product
+      if(this.products.length === 0){
+        const new_product:Product = {
+          productObjective: 'No products found',
+        }
+        this.products.push(new_product);
+      }
+
+
       await this.hideLoading()
     }catch (e) {
       console.log(e);
