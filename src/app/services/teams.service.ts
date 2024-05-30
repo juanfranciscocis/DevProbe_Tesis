@@ -4,17 +4,34 @@ import {Members} from "../interfaces/members";
 import {User} from "../interfaces/user";
 import {AuthService} from "./auth.service";
 
+/**
+ * TeamsService is a service that provides methods for managing teams and their members.
+ * It uses Firestore for data storage and retrieval.
+ *
+ * @Injectable is a decorator that marks a class as available to be provided and injected as a dependency.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class TeamsService {
-
+  /**
+   * TeamsService constructor.
+   * It initializes Firestore and AuthService instances.
+   *
+   * @param firestore - An instance of Firestore.
+   * @param authService - An instance of AuthService.
+   */
   constructor(
     private firestore: Firestore,
     private authService: AuthService
   ) { }
 
-
+  /**
+   * This method retrieves a team by its organization name and returns its members.
+   *
+   * @param orgName - The name of the organization.
+   * @returns A promise that resolves to an array of User objects.
+   */
   async getTeamByOrganization(orgName: string):Promise<User[]> {
     let ref = doc(this.firestore, "teams", orgName); // teams/organizationName
     const fetchOrg = await getDoc(ref);
@@ -35,7 +52,13 @@ export class TeamsService {
       return users;
   }
 
-
+  /**
+   * This method removes a member from a team.
+   *
+   * @param orgName - The name of the organization.
+   * @param memberUID - The UID of the member to be removed.
+   * @returns A promise that resolves to a boolean indicating the success of the operation.
+   */
   async removeMember(orgName: string, memberUID: string):Promise<boolean> {
     try {
 
@@ -67,6 +90,12 @@ export class TeamsService {
     }
   }
 
+  /**
+   * This method adds a member to a team.
+   *
+   * @param user - The User object representing the member to be added.
+   * @returns A promise that resolves to a string representing the UID of the added member, or a boolean indicating the success of the operation.
+   */
   async addMember(user:User):Promise<string | boolean> {
 
     try {
@@ -100,16 +129,5 @@ export class TeamsService {
       return false;
     }
   }
-
-
-
-
-
-
-
-
-
-
-
 
 }

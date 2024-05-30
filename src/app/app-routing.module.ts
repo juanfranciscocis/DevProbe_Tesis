@@ -29,15 +29,18 @@ const routes: Routes = [
   },
   {
     path: 'myteam',
-    loadChildren: () => import('./pages/myteam/myteam.module').then( m => m.MyteamPageModule)
+    loadChildren: () => import('./pages/myteam/myteam.module').then( m => m.MyteamPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'model-product',
-    loadChildren: () => import('./pages/model-product/model-product.module').then( m => m.ModelProductPageModule)
+    loadChildren: () => import('./pages/model-product/model-product.module').then( m => m.ModelProductPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'new-product',
-    loadChildren: () => import('./pages/new-product/new-product.module').then( m => m.NewProductPageModule)
+    loadChildren: () => import('./pages/new-product/new-product.module').then( m => m.NewProductPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
 ];
 

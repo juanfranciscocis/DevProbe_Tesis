@@ -94,6 +94,7 @@ async loginUser(user:User):Promise<UserCredential | null>{
   //TODO: Implement the following methods
   /**
    * Logout the current user.
+   * @returns {Promise<void>} - A promise that resolves when the user is logged out.
    */
   async logoutUser():Promise<void>{
     await this.auth.signOut();
@@ -101,6 +102,9 @@ async loginUser(user:User):Promise<UserCredential | null>{
 
   /**
    * Add a new member to the team.
+   * It also saves the user data to Firestore.
+   * @param {User} user - The user to add to the team. Must contain 'email', 'password', 'name', and 'orgName' fields.
+   * @returns {Promise<User | false>} - A promise that resolves to the user data for the newly added member, or false if the operation fails.
    */
   async addMember(user:User):Promise<User | false>{
 

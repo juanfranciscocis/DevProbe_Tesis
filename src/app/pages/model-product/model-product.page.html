@@ -2,18 +2,21 @@
 
 <ion-content [fullscreen]="true">
 
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
 
   <ion-grid>
     <app-title [title]="'Products'"></app-title>
     <ion-row class="lg:m-10">
       <ion-col size="12">
         <ion-list [inset]="true" class="bg-white">
-          <ion-item color="dark" [routerLink]="['/new-product']">
-            <ion-label >Pokémon Yellow</ion-label>
-          </ion-item>
-          <ion-item color="dark" >
-            <ion-label >Pokémon Yellow</ion-label>
-          </ion-item>
+          @for (product of products; track product){
+            <ion-item color="dark">
+              <ion-label>{{product.productObjective}}</ion-label>
+            </ion-item>
+          }
         </ion-list>
       </ion-col>
     </ion-row>

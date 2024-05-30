@@ -6,7 +6,7 @@
     <app-title [title]="'New Product Objective'"></app-title>
     <ion-row class="lg:m-10">
       <ion-col size="12">
-        <ion-input class="" label="Product Objective" placeholder="Enter a objective *example(compose mail)" type="text" labelPlacement="stacked"></ion-input>
+        <ion-input class="" label="Product Objective" placeholder="Enter a objective *example(compose mail)" type="text" labelPlacement="stacked" [(ngModel)]=productObjective></ion-input>
       </ion-col>
     </ion-row>
 
@@ -27,7 +27,7 @@
       </ion-col>
       <ion-col size="12" size-lg="4" size-md="4" class="flex flex-col justify-between ">
         <h3 class="text-4xl lg:text-6xl font-bold">Product Services</h3>
-        <ion-input class="" label="Product Services" placeholder="Enter a service *example(outlook api)" type="text" labelPlacement="stacked" [(ngModel)]=productService></ion-input>
+        <ion-input class="" label="Product Services" placeholder="Enter a service *example(outlook api)" type="text" labelPlacement="stacked" [(ngModel)]=productServices></ion-input>
         <div class="flex flex-row justify-center items-center flex-grow m-2">
           <ion-button size="small" color="primary" (click)="addProductService()">Add Service</ion-button>
         </div>
@@ -58,7 +58,7 @@
       <ion-col size="12">
         <div class="flex flex-row justify-center items-center flex-grow m-2">
           <!-- make a huge button that is 100% width -->
-          <ion-button size="" color="success" routerLink="/new-product">Model The Product</ion-button>
+          <ion-button size="" color="success" (click)="createProduct()">Model The Product</ion-button>
         </div>
       </ion-col>
     </ion-row>
