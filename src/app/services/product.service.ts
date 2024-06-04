@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {collection, doc, Firestore, getDocs, setDoc} from "@angular/fire/firestore";
+import {collection, deleteDoc, doc, Firestore, getDocs, setDoc} from "@angular/fire/firestore";
 import {Product} from "../interfaces/product";
 import {DocumentData, Query} from "@angular/fire/compat/firestore";
 import {query} from "@angular/animations";
@@ -38,7 +38,16 @@ export class ProductService {
     }
   }
 
-
+  async removeProduct(orgName:string, productObjective:string){
+    try {
+      const collectionRef = doc(this.firestore, 'teams', orgName, 'products', productObjective);
+      await deleteDoc(collectionRef);
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
 
 
 }

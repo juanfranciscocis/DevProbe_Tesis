@@ -9,10 +9,11 @@
         <ion-card-title>Product Steps</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-list #stepList>
+        <ion-list>
           @for (step of product.productSteps; track step){
           <ion-item>
             <ion-input value="{{step}}"></ion-input>
+            <ion-icon slot="end" name="trash" (click)="deleteStep(step)"></ion-icon>
           </ion-item>
           }
         </ion-list>
@@ -51,13 +52,13 @@
     <ion-item-divider color="light">
       <div class="flex justify-center items-center min-w-full p-4">
         <div class="p-1">
-          <ion-button color="success">Add Step</ion-button>
+          <ion-button color="success" (click)="addStep()">Add Step</ion-button>
         </div>
         <div class="p-1">
-          <ion-button color="primary" (click)="getAllInputValues()">Edit Product</ion-button>
+          <ion-button color="primary" (click)="upDateFields()">Edit Product</ion-button>
         </div>
         <div class="p-1">
-          <ion-button color="danger">Delete Product</ion-button>
+          <ion-button color="danger" (click)="deleteProduct()">Delete Product</ion-button>
         </div>
       </div>
     </ion-item-divider>
