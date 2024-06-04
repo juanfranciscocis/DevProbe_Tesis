@@ -1,0 +1,69 @@
+
+<app-header [title]=product.productObjective!></app-header>
+
+
+<ion-content [fullscreen]="true">
+  <div class="flex flex-col flex-grow lg:flex-row md:flex-row min-w-full h-full">
+    <ion-card class="flex flex-col flex-grow">
+      <ion-card-header class="flex flex-row justify-center">
+        <ion-card-title>Product Steps</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list #stepList>
+          @for (step of product.productSteps; track step){
+          <ion-item>
+            <ion-input value="{{step}}"></ion-input>
+          </ion-item>
+          }
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+    <ion-card class="flex flex-col flex-grow">
+      <ion-card-header class="flex flex-row justify-center">
+        <ion-card-title>Product Services</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          @for (step of product.productServices; track step){
+            <ion-item>
+              <ion-input value="{{step}}"></ion-input>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+    <ion-card class="flex flex-col flex-grow">
+      <ion-card-header class="flex flex-row justify-center">
+        <ion-card-title>Product SLOs</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          @for (step of product.productSLOs; track step){
+            <ion-item>
+              <ion-input value="{{step}}"></ion-input>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  <div class="flex flex-row justify-center items-center mt-auto">
+    <ion-item-divider color="light">
+      <div class="flex justify-center items-center min-w-full p-4">
+        <div class="p-1">
+          <ion-button color="success">Add Step</ion-button>
+        </div>
+        <div class="p-1">
+          <ion-button color="primary" (click)="getAllInputValues()">Edit Product</ion-button>
+        </div>
+        <div class="p-1">
+          <ion-button color="danger">Delete Product</ion-button>
+        </div>
+      </div>
+    </ion-item-divider>
+  </div>
+
+
+
+
+</ion-content>

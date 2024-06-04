@@ -3,6 +3,7 @@ import {ProductService} from "../../services/product.service";
 import {Product} from "../../interfaces/product";
 import {User} from "../../interfaces/user";
 import {AlertController, LoadingController} from "@ionic/angular";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-model-product',
@@ -18,7 +19,8 @@ export class ModelProductPage implements OnInit {
   constructor(
     private productService: ProductService,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private router: Router
 
   ) { }
 
@@ -53,6 +55,11 @@ export class ModelProductPage implements OnInit {
     }catch (e) {
       console.log(e);
     }
+  }
+
+  async viewProduct(product: Product) {
+    //navigate to the product page
+    await this.router.navigate(['/view-product'],{queryParams:{product:JSON.stringify(product)}});
   }
 
 

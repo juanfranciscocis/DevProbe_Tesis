@@ -13,7 +13,7 @@
       <ion-col size="12">
         <ion-list [inset]="true" class="bg-white">
           @for (product of products; track product){
-            <ion-item color="dark">
+            <ion-item color="dark" (click)="viewProduct(product)">
               <ion-label>{{product.productObjective}}</ion-label>
             </ion-item>
           }

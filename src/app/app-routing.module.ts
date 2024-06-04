@@ -42,6 +42,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/new-product/new-product.module').then( m => m.NewProductPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
+  {
+    path: 'view-product',
+    loadChildren: () => import('./pages/view-product/view-product.module').then( m => m.ViewProductPageModule)
+  },
 ];
 
 @NgModule({
