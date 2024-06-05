@@ -34,6 +34,11 @@ export class AppComponent implements OnInit {
       url: '/myteam',
       icon: 'people'
     },
+    {
+      title:'Show Map',
+      url:'/show-map',
+      icon:'map'
+    }
   ];
 
   /**
