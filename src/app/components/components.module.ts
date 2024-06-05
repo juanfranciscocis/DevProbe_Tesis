@@ -4,7 +4,6 @@ import {HeaderComponent} from "./header/header.component";
 import {IonicModule} from "@ionic/angular";
 import {RouterLink} from "@angular/router";
 import {TitleComponent} from "./title/title.component";
-import {MapComponent} from "./map/map.component";
 
 /**
  * ComponentsModule is a module that declares and exports the components used in the application.
@@ -18,7 +17,6 @@ import {MapComponent} from "./map/map.component";
   declarations: [
     HeaderComponent,
     TitleComponent,
-    MapComponent
   ],
   /**
    * Other modules whose exported classes are needed by component templates declared in this module.
@@ -34,7 +32,6 @@ import {MapComponent} from "./map/map.component";
   exports: [
     HeaderComponent,
     TitleComponent,
-    MapComponent
   ]
 })
 export class ComponentsModule { }
