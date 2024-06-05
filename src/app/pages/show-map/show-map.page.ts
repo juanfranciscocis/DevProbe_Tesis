@@ -3,6 +3,9 @@ import * as Leaflet from "leaflet";
 // @ts-ignore
 import { antPath } from 'leaflet-ant-path';
 
+
+//https://edupala.com/how-to-add-leaflet-map-in-ionic/
+
 @Component({
   selector: 'app-show-map',
   templateUrl: './show-map.page.html',
