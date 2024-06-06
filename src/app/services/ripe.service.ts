@@ -17,7 +17,7 @@ export class RipeService {
         "definitions": [
         {
           "target": "portfoliojuanfranciscocisneros.web.app",
-          "description": "My First Measurement, A mi portfolio 4",
+          "description": "My First Measurement, A mi portfolio 5",
           "type": "ping",
           "af": 4,
           "is_oneoff":true
