@@ -1,8 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-
+//https://edupala.com/how-to-add-leaflet-map-in-ionic/
 import * as Leaflet from 'leaflet';
 // @ts-ignore
 import { antPath } from 'leaflet-ant-path';
+import {RipeService} from "../../services/ripe.service";
 
 @Component({
   selector: 'app-show-map',
@@ -13,9 +14,13 @@ export class ShowMapPage implements OnInit, OnDestroy{
 
   map: Leaflet.Map|undefined;
 
-  constructor() { }
+  constructor(
+    private ripeService: RipeService
+  ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.ripeService.sendMeasurementRequest();
+  }
   ionViewDidEnter() { this.leafletMap(); }
 
   leafletMap() {
