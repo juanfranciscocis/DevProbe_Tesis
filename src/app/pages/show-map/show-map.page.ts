@@ -4,6 +4,7 @@ import * as Leaflet from "leaflet";
 import { antPath } from 'leaflet-ant-path';
 import {MapData} from "../../interfaces/map-data";
 import {LatLngExpression} from "leaflet";
+import {RipeService} from "../../services/ripe.service";
 
 
 //https://edupala.com/how-to-add-leaflet-map-in-ionic/
@@ -27,9 +28,13 @@ export class ShowMapPage implements OnInit, OnDestroy {
 
 
 
-  constructor() { }
+  constructor(
+    private ripeService: RipeService
+  ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.ripeService.newMeasurement('https://portfoliojuanfranciscocisneros.web.app', 'Test from app', 'ping');
+  }
 
 
   ionViewDidEnter() { this.leafletMap(); }
