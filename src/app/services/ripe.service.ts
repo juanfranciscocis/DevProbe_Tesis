@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Ripe} from "../interfaces/ripe";
 import {Observable} from "rxjs";
+import {collection, doc, Firestore, setDoc} from "@angular/fire/firestore";
 
 
 @Injectable({
@@ -13,7 +14,8 @@ export class RipeService {
   public measurementID: string = '73134479';
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private firestore: Firestore
   ) {
   }
 
@@ -56,5 +58,28 @@ export class RipeService {
    return this.http.get<Ripe[]>(this.measurementsUrl + this.measurementID + '/results/', {headers: headers})
 
   }
+
+async saveMeasurementResults(orgName:string, productObjective:string,description:string ,ripeData:Ripe[]){
+  try {
+    const collectionRef = collection(this.firestore, 'teams', orgName, 'products', productObjective, 'ripe');
+    const docRef = doc(collectionRef, description); // Use description as the document ID
+
+    // Prepare the data
+    const data = ripeData.map((item, index) => ({
+        from: item.from,
+        dst_addr: item.dst_addr,
+        latency: item.latency
+    }));
+
+    await setDoc(docRef, { data });
+
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+}
+
+
 
 }

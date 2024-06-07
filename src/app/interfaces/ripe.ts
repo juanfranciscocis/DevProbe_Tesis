@@ -7,4 +7,5 @@ export interface Ripe {
   toLatitude?: number;
   toLongitude?: number;
   latency?: number;
+  description?: string;
 }

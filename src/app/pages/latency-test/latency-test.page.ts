@@ -1,6 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {RipeService} from "../../services/ripe.service";
 import {Ripe} from "../../interfaces/ripe";
+import {User} from "../../interfaces/user";
+import {TeamsService} from "../../services/teams.service";
+import {LoadingController} from "@ionic/angular";
 
 @Component({
   selector: 'app-latency-test',
@@ -16,22 +19,35 @@ export class LatencyTestPage implements OnInit {
   ripeResults:Ripe[] = [];
 
   constructor(
-    private ripeService: RipeService
+    private ripeService: RipeService,
+    private teamsService: TeamsService,
+    private loadingCtrl: LoadingController
   ) {
 
   }
 
-  async ngOnInit() {
-    await this.getResults();
+  ngOnInit() {
   }
 
-  sendRequest() {
+  async sendRequest() {
+    await this.showLoading();
     console.log(this.host, this.description, this.type);
-    this.ripeService.sendMeasurementRequest(this.host, this.description, this.type);
+    await this.ripeService.sendMeasurementRequest(this.host, this.description, this.type);
+    await this.hideLoading();
   }
 
   async getResults() {
-    (await this.ripeService.getMeasurementResults()).subscribe((data) => {
+
+    await this.showLoading();
+    const userString = localStorage.getItem('user');
+    if (!userString) {
+      return;
+    }
+    const user: User = JSON.parse(userString);
+    const orgName = user.orgName!;
+
+
+    (await this.ripeService.getMeasurementResults()).subscribe(async (data) => {
       for (let i = 0; i < data.length; i++) {
         let ripe: Ripe = {
           latency: data[i].avg,
@@ -39,12 +55,33 @@ export class LatencyTestPage implements OnInit {
           from: data[i].from,
         }
         this.ripeResults.push(ripe);
-        console.log(ripe);
+        //TODO:Prodcut Objective
       }
+      await this.ripeService.saveMeasurementResults(orgName, "Web", this.description, this.ripeResults);
     });
+    await this.hideLoading();
   }
 
   handleChange($event: any) {
     this.type = $event.detail.value;
   }
+
+
+  /**
+   * Show a loading spinner.
+   */
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+    });
+    await loading.present();
+  }
+
+  /**
+   * Hide the loading spinner.
+   */
+  async hideLoading() {
+    await this.loadingCtrl.dismiss();
+  }
+
+
 }
