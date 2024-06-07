@@ -50,6 +50,10 @@ const routes: Routes = [
     path: 'show-map',
     loadChildren: () => import('./pages/show-map/show-map.module').then( m => m.ShowMapPageModule)
   },
+  {
+    path: 'latency-test',
+    loadChildren: () => import('./pages/latency-test/latency-test.module').then( m => m.LatencyTestPageModule)
+  },
 ];
 
 @NgModule({

@@ -19,7 +19,8 @@ import {HttpClientModule} from "@angular/common/http";
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
-    provideAuth(() => getAuth())
+    provideAuth(() => getAuth()),
+    HttpClientModule
   ],
   bootstrap: [AppComponent],
 })

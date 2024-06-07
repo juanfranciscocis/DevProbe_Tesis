@@ -15,11 +15,9 @@ export class ShowMapPage implements OnInit, OnDestroy{
   map: Leaflet.Map|undefined;
 
   constructor(
-    private ripeService: RipeService
   ) { }
 
   ngOnInit() {
-    this.ripeService.sendMeasurementRequest();
   }
   ionViewDidEnter() { this.leafletMap(); }
 
@@ -29,8 +27,6 @@ export class ShowMapPage implements OnInit, OnDestroy{
       attribution: 'edupala.com © Angular LeafLet',
     }).addTo(this.map);
 
-    Leaflet.marker([28.6, 77]).addTo(this.map).bindPopup('Delhi').openPopup();
-    Leaflet.marker([34, 77]).addTo(this.map).bindPopup('Leh').openPopup();
 
     antPath([[28.644800, 77.216721], [34.1526, 77.5771]],
       { color: '#FF0000', weight: 5, opacity: 0.6 })
@@ -38,7 +34,7 @@ export class ShowMapPage implements OnInit, OnDestroy{
 
     setTimeout(() => {
         this.map!.invalidateSize();
-    },10);
+    },100);
 
   }
 

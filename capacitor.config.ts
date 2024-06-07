@@ -6,7 +6,15 @@ const config: CapacitorConfig = {
   webDir: 'www',
   server: {
     url: 'http://localhost:8100',
-  }
+  },
+  plugins: {
+    CapacitorHttp: {
+      enabled: true,
+    },
+  },
+
+
+
 };
 
 export default config;
