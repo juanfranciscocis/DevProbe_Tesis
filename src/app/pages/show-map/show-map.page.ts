@@ -70,8 +70,8 @@ export class ShowMapPage implements OnInit, OnDestroy{
 
       let labelIcon = Leaflet.divIcon({
         className: 'label-icon',
-        html: `<div style="background-color: black; padding: 2px; border-radius: 3px;">Latency: ${data.latency} ms</div>`,
-        iconSize: [120, 20] // size of the icon
+        html: `<div style="background-color: white; padding: 2px; border-radius: 3px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 5px 0 rgba(0,0,0,0.2);"><p style="color:black">Latency: ${data.latency} ms</p></div>`,
+        iconSize: [200, 20] // size of the icon
       })
 
       // Add the label to the map at the desired coordinates
