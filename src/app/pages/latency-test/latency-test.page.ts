@@ -4,6 +4,7 @@ import {Ripe} from "../../interfaces/ripe";
 import {User} from "../../interfaces/user";
 import {TeamsService} from "../../services/teams.service";
 import {LoadingController} from "@ionic/angular";
+import {LocationService} from "../../services/location.service";
 
 @Component({
   selector: 'app-latency-test',
@@ -21,12 +22,14 @@ export class LatencyTestPage implements OnInit {
   constructor(
     private ripeService: RipeService,
     private teamsService: TeamsService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private locationService: LocationService
   ) {
 
   }
 
   ngOnInit() {
+
   }
 
   async sendRequest() {
@@ -54,13 +57,33 @@ export class LatencyTestPage implements OnInit {
           latency: data[i].avg,
           dst_addr: data[i].dst_addr,
           from: data[i].from,
+          toLatitude: 0,
+          toLongitude: 0,
+          fromLatitude: 0,
+          fromLongitude: 0,
+          cityTo: '',
+          countryTo: '',
+          cityFrom: '',
+          countryFrom: ''
         }
         this.ripeResults.push(ripe);
         //TODO:Prodcut Objective
       }
-      await this.ripeService.saveMeasurementResults(orgName, "Web", this.description, this.ripeResults);
+      await this.ripeService.saveMeasurementResults(orgName, "Web", this.description, this.ripeResults).then(async () => {
+        //TODO: Get Location service
+        await this.locationService.getLocation(this.ripeResults).then((data) => {
+          this.ripeResults = data;
+          this.locationService.saveLocationResults(orgName, "Web", this.description, data).then(async (data) => {
+            if (data) {
+              console.log('Data saved');
+              console.log(this.ripeResults);
+              await this.hideLoading();
+            }
+          });
+        });
+      });
     });
-    await this.hideLoading();
+
   }
 
   handleChange($event: any) {

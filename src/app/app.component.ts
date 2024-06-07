@@ -38,6 +38,11 @@ export class AppComponent implements OnInit {
       title:'Latency Test',
       url:'/latency-test',
       icon:'pulse'
+    },
+    {
+      title:'Show Map',
+      url:'/show-map',
+      icon:'map'
     }
   ];
 

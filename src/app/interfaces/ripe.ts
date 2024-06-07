@@ -8,4 +8,8 @@ export interface Ripe {
   toLongitude?: number;
   latency?: number;
   description?: string;
+  cityFrom?: string;
+  countryFrom?: string;
+  cityTo?: string;
+  countryTo?: string;
 }

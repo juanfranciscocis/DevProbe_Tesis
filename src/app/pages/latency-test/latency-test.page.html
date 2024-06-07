@@ -33,9 +33,9 @@
       <ion-col size="12" size-md="12" size-lg="12">
         <ion-list>
           <ion-item *ngFor="let test of ripeResults">
-            <ion-label>FROM {{ test.from }}</ion-label>
+            <ion-label>FROM {{ test.cityFrom }},{{test.countryFrom}}</ion-label>
             <ion-label>{{ test.latency }} ms</ion-label>
-            <ion-label> TO {{ test.dst_addr }}</ion-label>
+            <ion-label> TO {{ test.cityTo }},{{test.countryTo}}</ion-label>
           </ion-item>
         </ion-list>
       </ion-col>

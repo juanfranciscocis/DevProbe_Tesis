@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Ripe} from "../interfaces/ripe";
 import {Observable} from "rxjs";
-import {collection, doc, Firestore, setDoc} from "@angular/fire/firestore";
+import {collection, doc, Firestore, getDoc, getDocs, setDoc} from "@angular/fire/firestore";
 
 
 @Injectable({
@@ -59,26 +59,38 @@ export class RipeService {
 
   }
 
-async saveMeasurementResults(orgName:string, productObjective:string,description:string ,ripeData:Ripe[]){
-  try {
-    const collectionRef = collection(this.firestore, 'teams', orgName, 'products', productObjective, 'ripe');
-    const docRef = doc(collectionRef, description); // Use description as the document ID
+  async saveMeasurementResults(orgName:string, productObjective:string,description:string ,ripeData:Ripe[]){
+    try {
+      const collectionRef = collection(this.firestore, 'teams', orgName, 'products', productObjective, 'ripe');
+      const docRef = doc(collectionRef, description); // Use description as the document ID
 
-    // Prepare the data
-    const data = ripeData.map((item, index) => ({
-        from: item.from,
-        dst_addr: item.dst_addr,
-        latency: item.latency
-    }));
+      // Prepare the data
+      const data = ripeData.map((item, index) => ({
+          from: item.from,
+          dst_addr: item.dst_addr,
+          latency: item.latency
+      }));
 
-    await setDoc(docRef, { data });
+      await setDoc(docRef, { data });
 
-    return true;
-  } catch (e) {
-    console.log(e);
-    return false;
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   }
-}
+
+
+  async getAllResults(orgName:string, productObjective:string, description:string):Promise<Ripe[]>{
+    let path = 'teams/' + orgName + '/products/' + productObjective + '/ripe';
+    let ref = doc(this.firestore, path, description);
+    const fetchOrg = await getDoc(ref);
+    const ripeData = fetchOrg.data();
+    return ripeData as Ripe[];
+
+  }
+
+
 
 
 

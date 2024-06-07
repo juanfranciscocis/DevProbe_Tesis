@@ -1,10 +1,15 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>show-map</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header [title]="'Show Map'"></app-header>
 
-<ion-content>
-  <div id="mapId" style="width: 100%; height: 100%">
-  </div>
+<ion-content class="relative">
+  <ion-card class="fixed-card hidden  lg:block">
+    <ion-card-header>
+      <ion-card-title>Latency Higher to Lower</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      @for(data of ripeData; track data){
+        <p>{{data.countryFrom}} : {{data.latency}}</p>
+      }
+    </ion-card-content>
+  </ion-card>
+  <div id="mapId" style="width: 100%; height: 100%"></div>
 </ion-content>
