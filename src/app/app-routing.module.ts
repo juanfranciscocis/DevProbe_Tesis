@@ -44,15 +44,18 @@ const routes: Routes = [
   },
   {
     path: 'view-product',
-    loadChildren: () => import('./pages/view-product/view-product.module').then( m => m.ViewProductPageModule)
+    loadChildren: () => import('./pages/view-product/view-product.module').then( m => m.ViewProductPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'show-map',
-    loadChildren: () => import('./pages/show-map/show-map.module').then( m => m.ShowMapPageModule)
+    loadChildren: () => import('./pages/show-map/show-map.module').then( m => m.ShowMapPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'latency-test',
-    loadChildren: () => import('./pages/latency-test/latency-test.module').then( m => m.LatencyTestPageModule)
+    loadChildren: () => import('./pages/latency-test/latency-test.module').then( m => m.LatencyTestPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
 ];
 
