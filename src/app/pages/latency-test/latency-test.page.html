@@ -5,7 +5,7 @@
     <app-title [title]="'Latency Test'"></app-title>
     <ion-row class="lg:m-10 md:m-10">
       <ion-col size="12" size-md="4" size-lg="4" class="">
-        <ion-input class="" label="Target" placeholder="Enter a url target" type="text" labelPlacement="stacked" [(ngModel)]="target"></ion-input>
+        <ion-input class="" label="Host Name" placeholder="Enter a host name" type="text" labelPlacement="stacked" [(ngModel)]="host"></ion-input>
       </ion-col>
       <ion-col size="12" size-md="4" size-lg="4">
         <ion-input class="" label="Description" placeholder="Enter a description" type="text" labelPlacement="stacked" [(ngModel)]="description"></ion-input>
@@ -14,12 +14,10 @@
         <ion-list>
           <ion-item>
             <ion-select
-              placeholder="Select a Type"
-              (ionChange)="changeType($event)"
+              (ionChange)="handleChange($event)"
             >
-              <div slot="label">Select a Type <ion-text color="danger">(Required)</ion-text></div>
-              <ion-select-option value="ping" [(ngModel)]="type">Ping</ion-select-option>
-              <ion-select-option value="traceroute" [(ngModel)]="type">Traceroute</ion-select-option>
+              <ion-select-option value="ping">Ping</ion-select-option>
+              <ion-select-option value="traceroute">Traceroute</ion-select-option>
             </ion-select>
           </ion-item>
         </ion-list>
@@ -27,8 +25,7 @@
     </ion-row>
     <ion-row class="lg:m-10 md:m-10">
       <ion-col size="12" size-md="12" size-lg="12" class="flex flex-row justify-end">
-        <ion-button class="" (click)="sendMeasurementRequest()" color="primary">Add Test</ion-button>
-        <ion-button class="" (click)="getMeasurementResults()" color="primary">Get Test Results</ion-button>
+        <ion-button class="" (click)="sendRequest()" color="primary">Add Test</ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>

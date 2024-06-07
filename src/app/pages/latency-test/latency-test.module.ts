@@ -10,13 +10,13 @@ import { LatencyTestPage } from './latency-test.page';
 import {ComponentsModule} from "../../components/components.module";
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        IonicModule,
-        LatencyTestPageRoutingModule,
-        ComponentsModule
-    ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    LatencyTestPageRoutingModule,
+    ComponentsModule
+  ],
   declarations: [LatencyTestPage]
 })
 export class LatencyTestPageModule {}

@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {RipeService} from "../../services/ripe.service";
+import {Ripe} from "../../interfaces/ripe";
 
 @Component({
   selector: 'app-latency-test',
@@ -8,29 +9,42 @@ import {RipeService} from "../../services/ripe.service";
 })
 export class LatencyTestPage implements OnInit {
 
-  @Input() target: string = 'portfoliojuanfranciscocisneros.web.app';
-  @Input() description: string = 'IONIC-TEST';
-  @Input() type: string = 'ping';
+  @Input() host: string = 'portfoliojuanfranciscocisneros.web.app';
+  @Input() description: string = 'NEW IONIC';
+  type: string = 'ping';
 
+  ripeResults:Ripe[] = [];
 
   constructor(
     private ripeService: RipeService
-  ) { }
+  ) {
 
-  ngOnInit() {
   }
 
-  async sendMeasurementRequest() {
-    console.log(this.target, this.description, this.type);
-    await this.ripeService.sendMeasurementRequest(this.target, this.description, this.type);
+  async ngOnInit() {
+    await this.getResults();
   }
 
-  async getMeasurementResults() {
-    let response = await this.ripeService.getMeasurementResults();
-    console.log(response);
+  sendRequest() {
+    console.log(this.host, this.description, this.type);
+    this.ripeService.sendMeasurementRequest(this.host, this.description, this.type);
   }
 
-  changeType($event: any) {
+  async getResults() {
+    (await this.ripeService.getMeasurementResults()).subscribe((data) => {
+      for (let i = 0; i < data.length; i++) {
+        let ripe: Ripe = {
+          latency: data[i].avg,
+          dst_addr: data[i].dst_addr,
+          from: data[i].from,
+        }
+        this.ripeResults.push(ripe);
+        console.log(ripe);
+      }
+    });
+  }
+
+  handleChange($event: any) {
     this.type = $event.detail.value;
   }
 }
