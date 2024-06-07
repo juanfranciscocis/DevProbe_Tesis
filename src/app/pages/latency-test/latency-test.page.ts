@@ -39,6 +39,7 @@ export class LatencyTestPage implements OnInit {
   async getResults() {
 
     await this.showLoading();
+    this.ripeResults = [];
     const userString = localStorage.getItem('user');
     if (!userString) {
       return;
