@@ -57,6 +57,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/latency-test/latency-test.module').then( m => m.LatencyTestPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
+  {
+    path: 'latency-chooser',
+    loadChildren: () => import('./pages/latency-chooser/latency-chooser.module').then( m => m.LatencyChooserPageModule)
+  },
 ];
 
 @NgModule({

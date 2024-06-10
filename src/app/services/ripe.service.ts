@@ -20,7 +20,9 @@ export class RipeService {
   }
 
   async sendMeasurementRequest(target: string, description: string, type: string) {
-    let body = {
+    try {
+
+      let body = {
       "definitions": [
         {
           "target": target,
@@ -39,23 +41,34 @@ export class RipeService {
       ]
     }
 
-    let headers = {
-      "Authorization": "Key 92530695-134f-4cbc-b7c3-ec130f3719b0"
+      let headers = {
+        "Authorization": "Key 92530695-134f-4cbc-b7c3-ec130f3719b0"
+      }
+
+      console.log(body);
+
+      let response: any = await this.http.post(this.measurementsUrl, body, {headers: headers}).toPromise();
+      console.log(response);
+      this.measurementID = response['measurements'][0];
+      return this.measurementID;
+    } catch (e) {
+      console.log(e);
+      return false;
     }
-
-    console.log(body);
-
-    let response: any = await this.http.post(this.measurementsUrl, body, {headers: headers}).toPromise();
-    console.log(response);
-    this.measurementID = response['measurements'][0];
-    console.log(this.measurementID);
   }
 
-  async getMeasurementResults():Promise<Observable<Ripe[]>> {
-    let headers = {
-      "Authorization": "Key 92530695-134f-4cbc-b7c3-ec130f3719b0"
+  async getMeasurementResults(){
+
+    try {
+      let headers = {
+        "Authorization": "Key 92530695-134f-4cbc-b7c3-ec130f3719b0"
+      }
+
+      return this.http.get<Ripe[]>(this.measurementsUrl + this.measurementID + '/results/', {headers: headers})
+    } catch (e) {
+      console.log(e);
+      return new Observable<Ripe[]>();
     }
-   return this.http.get<Ripe[]>(this.measurementsUrl + this.measurementID + '/results/', {headers: headers})
 
   }
 

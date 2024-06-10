@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
     },
     {
       title:'Latency Test',
-      url:'/latency-test',
+      url:'/latency-chooser',
       icon:'pulse'
     },
     {

@@ -3,8 +3,9 @@ import {RipeService} from "../../services/ripe.service";
 import {Ripe} from "../../interfaces/ripe";
 import {User} from "../../interfaces/user";
 import {TeamsService} from "../../services/teams.service";
-import {LoadingController} from "@ionic/angular";
+import {AlertController, LoadingController} from "@ionic/angular";
 import {LocationService} from "../../services/location.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-latency-test',
@@ -14,6 +15,7 @@ import {LocationService} from "../../services/location.service";
 export class LatencyTestPage implements OnInit {
 
   @Input() host: string = 'portfoliojuanfranciscocisneros.web.app';
+  product:string = '';
   @Input() description: string = 'NEW IONIC';
   type: string = 'ping';
 
@@ -23,7 +25,9 @@ export class LatencyTestPage implements OnInit {
     private ripeService: RipeService,
     private teamsService: TeamsService,
     private loadingCtrl: LoadingController,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private route:ActivatedRoute,
+    private alertCtrl: AlertController,
   ) {
 
   }
@@ -32,17 +36,42 @@ export class LatencyTestPage implements OnInit {
 
   }
 
+  ionViewWillEnter() {
+    // get url params
+    this.route.params.subscribe(params => {
+      //get current date and time
+      const currentdate = new Date();
+      const datetime = currentdate.getDate() + "/"
+        + (currentdate.getMonth() + 1) + "/"
+        + currentdate.getFullYear() + "-"
+        + currentdate.getHours() + ":"
+        + currentdate.getMinutes() + ":"
+        + currentdate.getSeconds();
+
+       this.description = params['productObjective'] + '-' + params['step'] + '-' + datetime;
+    });
+  }
+
+
+
   async sendRequest() {
     await this.showLoading();
     console.log(this.host, this.description, this.type);
-    await this.ripeService.sendMeasurementRequest(this.host, this.description, this.type);
-    await this.hideLoading();
+    const isTest = await this.ripeService.sendMeasurementRequest(this.host, this.description, this.type);
+    if (isTest !== false) {
+      await this.hideLoading();
+      await this.showAlert('Test sent, please wait a few minutes to GET RESULTS for ID: ' + isTest, 'Success');
+    }else {
+      await this.hideLoading();
+      await this.showAlert('Test not sent', 'Error');
+    }
   }
 
   async getResults() {
 
     await this.showLoading();
     this.ripeResults = [];
+
     const userString = localStorage.getItem('user');
     if (!userString) {
       return;
@@ -52,6 +81,14 @@ export class LatencyTestPage implements OnInit {
 
 
     (await this.ripeService.getMeasurementResults()).subscribe(async (data) => {
+
+      //if no data
+      if(data.length === 0){
+        await this.hideLoading();
+        await this.showAlert('No data found yet', 'Please wait a few minutes and try again');
+        return;
+      }
+
       for (let i = 0; i < data.length; i++) {
         let ripe: Ripe = {
           latency: data[i].avg,
@@ -67,17 +104,19 @@ export class LatencyTestPage implements OnInit {
           countryFrom: ''
         }
         this.ripeResults.push(ripe);
-        //TODO:Prodcut Objective
       }
-      await this.ripeService.saveMeasurementResults(orgName, "Web", this.description, this.ripeResults).then(async () => {
-        //TODO: Get Location service
+      let product = this.product;
+      product = product.replace(/\s/g, '');
+      console.log(product);
+      await this.ripeService.saveMeasurementResults(orgName, product, this.description, this.ripeResults).then(async () => {
         await this.locationService.getLocation(this.ripeResults).then((data) => {
           this.ripeResults = data;
-          this.locationService.saveLocationResults(orgName, "Web", this.description, data).then(async (data) => {
+          this.locationService.saveLocationResults(orgName, product, this.description, data).then(async (data) => {
             if (data) {
               console.log('Data saved');
               console.log(this.ripeResults);
               await this.hideLoading();
+              await this.showAlert('Data saved and Showing Results', 'Success');
             }
           });
         });
@@ -105,6 +144,20 @@ export class LatencyTestPage implements OnInit {
    */
   async hideLoading() {
     await this.loadingCtrl.dismiss();
+  }
+
+  /**
+   * Show an alert with the given message.
+   *
+   * @param {string} message - The message to show in the alert.
+   */
+  async showAlert(message:string, header:string) {
+    const alert = await this.alertCtrl.create({
+      header: header,
+      message:message,
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 
 
