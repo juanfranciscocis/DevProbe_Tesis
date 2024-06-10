@@ -34,7 +34,7 @@ export class RipeService {
       ],
       "probes": [
         {
-          "requested": 1,
+          "requested": 5,
           "type": "area",
           "value": "WW"
         }

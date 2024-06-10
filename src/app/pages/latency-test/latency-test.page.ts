@@ -6,6 +6,10 @@ import {AlertController, LoadingController} from "@ionic/angular";
 import {LocationService} from "../../services/location.service";
 import {ActivatedRoute} from "@angular/router";
 
+/**
+ * @component LatencyTestPage
+ * @description This component handles the latency test operations.
+ */
 @Component({
   selector: 'app-latency-test',
   templateUrl: './latency-test.page.html',
@@ -13,21 +17,62 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class LatencyTestPage implements OnInit {
 
+  /**
+   * @property {User} user - The user object, initialized as an empty object.
+   */
   user: User = {}
+
+  /**
+   * @property {string} orgName - The name of the organization, initialized as an empty string.
+   */
   orgName: string = '';
+
+  /**
+   * @property {string} productObjective - The objective of the product, initialized as an empty string.
+   */
   productObjective:string = '';
+
+  /**
+   * @property {string} productStep - The step of the product, initialized as an empty string.
+   */
   productStep:string = '';
 
+  /**
+   * @property {string} host - The host for the latency test, initialized as 'portfoliojuanfranciscocisneros.web.app'.
+   * @Input - This property is an input property and can be bound in the template.
+   */
   @Input() host: string = 'portfoliojuanfranciscocisneros.web.app';
+
+  /**
+   * @property {string} description - The description for the latency test, initialized as 'NEW IONIC'.
+   * @Input - This property is an input property and can be bound in the template.
+   */
   @Input() description: string = 'NEW IONIC';
 
+  /**
+   * @property {string} type - The type of the latency test, initialized as 'ping'.
+   */
   type: string = 'ping';
 
+  /**
+   * @property {Ripe[]} ripeResults - The results of the latency test, initialized as an empty array.
+   */
   ripeResults:Ripe[] = [];
+
+  /**
+   * @property {string[]} ripeHistoryResultsID - The IDs of the history results, initialized as an empty array.
+   */
   ripeHistoryResultsID:string[] = [];
 
 
-
+  /**
+   * @constructor
+   * @param {RipeService} ripeService - The service to handle RIPE operations.
+   * @param {LoadingController} loadingCtrl - The controller to handle loading operations.
+   * @param {LocationService} locationService - The service to handle location operations.
+   * @param {ActivatedRoute} route - The route object to handle routing operations.
+   * @param {AlertController} alertCtrl - The controller to handle alert operations.
+   */
   constructor(
     private ripeService: RipeService,
     private loadingCtrl: LoadingController,
@@ -38,10 +83,16 @@ export class LatencyTestPage implements OnInit {
 
   }
 
-  ngOnInit() {
+  /**
+   * @method ngOnInit
+   * @description Lifecycle hook that is called after data-bound properties of a directive are initialized.
+   */
+  ngOnInit() {}
 
-  }
-
+  /**
+   * @method ionViewWillEnter
+   * @description Lifecycle hook that is called when the page is about to enter and become the active page.
+   */
   async ionViewWillEnter() {
     await this.showLoading();
     // get url params
@@ -78,22 +129,29 @@ export class LatencyTestPage implements OnInit {
   }
 
 
-
+  /**
+   * @method sendRequest
+   * @description Sends a measurement request.
+   */
   async sendRequest() {
     await this.showLoading();
 
     const isTest = await this.ripeService.sendMeasurementRequest(this.host, this.description, this.type);
-    if (isTest !== false) {
-      await this.hideLoading();
-      await this.showAlert('Test sent, please wait a few minutes to GET RESULTS for ID: ' + isTest, 'Success');
-    }else {
-      await this.hideLoading();
-      await this.showAlert('Test not sent', 'Error');
-    }
+    await this.hideLoading();
 
+    const message = isTest !== false ?
+      `Test sent, please wait a few minutes to GET RESULTS for ID: ${isTest}` :
+      'Test not sent';
+
+    const header = isTest !== false ? 'Success' : 'Error';
+
+    await this.showAlert(message, header);
   }
 
-
+  /**
+   * @method getResults
+   * @description Gets the measurement results.
+   */
   async getResults() {
 
     await this.showLoading();
@@ -151,24 +209,32 @@ export class LatencyTestPage implements OnInit {
       await this.hideLoading();
       await this.showAlert('Error getting results', 'Error');
     }
-
   }
 
+  /**
+   * @method handleChange
+   * @description Handles the change event of the select element.
+   * @param {any} $event - The event object.
+   */
   handleChange($event: any) {
     this.type = $event.detail.value;
   }
 
-
-  async getHistoryResults(orgName:string,productObjective:string) {
+  /**
+   * @method getHistoryResults
+   * @description Gets the history results.
+   * @param {string} orgName - The organization name.
+   * @param {string} productObjective - The product objective.
+   */
+  async getHistoryResults(orgName:string, productObjective:string) {
     this.ripeHistoryResultsID = [];
-    await this.ripeService.getHistoryResults(orgName, productObjective).then(async (data) => {
-      for (let i = 0; i < data.length; i++) {
-        const split = data[i].id.split('-');
-        if (split[1] === this.productStep) {
-          this.ripeHistoryResultsID.push(data[i].id);
-        }
+    const data = await this.ripeService.getHistoryResults(orgName, productObjective);
+    for (let i = 0; i < data.length; i++) {
+      const split = data[i].id.split('-');
+      if (split[1] === this.productStep) {
+        this.ripeHistoryResultsID.push(data[i].id);
       }
-    });
+    }
   }
 
 

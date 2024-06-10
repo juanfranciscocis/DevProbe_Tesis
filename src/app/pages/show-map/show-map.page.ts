@@ -32,7 +32,7 @@ export class ShowMapPage implements OnInit, OnDestroy{
 
   async ionViewDidEnter() {
     await this.showLoading()
-    this.ripeData= await this.ripeService.getAllResults("DevProbe", "Web", "NEW IONIC");
+    this.ripeData= await this.ripeService.getAllResults("DevProbe", "Web", "Web-Hosting-10-6-2024-18:26:49");
     await this.leafletMap();
   }
 
