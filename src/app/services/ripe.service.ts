@@ -11,7 +11,7 @@ import {collection, doc, Firestore, getDoc, getDocs, setDoc} from "@angular/fire
 export class RipeService {
 
   private measurementsUrl = 'https://cors-ea3m.onrender.com/https://atlas.ripe.net/api/v2/measurements/';
-  public measurementID: string = '73134479';
+  public measurementID: string = '';
 
   constructor(
     private http: HttpClient,
@@ -64,6 +64,11 @@ export class RipeService {
         "Authorization": "Key 92530695-134f-4cbc-b7c3-ec130f3719b0"
       }
 
+      if (this.measurementID === '') {
+        console.log('No measurement ID');
+        return false;
+      }
+
       return this.http.get<Ripe[]>(this.measurementsUrl + this.measurementID + '/results/', {headers: headers})
     } catch (e) {
       console.log(e);
@@ -102,6 +107,19 @@ export class RipeService {
     return ripeData as Ripe[];
 
   }
+
+async getHistoryResults(orgName:string, productObjective:string):Promise<{id: string, data: Ripe}[]>{
+  let path = 'teams/' + orgName + '/products/' + productObjective + '/ripe';
+  //get all documents in the collection
+  const collectionRef = collection(this.firestore, path);
+  const products = await getDocs(collectionRef);
+  let ripeData:{id: string, data: Ripe}[] = [];
+  products.docs.forEach(doc => {
+    ripeData.push({id: doc.id, data: doc.data() as Ripe});
+  });
+  console.log(ripeData);
+  return ripeData;
+}
 
 
 

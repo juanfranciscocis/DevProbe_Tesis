@@ -2,10 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {RipeService} from "../../services/ripe.service";
 import {Ripe} from "../../interfaces/ripe";
 import {User} from "../../interfaces/user";
-import {TeamsService} from "../../services/teams.service";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {LocationService} from "../../services/location.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-latency-test',
@@ -14,16 +13,23 @@ import {ActivatedRoute, Router} from "@angular/router";
 })
 export class LatencyTestPage implements OnInit {
 
+  user: User = {}
+  orgName: string = '';
+  productObjective:string = '';
+  productStep:string = '';
+
   @Input() host: string = 'portfoliojuanfranciscocisneros.web.app';
-  product:string = '';
   @Input() description: string = 'NEW IONIC';
+
   type: string = 'ping';
 
   ripeResults:Ripe[] = [];
+  ripeHistoryResultsID:string[] = [];
+
+
 
   constructor(
     private ripeService: RipeService,
-    private teamsService: TeamsService,
     private loadingCtrl: LoadingController,
     private locationService: LocationService,
     private route:ActivatedRoute,
@@ -36,27 +42,46 @@ export class LatencyTestPage implements OnInit {
 
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
+    await this.showLoading();
     // get url params
     this.route.params.subscribe(params => {
-      //get current date and time
+
+      this.productObjective = params['productObjective']; //this is the product objective
+      this.productStep = params['step']; //this is the step of the product
+
+      //Create a unique identifier for the test
       const currentdate = new Date();
-      const datetime = currentdate.getDate() + "/"
-        + (currentdate.getMonth() + 1) + "/"
+      const datetime = currentdate.getDate() + "-"
+        + (currentdate.getMonth() + 1) + "-"
         + currentdate.getFullYear() + "-"
         + currentdate.getHours() + ":"
         + currentdate.getMinutes() + ":"
         + currentdate.getSeconds();
+      this.description = params['productObjective'] + '-' + params['step'] + '-' + datetime; //this is a unique identifier for the test
 
-       this.description = params['productObjective'] + '-' + params['step'] + '-' + datetime;
+
     });
+
+    // get user from local storage
+    const userString = localStorage.getItem('user');
+    if (!userString) {
+      return;
+    }
+    this.user = JSON.parse(userString);
+    this.orgName = this.user.orgName!;
+
+    // get history results for this product
+    await this.getHistoryResults(this.orgName, this.productObjective);
+    await this.hideLoading();
+
   }
 
 
 
   async sendRequest() {
     await this.showLoading();
-    console.log(this.host, this.description, this.type);
+
     const isTest = await this.ripeService.sendMeasurementRequest(this.host, this.description, this.type);
     if (isTest !== false) {
       await this.hideLoading();
@@ -65,68 +90,85 @@ export class LatencyTestPage implements OnInit {
       await this.hideLoading();
       await this.showAlert('Test not sent', 'Error');
     }
+
   }
+
 
   async getResults() {
 
     await this.showLoading();
+
     this.ripeResults = [];
 
-    const userString = localStorage.getItem('user');
-    if (!userString) {
-      return;
-    }
-    const user: User = JSON.parse(userString);
-    const orgName = user.orgName!;
-
-
-    (await this.ripeService.getMeasurementResults()).subscribe(async (data) => {
-
-      //if no data
-      if(data.length === 0){
+    try {
+      let measurement = (await this.ripeService.getMeasurementResults());
+      if (!measurement) {
         await this.hideLoading();
-        await this.showAlert('No data found yet', 'Please wait a few minutes and try again');
+        await this.showAlert('Please send a test first', 'Error');
         return;
       }
 
-      for (let i = 0; i < data.length; i++) {
-        let ripe: Ripe = {
-          latency: data[i].avg,
-          dst_addr: data[i].dst_addr,
-          from: data[i].from,
-          toLatitude: 0,
-          toLongitude: 0,
-          fromLatitude: 0,
-          fromLongitude: 0,
-          cityTo: '',
-          countryTo: '',
-          cityFrom: '',
-          countryFrom: ''
+      measurement.subscribe(async (data) => {
+
+        if (data.length === 0) {
+          await this.hideLoading();
+          await this.showAlert('No data found yet', 'Please wait a few minutes and try again');
+          return;
         }
-        this.ripeResults.push(ripe);
-      }
-      let product = this.product;
-      product = product.replace(/\s/g, '');
-      console.log(product);
-      await this.ripeService.saveMeasurementResults(orgName, product, this.description, this.ripeResults).then(async () => {
-        await this.locationService.getLocation(this.ripeResults).then((data) => {
-          this.ripeResults = data;
-          this.locationService.saveLocationResults(orgName, product, this.description, data).then(async (data) => {
-            if (data) {
-              console.log('Data saved');
-              console.log(this.ripeResults);
-              await this.hideLoading();
-              await this.showAlert('Data saved and Showing Results', 'Success');
-            }
+
+        for (let i = 0; i < data.length; i++) {
+          let ripe: Ripe = {
+            latency: data[i].avg,
+            dst_addr: data[i].dst_addr,
+            from: data[i].from,
+            toLatitude: 0,
+            toLongitude: 0,
+            fromLatitude: 0,
+            fromLongitude: 0,
+            cityTo: '',
+            countryTo: '',
+            cityFrom: '',
+            countryFrom: ''
+          }
+          this.ripeResults.push(ripe);
+        }
+
+        //save results
+        await this.ripeService.saveMeasurementResults(this.orgName, this.productObjective, this.description, this.ripeResults).then(async () => {
+          await this.locationService.getLocation(this.ripeResults).then((data) => {
+            this.ripeResults = data;
+            this.locationService.saveLocationResults(this.orgName, this.productObjective, this.description, data).then(async (data) => {
+              if (data) {
+                await this.getHistoryResults(this.orgName, this.productObjective);
+                await this.hideLoading();
+                await this.showAlert('Data saved and Showing Results', 'Success');
+              }
+            });
           });
         });
       });
-    });
+    }catch (e) {
+      await this.hideLoading();
+      await this.showAlert('Error getting results', 'Error');
+    }
 
   }
 
   handleChange($event: any) {
     this.type = $event.detail.value;
+  }
+
+
+  async getHistoryResults(orgName:string,productObjective:string) {
+    this.ripeHistoryResultsID = [];
+    await this.ripeService.getHistoryResults(orgName, productObjective).then(async (data) => {
+      for (let i = 0; i < data.length; i++) {
+        const split = data[i].id.split('-');
+        if (split[1] === this.productStep) {
+          this.ripeHistoryResultsID.push(data[i].id);
+        }
+      }
+    });
   }
 
 
