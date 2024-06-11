@@ -1,5 +1,4 @@
-<app-header [title]="'Latency Test'"></app-header>
-
+<app-header-return [title]="'Latency Test'"></app-header-return>
 <ion-content [fullscreen]="true">
   <ion-grid>
     <app-title [title]="'New Latency Test'"></app-title>
@@ -45,7 +44,7 @@
     <ion-row class="lg:m-10 md:m-10">
       <ion-col size="12" size-md="12" size-lg="12">
         <ion-list>
-          <ion-item *ngFor="let test of ripeHistoryResultsID">
+          <ion-item *ngFor="let test of ripeHistoryResultsID" (click)="viewHistory(test)">
             <ion-label>{{ test }}</ion-label>
             <ion-icon name="arrow-forward"  color="primary"></ion-icon>
           </ion-item>

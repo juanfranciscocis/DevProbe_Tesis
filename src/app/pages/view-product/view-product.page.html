@@ -1,5 +1,5 @@
 
-<app-header [title]=product.productObjective!></app-header>
+<app-header-return [title]=product.productObjective!></app-header-return>
 
 
 <ion-content [fullscreen]="true">
@@ -8,7 +8,7 @@
       <ion-card-header class="flex flex-row justify-center">
         <ion-card-title>Product Steps</ion-card-title>
       </ion-card-header>
-      <ion-card-content>
+      <ion-card-content class="scrollable-content">
         <ion-list>
           @for (step of product.productSteps; track step){
           <ion-item>
@@ -23,7 +23,7 @@
       <ion-card-header class="flex flex-row justify-center">
         <ion-card-title>Product Services</ion-card-title>
       </ion-card-header>
-      <ion-card-content>
+      <ion-card-content class="scrollable-content ">
         <ion-list>
           @for (step of product.productServices; track step){
             <ion-item>
@@ -37,7 +37,7 @@
       <ion-card-header class="flex flex-row justify-center">
         <ion-card-title>Product SLOs</ion-card-title>
       </ion-card-header>
-      <ion-card-content>
+      <ion-card-content class="scrollable-content">
         <ion-list>
           @for (step of product.productSLOs; track step){
             <ion-item>

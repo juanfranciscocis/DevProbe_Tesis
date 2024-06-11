@@ -30,20 +30,15 @@ export class AppComponent implements OnInit {
       icon: 'cube'
     },
     {
-      title: 'My Team',
-      url: '/myteam',
-      icon: 'people'
-    },
-    {
       title:'Latency Test',
       url:'/latency-chooser',
       icon:'pulse'
     },
     {
-      title:'Show Map',
-      url:'/show-map',
-      icon:'map'
-    }
+      title: 'My Team',
+      url: '/myteam',
+      icon: 'people'
+    },
   ];
 
   /**

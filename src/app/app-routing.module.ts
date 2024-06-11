@@ -59,7 +59,13 @@ const routes: Routes = [
   },
   {
     path: 'latency-chooser',
-    loadChildren: () => import('./pages/latency-chooser/latency-chooser.module').then( m => m.LatencyChooserPageModule)
+    loadChildren: () => import('./pages/latency-chooser/latency-chooser.module').then( m => m.LatencyChooserPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+  },
+  {
+    path: 'latency-results',
+    loadChildren: () => import('./pages/latency-results/latency-results.module').then( m => m.LatencyResultsPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
 ];
 

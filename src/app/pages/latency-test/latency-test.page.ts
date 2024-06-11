@@ -4,7 +4,7 @@ import {Ripe} from "../../interfaces/ripe";
 import {User} from "../../interfaces/user";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {LocationService} from "../../services/location.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 /**
  * @component LatencyTestPage
@@ -79,6 +79,7 @@ export class LatencyTestPage implements OnInit {
     private locationService: LocationService,
     private route:ActivatedRoute,
     private alertCtrl: AlertController,
+    private router: Router
   ) {
 
   }
@@ -268,5 +269,16 @@ export class LatencyTestPage implements OnInit {
     await alert.present();
   }
 
-
+  /**
+   * @method viewHistory
+   * @description Navigates to the latency results page.
+   * @param test
+   */
+  async viewHistory(test: string) {
+    await this.router.navigate(['/latency-results', {
+      orgName: this.orgName,
+      productObjective: this.productObjective,
+      description: test
+    }]);
+  }
 }
