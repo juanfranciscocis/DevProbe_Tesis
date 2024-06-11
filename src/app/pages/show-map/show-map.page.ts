@@ -7,6 +7,7 @@ import {RipeService} from "../../services/ripe.service";
 import {LatLngExpression} from "leaflet";
 import {Ripe} from "../../interfaces/ripe";
 import {LoadingController} from "@ionic/angular";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-show-map',
@@ -18,9 +19,14 @@ export class ShowMapPage implements OnInit, OnDestroy{
   map: Leaflet.Map|undefined;
   ripeData: Ripe[]=[];
 
+  orgName: string = '';
+  productObjective:string = '';
+  description: string = '';
+
   constructor(
     private ripeService: RipeService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private route: ActivatedRoute,
   ) {
 
   }
@@ -32,8 +38,21 @@ export class ShowMapPage implements OnInit, OnDestroy{
 
   async ionViewDidEnter() {
     await this.showLoading()
-    this.ripeData= await this.ripeService.getAllResults("DevProbe", "Web", "Web-Hosting-10-6-2024-18:26:49");
-    await this.leafletMap();
+    this.route.queryParams.subscribe(async params => {
+      this.description = params['description'];
+      this.productObjective = params['productObjective'];
+      this.orgName = params['orgName'];
+      console.log(this.orgName);
+      console.log(this.productObjective);
+      console.log(this.description);
+      await this.ripeService.getAllResults(this.orgName, this.productObjective, this.description).then(r => {
+        this.ripeData = r;
+      }).then(() => {
+        this.leafletMap();
+      });
+    });
+
+
   }
 
   async leafletMap() {

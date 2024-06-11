@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {RipeService} from "../../services/ripe.service";
 import {User} from "../../interfaces/user";
 import {Ripe} from "../../interfaces/ripe";
@@ -21,6 +21,7 @@ export class LatencyResultsPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private ripeService: RipeService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -51,6 +52,7 @@ export class LatencyResultsPage implements OnInit {
   }
 
   goToMap() {
+    this.router.navigate(['/show-map'], { queryParams: { description: this.description, productObjective: this.productObjective, orgName: this.orgName } });
 
   }
 }
