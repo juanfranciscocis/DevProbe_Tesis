@@ -101,6 +101,7 @@ export class RipeService {
 
   async getAllResults(orgName:string, productObjective:string, description:string):Promise<Ripe[]>{
     let path = 'teams/' + orgName + '/products/' + productObjective + '/ripe';
+    console.log(path);
     let ref = doc(this.firestore, path, description);
     const fetchOrg = await getDoc(ref);
     const ripeData = fetchOrg.data();

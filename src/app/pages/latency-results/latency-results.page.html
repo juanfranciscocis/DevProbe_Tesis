@@ -1,13 +1,46 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>latency-results</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header-return [title]="'Latency Results for ' + description"></app-header-return>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">latency-results</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-grid>
+    <app-title [title]="'Test Results'"></app-title>
+    <h2 class="text-xs m-2 lg:m-10 lg:text-2xl md:text-2xl md:m-10">Results for {{description}}</h2>
+    <br>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="4" size-md="4" size-lg="4" class="flex flex-row justify-center">
+            <h1 class="text-2xl">FROM</h1>
+      </ion-col>
+      <ion-col size="4" size-md="4" size-lg="4" class="flex flex-row justify-center">
+        <h1 class="text-2xl">LATENCY</h1>
+      </ion-col>
+      <ion-col size="4" size-md="4" size-lg="4" class="flex flex-row justify-center">
+        <h1 class="text-2xl">TO</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12">
+        <ion-list>
+          <ion-item *ngFor="let test of results">
+            <ion-label>{{ test.cityFrom }},{{test.countryFrom}}</ion-label>
+            <ion-label>{{ test.latency }} ms</ion-label>
+            <ion-label> {{ test.cityTo }},{{test.countryTo}}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
 </ion-content>
+
+<ion-footer [translucent]="true">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="4">
+        </ion-col>
+        <ion-col size="8" class="flex flex-row justify-end">
+          <ion-button (click)="goToMap()" size="small" color="primary">GO TO MAP <ion-icon name="arrow-forward"></ion-icon></ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-footer>

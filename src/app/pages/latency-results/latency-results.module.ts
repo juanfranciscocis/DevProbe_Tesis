@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { LatencyResultsPageRoutingModule } from './latency-results-routing.module';
 
 import { LatencyResultsPage } from './latency-results.page';
+import {ComponentsModule} from "../../components/components.module";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    LatencyResultsPageRoutingModule
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        LatencyResultsPageRoutingModule,
+        ComponentsModule
+    ],
   declarations: [LatencyResultsPage]
 })
 export class LatencyResultsPageModule {}

@@ -272,13 +272,16 @@ export class LatencyTestPage implements OnInit {
   /**
    * @method viewHistory
    * @description Navigates to the latency results page.
-   * @param test
+   * @param {string} test - The test description.
    */
   async viewHistory(test: string) {
-    await this.router.navigate(['/latency-results', {
-      orgName: this.orgName,
-      productObjective: this.productObjective,
-      description: test
-    }]);
+    await this.router.navigate(['/latency-results'], {
+      queryParams: {
+        description: test,
+        productObjective: this.productObjective,
+        step: this.productStep
+      }
+    });
   }
+
 }
