@@ -50,7 +50,7 @@ export class LatencyResultsPage implements OnInit {
     const user: User = JSON.parse(userString);
     this.orgName = user.orgName!;
 
-    this.ripeService.getAllResults(this.orgName, this.productObjective, this.description).then(r => {
+    this.ripeService.getAllResultsByDescription(this.orgName, this.productObjective, this.description).then(r => {
       // @ts-ignore
       for (let i = 0; i < r['data'].length; i++){
         // @ts-ignore

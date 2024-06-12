@@ -105,7 +105,7 @@ export class RipeService {
   }
 
 
-  async getAllResults(orgName:string, productObjective:string, description:string):Promise<Ripe[]>{
+  async getAllResultsByDescription(orgName:string, productObjective:string, description:string):Promise<Ripe[]>{
     try {
       let path = 'teams/' + orgName + '/products/' + productObjective + '/ripe';
       console.log(path);

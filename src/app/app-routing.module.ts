@@ -67,6 +67,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/latency-results/latency-results.module').then( m => m.LatencyResultsPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
+  {
+    path: 'graph',
+    loadChildren: () => import('./pages/graph/graph.module').then( m => m.GraphPageModule)
+  },
 ];
 
 @NgModule({

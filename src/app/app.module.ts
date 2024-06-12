@@ -11,16 +11,28 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import {environment} from "../environments/environment.prod";
 import {getAuth, provideAuth} from "@angular/fire/auth";
 import {HttpClientModule} from "@angular/common/http";
+import {NgxEchartsDirective, NgxEchartsModule, provideEcharts} from "ngx-echarts";
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
+  imports: [
+    BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
+    HttpClientModule,
+    NgxEchartsDirective,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts')
+    }),
+
+  ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
-    HttpClientModule
+    HttpClientModule,
+    provideEcharts()
   ],
   bootstrap: [AppComponent],
 })

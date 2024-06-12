@@ -45,7 +45,7 @@ export class ShowMapPage implements OnInit, OnDestroy{
       console.log(this.orgName);
       console.log(this.productObjective);
       console.log(this.description);
-      await this.ripeService.getAllResults(this.orgName, this.productObjective, this.description).then(r => {
+      await this.ripeService.getAllResultsByDescription(this.orgName, this.productObjective, this.description).then(r => {
         this.ripeData = r;
       }).then(() => {
         this.leafletMap();
