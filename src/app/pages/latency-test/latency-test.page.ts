@@ -66,9 +66,16 @@ export class LatencyTestPage implements OnInit {
    */
   ripeHistoryResultsID:string[] = [];
 
+  /**
+   * @property {string[]} selectedCountries - An array to store the selected countries. Initialized as an empty array.
+   */
   selectedCountries: string[] = [];
 
-  //make a dictionary of countries
+  /**
+   * @property {Object} countries - An object that contains two arrays: 'names' and 'probeIDs'.
+   * 'names' is an array of country names.
+   * 'probeIDs' is an array of corresponding probe IDs for the countries in the 'names' array.
+   */
   countries = {
     names:["BRAZIL", "AUSTRALIA", "USA", "RUSSIA", "UK", "GERMANY", "ITALY",
       "SPAIN", "FRANCE", "JAPAN", "ARGENTINA", "SOUTH_AFRICA", "SAUDI_ARABIA",
@@ -153,6 +160,13 @@ export class LatencyTestPage implements OnInit {
   async sendRequest() {
     await this.showLoading();
 
+    //Check if host input starts with http or https or finishes with a slash
+    if (this.host.startsWith('http://') ||  this.host.startsWith('https://') || this.host.endsWith('/')) {
+      await this.hideLoading();
+      await this.showAlert('No http or https is needed, check for slashes at the end of the domain', 'Please enter a valid host');
+      return;
+    }
+
     //Get selected countries as a string
     if (this.selectedCountries.length === 0) {
       await this.hideLoading();
@@ -182,10 +196,15 @@ export class LatencyTestPage implements OnInit {
       return;
     }
 
-    await this.showAlert(message, header)
-    //wait for at least a 30 seconds before running the getResults
-    await new Promise(resolve => setTimeout(resolve, 15000));
-    await this.getResults();
+    let isOK = await this.showAlert(message, header)
+    if (isOK){
+      await this.showLoading();
+      //wait for at least a 30 seconds before running the getResults
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      await this.hideLoading();
+      await this.getResults();
+    }
+
 
 
 
@@ -214,7 +233,8 @@ export class LatencyTestPage implements OnInit {
 
         if (data.length === 0) {
           await this.hideLoading();
-          await this.showAlert('No data found yet', 'Please wait a few minutes and try again');
+          await this.showAlert('No data found yet', 'Trying again');
+          await this.getResults();
           return;
         }
 
@@ -244,7 +264,7 @@ export class LatencyTestPage implements OnInit {
               if (data) {
                 await this.getHistoryResults(this.orgName, this.productObjective);
                 await this.hideLoading();
-                await this.showAlert('Data saved and Showing Results', 'Success');
+                await this.showAlert('Data saved and Showing Results, you can get more results in the test history', 'Success');
               }
             });
           });
@@ -328,6 +348,12 @@ export class LatencyTestPage implements OnInit {
       buttons: ['OK']
     });
     await alert.present();
+
+    const {role} = await alert.onDidDismiss();
+    if (role === 'ok') {
+      return true;
+    }
+    return true;
   }
 
   /**
