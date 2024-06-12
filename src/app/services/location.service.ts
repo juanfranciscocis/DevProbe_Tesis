@@ -68,7 +68,8 @@ export class LocationService {
         fromLatitude: item.fromLatitude,
         fromLongitude: item.fromLongitude,
         toLatitude: item.toLatitude,
-        toLongitude: item.toLongitude
+        toLongitude: item.toLongitude,
+        id: item.id
       }));
       await setDoc(docRef, { data });
       console.log("Data saved", { data });

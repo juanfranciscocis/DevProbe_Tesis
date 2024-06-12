@@ -12,4 +12,5 @@ export interface Ripe {
   countryFrom?: string;
   cityTo?: string;
   countryTo?: string;
+  id: string;
 }

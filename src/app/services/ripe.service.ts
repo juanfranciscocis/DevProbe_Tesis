@@ -19,14 +19,15 @@ export class RipeService {
   ) {
   }
 
-  async sendMeasurementRequest(target: string, description: string, type: string) {
+  async sendMeasurementRequest(target: string, description: string, type: string, probes:string) {
+    let size =  probes.split(',').length - 1;
+    probes = probes.slice(0, -1);
     try {
-
       let body = {
       "definitions": [
         {
           "target": target,
-          "description": description,
+          "description": "ping",
           "type": "ping",
           "af": 4,
           "is_oneoff": true
@@ -34,9 +35,9 @@ export class RipeService {
       ],
       "probes": [
         {
-          "requested": 5,
-          "type": "area",
-          "value": "WW"
+          "requested": size,
+          "type": "probes",
+          "value": probes
         }
       ]
     }
@@ -57,7 +58,11 @@ export class RipeService {
     }
   }
 
-  async getMeasurementResults(){
+  async getMeasurementResults(id?:string){
+
+    if (id) {
+      this.measurementID = id;
+    }
 
     try {
       let headers = {
@@ -84,6 +89,7 @@ export class RipeService {
 
       // Prepare the data
       const data = ripeData.map((item, index) => ({
+          id: this.measurementID,
           from: item.from,
           dst_addr: item.dst_addr,
           latency: item.latency

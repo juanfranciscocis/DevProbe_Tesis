@@ -5,6 +5,8 @@ import {User} from "../../interfaces/user";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {LocationService} from "../../services/location.service";
 import {ActivatedRoute, Router} from "@angular/router";
+import {Countries} from "../../interfaces/countries";
+import {compass} from "ionicons/icons";
 
 /**
  * @component LatencyTestPage
@@ -63,6 +65,20 @@ export class LatencyTestPage implements OnInit {
    * @property {string[]} ripeHistoryResultsID - The IDs of the history results, initialized as an empty array.
    */
   ripeHistoryResultsID:string[] = [];
+
+  selectedCountries: string[] = [];
+
+  //make a dictionary of countries
+  countries = {
+    names:["BRAZIL", "AUSTRALIA", "USA", "RUSSIA", "UK", "GERMANY", "ITALY",
+      "SPAIN", "FRANCE", "JAPAN", "ARGENTINA", "SOUTH_AFRICA", "SAUDI_ARABIA",
+      "GUATEMALA", "THAILAND", "INDIA"],
+    probeIDs:[
+      1003561, 1007336, 1008100, 1000053, 1002575, 1005576,
+      1006903, 1004167, 1004967, 61328, 62589, 62590, 62643, 51757,
+      1004373, 1007631,
+      ]
+  }
 
 
   /**
@@ -137,16 +153,43 @@ export class LatencyTestPage implements OnInit {
   async sendRequest() {
     await this.showLoading();
 
-    const isTest = await this.ripeService.sendMeasurementRequest(this.host, this.description, this.type);
+    //Get selected countries as a string
+    if (this.selectedCountries.length === 0) {
+      await this.hideLoading();
+      await this.showAlert('Please select at least one country', 'Error');
+      return;
+    }
+
+    let probes = '';
+    for (let i = 0; i < this.selectedCountries.length; i++) {
+      probes += this.countries.probeIDs[this.countries.names.indexOf(this.selectedCountries[i])] + ',';
+    }
+
+
+
+    const isTest = await this.ripeService.sendMeasurementRequest(this.host, this.description, this.type, probes);
+
+
     await this.hideLoading();
 
     const message = isTest !== false ?
-      `Test sent, please wait a few minutes to GET RESULTS for ID: ${isTest}` :
+      `Test sent, please wait a few seconds to GET RESULTS for ID: ${isTest}` :
       'Test not sent';
 
     const header = isTest !== false ? 'Success' : 'Error';
+    if (isTest === false) {
+      await this.showAlert(message, header);
+      return;
+    }
 
-    await this.showAlert(message, header);
+    await this.showAlert(message, header)
+    //wait for at least a 30 seconds before running the getResults
+    await new Promise(resolve => setTimeout(resolve, 15000));
+    await this.getResults();
+
+
+
+
   }
 
   /**
@@ -187,7 +230,8 @@ export class LatencyTestPage implements OnInit {
             cityTo: '',
             countryTo: '',
             cityFrom: '',
-            countryFrom: ''
+            countryFrom: '',
+            id:  this.ripeService.measurementID
           }
           this.ripeResults.push(ripe);
         }
@@ -236,6 +280,23 @@ export class LatencyTestPage implements OnInit {
         this.ripeHistoryResultsID.push(data[i].id);
       }
     }
+  }
+
+
+
+
+  selectCountry(country: string) {
+    const index = this.selectedCountries.indexOf(country);
+    if (index > -1) {
+      this.selectedCountries.splice(index, 1);
+    } else {
+      this.selectedCountries.push(country);
+    }
+  }
+
+
+  isCountrySelected(country: string) {
+    return this.selectedCountries.includes(country);
   }
 
 
