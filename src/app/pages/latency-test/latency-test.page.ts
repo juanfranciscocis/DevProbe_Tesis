@@ -300,11 +300,21 @@ export class LatencyTestPage implements OnInit {
         this.ripeHistoryResultsID.push(data[i].id);
       }
     }
+
+    //sort by date
+    this.ripeHistoryResultsID.sort((a, b) => {
+      // @ts-ignore
+      return new Date(b.split('-')[2]) - new Date(a.split('-')[2]);
+    });
   }
 
 
 
-
+  /**
+   * @method selectCountry
+   * @description Selects or deselects a country. If the country is already selected, it is deselected. If it is not selected, it is selected.
+   * @param {string} country - The name of the country to select or deselect.
+   */
   selectCountry(country: string) {
     const index = this.selectedCountries.indexOf(country);
     if (index > -1) {
@@ -314,7 +324,11 @@ export class LatencyTestPage implements OnInit {
     }
   }
 
-
+  /**
+   * @property {Object} countries - An object that contains two arrays: 'names' and 'probeIDs'.
+   * 'names' is an array of country names.
+   * 'probeIDs' is an array of corresponding probe IDs for the countries in the 'names' array.
+   */
   isCountrySelected(country: string) {
     return this.selectedCountries.includes(country);
   }
