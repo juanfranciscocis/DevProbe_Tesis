@@ -25,6 +25,9 @@ export class ModelProductPage implements OnInit {
   ) { }
 
   async ngOnInit() {
+  }
+
+  async ionViewWillEnter() {
     await this.getProducts();
   }
 
