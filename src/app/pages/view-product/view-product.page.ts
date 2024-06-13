@@ -3,6 +3,8 @@ import {Product} from "../../interfaces/product";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AlertController, IonInput, IonList, LoadingController} from "@ionic/angular";
 import {ProductService} from "../../services/product.service";
+import {RipeService} from "../../services/ripe.service";
+import {Ripe} from "../../interfaces/ripe";
 
 /**
  * ViewProductPage is a component that manages the view product page of the application.
@@ -52,7 +54,8 @@ export class ViewProductPage implements OnInit {
     private productService: ProductService,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
-    private router: Router
+    private router: Router,
+    private ripeService:RipeService
   ) { }
 
   /**
@@ -147,6 +150,29 @@ export class ViewProductPage implements OnInit {
 
 
     await this.productService.addProduct(this.product, this.orgName);
+
+
+    //Delete the latency history of the step
+    let ripeDataID:string[] =[]
+    this.ripeService.getHistoryResults(this.orgName, this.product.productObjective!).then((data:Ripe[])=>{
+      console.log(step)
+      for (let i = 0; i < data.length; i++) {
+        ripeDataID.push(data[i].id)
+      }
+      for (let i = 0; i < ripeDataID.length; i++) {
+
+        // Data looks like this: Web-otra cosa-12-6-2024-14:24:4, so we need to split it
+        let dataSplit = ripeDataID[i].split('-')
+        let stepID = dataSplit[1]
+
+        if (stepID == step) {
+          console.log('Deleting step: ' + stepID)
+          this.ripeService.deleteHistory(this.orgName, this.product.productObjective!, ripeDataID[i])
+        }
+      }
+    });
+
+
     await this.hideLoading();
     await this.showAlert('Product step deleted successfully');
 

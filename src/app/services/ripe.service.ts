@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Ripe} from "../interfaces/ripe";
 import {Observable} from "rxjs";
-import {collection, doc, Firestore, getDoc, getDocs, setDoc} from "@angular/fire/firestore";
+import {collection, deleteDoc, doc, Firestore, getDoc, getDocs, setDoc} from "@angular/fire/firestore";
 
 
 @Injectable({
@@ -134,7 +134,15 @@ async getHistoryResults(orgName:string, productObjective:string):Promise<{id: st
 }
 
 
-
-
-
+  async deleteHistory(orgName: string, productObjective: string, description: string) {
+    let path = 'teams/' + orgName + '/products/' + productObjective + '/ripe';
+    const ref = doc(this.firestore, path, description);
+    try {
+      await deleteDoc(ref);
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
 }
