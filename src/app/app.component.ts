@@ -35,11 +35,6 @@ export class AppComponent implements OnInit {
       icon:'pulse'
     },
     {
-      title:'Graph',
-      url:'/graph',
-      icon:'bar-chart'
-    },
-    {
       title: 'My Team',
       url: '/myteam',
       icon: 'people'
