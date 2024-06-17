@@ -149,7 +149,6 @@ export class LatencyTestPage implements OnInit {
     // get history results for this product
     await this.getHistoryResults(this.orgName, this.productObjective);
     await this.hideLoading();
-
   }
 
 

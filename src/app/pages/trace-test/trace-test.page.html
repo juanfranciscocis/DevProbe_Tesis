@@ -1,0 +1,64 @@
+<app-header-return [title]="'Traceroute Test'"></app-header-return>
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <app-title [title]="'New Traceroute Test'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <ion-input class="" label="Host Name" placeholder="Enter a host name" type="text" labelPlacement="stacked" [(ngModel)]="host"></ion-input>
+      </ion-col>
+      <ion-col size="12" size-md="4" size-lg="4">
+        <ion-input readonly="true" class="" label="Description" placeholder="Enter a description" type="text" labelPlacement="stacked" [(ngModel)]="description" ></ion-input>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12">
+        <h3 class="text-xl">Select Countries to test</h3>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12">
+        @for (country of countries.names; track country){
+          <ion-chip
+            (click)="selectCountry(country)"
+            [color]="isCountrySelected(country) ? 'primary' : ''" class="m-2" > {{ country }}
+          </ion-chip>
+        }
+
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="flex flex-row justify-end">
+        <ion-button (click)="sendTraceRequest()" class="" color="primary" size="small">Add Test <ion-icon name="add"></ion-icon></ion-button>
+      </ion-col>
+    </ion-row>
+    <app-title [title]="'Test Results'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12">
+        <ion-list>
+          <ion-item *ngFor="let test of ripeResults">
+            <ion-label>FROM {{ test.cityFrom }},{{test.countryFrom}}</ion-label>
+            <ion-label>{{ test.latency }} ms</ion-label>
+            <ion-label> TO {{ test.cityTo }},{{test.countryTo}}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="flex flex-row justify-end items-center">
+        <ion-label class="m-2">Not all results are shown? </ion-label>
+        <ion-button (click)="getMeasurementResults()" class="" color="warning" size="small">GET MORE RESULTS <ion-icon name="refresh"></ion-icon></ion-button>
+      </ion-col>
+    </ion-row>
+    <app-title [title]="'Test Results History'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12">
+        <ion-list>
+          <ion-item *ngFor="let test of ripeHistoryResultsID">
+            <ion-label>{{ test }}</ion-label>
+            <ion-icon name="arrow-forward"  color="primary"></ion-icon>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

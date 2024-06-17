@@ -72,6 +72,14 @@ const routes: Routes = [
     loadChildren: () => import('./pages/graph/graph.module').then( m => m.GraphPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
+  {
+    path: 'trace-chooser',
+    loadChildren: () => import('./pages/trace-chooser/trace-chooser.module').then( m => m.TraceChooserPageModule)
+  },
+  {
+    path: 'trace-test',
+    loadChildren: () => import('./pages/trace-test/trace-test.module').then( m => m.TraceTestPageModule)
+  },
 ];
 
 @NgModule({

@@ -35,6 +35,11 @@ export class AppComponent implements OnInit {
       icon:'pulse'
     },
     {
+      title:'Trace Test',
+      url:'/trace-chooser',
+      icon:'radio'
+    },
+    {
       title: 'My Team',
       url: '/myteam',
       icon: 'people'
