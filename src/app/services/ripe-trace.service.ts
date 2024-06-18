@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {Firestore} from "@angular/fire/firestore";
+import {collection, doc, Firestore, setDoc} from "@angular/fire/firestore";
 import {Ripe} from "../interfaces/ripe";
+import {Traceroute} from "../classes/traceroute";
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import {Ripe} from "../interfaces/ripe";
 export class RipeTraceService {
 
   private measurementsUrl = 'https://cors-ea3m.onrender.com/https://atlas.ripe.net/api/v2/measurements/';
-  public measurementID: string = '73614313';
+  public measurementID: string = '73614089';
 
 
   constructor(
@@ -81,11 +82,38 @@ export class RipeTraceService {
         console.log('No measurement ID');
         return false;
       }
-      return this.http.get<Ripe[]>(this.measurementsUrl + this.measurementID + '/results/', {headers: headers}).toPromise();
+      return this.http.get<Traceroute[]>(this.measurementsUrl + this.measurementID + '/results/', {headers: headers}).toPromise();
     } catch (e) {
       console.log(e);
       return false;
     }
+   }
+
+   async saveMeasurementResults(orgName: string, productObjective: string, description: string, traceroutes: Traceroute[]) {
+    try{
+      const collectionRef = collection(this.firestore, 'teams', orgName, 'products', productObjective, 'ripe_trace')
+      const docRef = doc(collectionRef, description);
+
+      const data = traceroutes.map((item, index) => ({
+        dst_addr: item.dst_addr,
+        dst_city: item.dst_city,
+        dst_country: item.dst_country,
+        dst_latitude: item.dst_latitude,
+        dst_longitude: item.dst_longitude,
+        src_addr: item.src_addr,
+        src_city: item.src_city,
+        src_country: item.src_country,
+        src_latitude: item.src_latitude,
+        src_longitude: item.src_longitude,
+        result: item.result
+      }));
+      await setDoc(docRef, { data });
+      return true;
+    }catch (e){
+      console.log(e);
+      return false;
+    }
+
    }
 
 

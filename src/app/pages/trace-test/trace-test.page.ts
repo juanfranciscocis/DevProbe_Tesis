@@ -3,6 +3,8 @@ import {RipeTraceService} from "../../services/ripe-trace.service";
 import {User} from "../../interfaces/user";
 import {ActivatedRoute} from "@angular/router";
 import {AlertController, LoadingController} from "@ionic/angular";
+import {Traceroute} from "../../classes/traceroute";
+import {LocationTraceService} from "../../services/location-trace.service";
 
 @Component({
   selector: 'app-trace-test',
@@ -59,7 +61,7 @@ export class TraceTestPage implements OnInit {
   private selectedCountries: string[] = [];
 
 
-  ripeResults: any = [];
+  ripeResults: Traceroute[] = [];
   ripeHistoryResultsID: any = [];
 
 
@@ -70,7 +72,8 @@ export class TraceTestPage implements OnInit {
     private ripeTraceService: RipeTraceService,
     private route: ActivatedRoute,
     private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private locationTraceService: LocationTraceService
   ) { }
 
   ngOnInit() {
@@ -128,15 +131,32 @@ export class TraceTestPage implements OnInit {
   }
 
 
-  async getMeasurementResults(){
-    let measurement = (await this.ripeTraceService.getTraceResults());
-    if (measurement) {
-      console.log(measurement);
-    } else {
-      await this.showAlert('Error fetching trace results', 'Error');
+   async getMeasurementResults() {
+    try {
+      await this.showLoading();
+      const response = await this.ripeTraceService.getTraceResults();
+      if (!response || response.length === 0) {
+        await this.hideLoading();
+        await this.showAlert('No trace results found', 'Error');
+        return;
+      }
+      for (let traceroute of response) {
+        traceroute = await this.locationTraceService.getLocationDestSrc(traceroute);
+        traceroute = await this.locationTraceService.getLocationFrom(traceroute);
+        this.ripeResults.push(traceroute);
+      }
+      const saveResponse = await this.ripeTraceService.saveMeasurementResults(this.orgName, this.productObjective, this.description, this.ripeResults);
+      await this.hideLoading();
+      if (saveResponse) {
+        await this.showAlert('Trace results saved successfully', 'Success');
+      } else {
+        await this.showAlert('Error saving trace results', 'Error');
+      }
+    } catch (e) {
+      console.log(e);
+      await this.hideLoading();
     }
   }
-
 
 
 
