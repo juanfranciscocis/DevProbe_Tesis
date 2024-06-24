@@ -80,6 +80,10 @@ const routes: Routes = [
     path: 'trace-test',
     loadChildren: () => import('./pages/trace-test/trace-test.module').then( m => m.TraceTestPageModule)
   },
+  {
+    path: 'trace-results',
+    loadChildren: () => import('./pages/trace-results/trace-results.module').then( m => m.TraceResultsPageModule)
+  },
 ];
 
 @NgModule({

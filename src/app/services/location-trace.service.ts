@@ -52,25 +52,34 @@ export class LocationTraceService {
 
     let results = traceroute.result!;
     for (let i = 0; i < results.length; i++) {
+      try{
       let result = results[i];
       let from = result.result![0].from;
       if (!from) {
         continue
       }
       const apiData = this.http.get<IpApi>(this.ipApiURL + from).toPromise();
-      const fromData:IpApi = await apiData as IpApi;
+      const fromData: IpApi = await apiData as IpApi;
       result.result![0].from_country = fromData.country ?? 'No country found';
       result.result![0].form_city = fromData.city ?? 'No city found';
       result.result![0].from_latitude = fromData.lat ?? 0;
       result.result![0].from_longitude = fromData.lon ?? 0;
 
 
-
       traceroute.result![i] = result;
+      }catch (e){
+        console.log(e);
+      }
     }
+
     return traceroute;
   }
 
+
+  async getByIp(ip: string): Promise<IpApi> {
+    const apiData = this.http.get<IpApi>(this.ipApiURL + ip).toPromise();
+    return await apiData as IpApi;
+  }
 
 
 }

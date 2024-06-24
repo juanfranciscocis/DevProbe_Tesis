@@ -1,0 +1,56 @@
+<app-header-return [title]="'Trace Results for ' + description"></app-header-return>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <app-title [title]="'Test Results'"></app-title>
+    <h2 class="text-xs m-2 lg:m-10 lg:text-2xl md:text-2xl md:m-10">Results for {{description}}</h2>
+    <br>
+
+    @for (result of results; track result){
+      <ion-row class="lg:m-10 md:m-10">
+        <ion-col size="12">
+          <h1 class="text-2xl">FROM {{ result.src_city }}, {{ result.src_country }}</h1>
+        </ion-col>
+      </ion-row>
+      <ion-row class="lg:m-10 md:m-10">
+        @for (hop of result.result; track hop) {
+            <ion-col size="4" size-md="4" size-lg="4" class="flex flex-row justify-center">
+              <ion-card class="p-10 min-w-full">
+              <ion-card-subtitle>Hop{{ hop.hop }}</ion-card-subtitle>
+                @if (hop.result![0].x){
+                  <ion-card-title>No city found</ion-card-title>
+                  <ion-card-subtitle>No country found</ion-card-subtitle>
+                }
+              <ion-card-title>{{ hop.result![0].form_city}} </ion-card-title>
+              <ion-card-subtitle>{{ hop.result![0].from_country}}</ion-card-subtitle>
+                @if(!hop.result![0].rtt){
+                  <ion-card-subtitle>RTT : Not calculated</ion-card-subtitle>
+                }
+                @else{
+                <ion-card-subtitle>RTT : {{ hop.result![0].rtt }} ms</ion-card-subtitle>
+                }
+              <ion-card-subtitle>Latitude : {{ hop.result![0].from_latitude }}, Longitude : {{ hop.result![0].from_longitude }}</ion-card-subtitle>
+              </ion-card>
+            </ion-col>
+        }
+      </ion-row>
+    }
+  </ion-grid>
+</ion-content>
+
+
+
+<ion-footer [translucent]="true">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="4">
+        </ion-col>
+        <ion-col size="8" class="flex flex-row justify-end">
+          <ion-button (click)="getMoreResults()" size="small" color="light">GET MORE RESULTS <ion-icon name="refresh" class="m-2"></ion-icon></ion-button>
+          <ion-button (click)="goToMap()" size="small" color="primary">GO TO MAP <ion-icon name="arrow-forward" class="m-2"></ion-icon></ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-footer>

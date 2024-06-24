@@ -1,10 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {RipeTraceService} from "../../services/ripe-trace.service";
 import {User} from "../../interfaces/user";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {Traceroute} from "../../classes/traceroute";
 import {LocationTraceService} from "../../services/location-trace.service";
+import {data} from "autoprefixer";
 
 @Component({
   selector: 'app-trace-test',
@@ -62,7 +63,7 @@ export class TraceTestPage implements OnInit {
 
 
   ripeResults: Traceroute[] = [];
-  ripeHistoryResultsID: any = [];
+  ripeHistoryResultsID: string[] = [];
 
 
 
@@ -73,7 +74,8 @@ export class TraceTestPage implements OnInit {
     private route: ActivatedRoute,
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
-    private locationTraceService: LocationTraceService
+    private locationTraceService: LocationTraceService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -108,6 +110,9 @@ export class TraceTestPage implements OnInit {
     this.user = JSON.parse(userString);
     this.orgName = this.user.orgName!;
 
+
+    await this.getResultsHistory();
+
     // get history results for this product
     await this.hideLoading();
 
@@ -123,6 +128,7 @@ export class TraceTestPage implements OnInit {
       if (response) {
         await this.hideLoading();
         await this.showAlert('Trace request sent successfully', 'Success');
+        await this.getMeasurementResults();
       } else {
         await this.hideLoading();
         await this.showAlert('Error sending trace request', 'Error');
@@ -132,30 +138,65 @@ export class TraceTestPage implements OnInit {
 
 
    async getMeasurementResults() {
+    this.ripeResults = [];
     try {
       await this.showLoading();
       const response = await this.ripeTraceService.getTraceResults();
       if (!response || response.length === 0) {
         await this.hideLoading();
         await this.showAlert('No trace results found', 'Error');
+        await this.getMeasurementResults();
         return;
       }
       for (let traceroute of response) {
-        traceroute = await this.locationTraceService.getLocationDestSrc(traceroute);
-        traceroute = await this.locationTraceService.getLocationFrom(traceroute);
-        this.ripeResults.push(traceroute);
+        try {
+          traceroute = await this.locationTraceService.getLocationDestSrc(traceroute);
+          traceroute = await this.locationTraceService.getLocationFrom(traceroute);
+          this.ripeResults.push(traceroute);
+        }catch (e){
+          console.log(e);
+        }
       }
       const saveResponse = await this.ripeTraceService.saveMeasurementResults(this.orgName, this.productObjective, this.description, this.ripeResults);
-      await this.hideLoading();
+
       if (saveResponse) {
+        await this.hideLoading();
+        await this.getResultsHistory();
         await this.showAlert('Trace results saved successfully', 'Success');
       } else {
+        await this.hideLoading();
         await this.showAlert('Error saving trace results', 'Error');
       }
     } catch (e) {
       console.log(e);
       await this.hideLoading();
     }
+  }
+
+
+  async getResultsHistory() {
+    this.ripeHistoryResultsID = [];
+    this.ripeTraceService.getHistoryResults(this.orgName, this.productObjective).then((response) => {
+      for (let result of response) {
+        this.ripeHistoryResultsID.push(result.id);
+      }
+    });
+
+  }
+
+  /**
+   * @method viewHistory
+   * @description Navigates to the latency results page.
+   * @param {string} test - The test description.
+   */
+  async viewHistory(test: string) {
+    await this.router.navigate(['/trace-results'], {
+      queryParams: {
+        description: test,
+        productObjective: this.productObjective,
+        step: this.productStep
+      }
+    });
   }
 
 

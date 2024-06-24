@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {collection, doc, Firestore, setDoc} from "@angular/fire/firestore";
+import {collection, doc, Firestore, getDoc, getDocs, setDoc} from "@angular/fire/firestore";
 import {Ripe} from "../interfaces/ripe";
 import {Traceroute} from "../classes/traceroute";
 
@@ -20,6 +20,7 @@ export class RipeTraceService {
 
 
   async sendTraceRequest(target: string, description: string, type: string, probes:string) {
+    console.log("Sending trace request");
     try{
       let body = {
         "definitions": [
@@ -116,6 +117,18 @@ export class RipeTraceService {
 
    }
 
+  async getHistoryResults(orgName:string, productObjective:string):Promise<{id: string, data: Traceroute}[]>{
+    let path = 'teams/' + orgName + '/products/' + productObjective + '/ripe_trace';
+    //get all documents in the collection
+    const collectionRef = collection(this.firestore, path);
+    const products = await getDocs(collectionRef);
+    let ripeData:{id: string, data: Traceroute}[] = [];
+    products.docs.forEach(doc => {
+      ripeData.push({id: doc.id, data: doc.data() as Traceroute});
+    });
+    console.log(ripeData);
+    return ripeData;
+  }
 
 
 
