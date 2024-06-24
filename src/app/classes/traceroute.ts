@@ -8,6 +8,7 @@
 // match the expected interface, even if the JSON is valid.
 
 export interface Traceroute {
+  id?: string;
   fw?:                       number;
   mver?:                     string;
   lts?:                      number;

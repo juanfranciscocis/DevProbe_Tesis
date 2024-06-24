@@ -10,7 +10,7 @@ import {Traceroute} from "../classes/traceroute";
 export class RipeTraceService {
 
   private measurementsUrl = 'https://cors-ea3m.onrender.com/https://atlas.ripe.net/api/v2/measurements/';
-  public measurementID: string = '73614089';
+  public measurementID: string = '';
 
 
   constructor(
@@ -96,6 +96,7 @@ export class RipeTraceService {
       const docRef = doc(collectionRef, description);
 
       const data = traceroutes.map((item, index) => ({
+        id: this.measurementID,
         dst_addr: item.dst_addr,
         dst_city: item.dst_city,
         dst_country: item.dst_country,

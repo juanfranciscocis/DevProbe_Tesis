@@ -84,6 +84,10 @@ const routes: Routes = [
     path: 'trace-results',
     loadChildren: () => import('./pages/trace-results/trace-results.module').then( m => m.TraceResultsPageModule)
   },
+  {
+    path: 'show-map-trace',
+    loadChildren: () => import('./pages/show-map-trace/show-map-trace.module').then( m => m.ShowMapTracePageModule)
+  },
 ];
 
 @NgModule({

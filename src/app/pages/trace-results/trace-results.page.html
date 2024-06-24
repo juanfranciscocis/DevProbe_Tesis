@@ -6,7 +6,7 @@
     <h2 class="text-xs m-2 lg:m-10 lg:text-2xl md:text-2xl md:m-10">Results for {{description}}</h2>
     <br>
 
-    @for (result of results; track result){
+    @for (result of ripeResults; track result){
       <ion-row class="lg:m-10 md:m-10">
         <ion-col size="12">
           <h1 class="text-2xl">FROM {{ result.src_city }}, {{ result.src_country }}</h1>
@@ -14,7 +14,7 @@
       </ion-row>
       <ion-row class="lg:m-10 md:m-10">
         @for (hop of result.result; track hop) {
-            <ion-col size="4" size-md="4" size-lg="4" class="flex flex-row justify-center">
+            <ion-col size="12" size-md="4" size-lg="4" class="flex flex-row justify-center">
               <ion-card class="p-10 min-w-full">
               <ion-card-subtitle>Hop{{ hop.hop }}</ion-card-subtitle>
                 @if (hop.result![0].x){
@@ -43,12 +43,19 @@
 <ion-footer [translucent]="true">
   <ion-toolbar>
     <ion-grid>
+
       <ion-row>
-        <ion-col size="4">
+        <ion-col size="4" class="flex flex-row justify-start items-center ">
+          <h1 class="text-sm hidden lg:flex md:flex  ">No city found might be due to host protections!</h1>
         </ion-col>
         <ion-col size="8" class="flex flex-row justify-end">
           <ion-button (click)="getMoreResults()" size="small" color="light">GET MORE RESULTS <ion-icon name="refresh" class="m-2"></ion-icon></ion-button>
           <ion-button (click)="goToMap()" size="small" color="primary">GO TO MAP <ion-icon name="arrow-forward" class="m-2"></ion-icon></ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12" class="flex lg:hidden md:hidden flex-row justify-center items-center">
+          <h1 class="text-sm">No city found might be due to host protections!</h1>
         </ion-col>
       </ion-row>
     </ion-grid>
