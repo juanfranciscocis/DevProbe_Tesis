@@ -97,37 +97,41 @@ export class ShowMapTracePage implements OnInit {
           continue;
         }
       }
+
+      for (let data of this.ripeData){
+        let dest_lat = data.dst_latitude;
+        let dest_long = data.dst_longitude;
+        let src_lat = data.src_latitude;
+        let src_long = data.src_longitude;
+
+        if (dest_lat == 0 && dest_long == 0){
+          continue;
+        }
+        latLong.push([dest_lat, dest_long])
+
+        if (src_lat == 0 && src_long == 0){
+          continue;
+        }
+        // add src lat long to the beginning of the array
+        latLong.unshift([src_lat, src_long])
+      }
+
       arrOfLatLong.push(latLong)
     }
 
+
+    console.log(arrOfLatLong)
+
     for (let data of arrOfLatLong){
+
+      //generate a random color
+      let randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+
+
       antPath(data,
-        {color: '#FF0000', weight: 5, opacity: 0.6})
+        {color:randomColor, weight: 5, opacity: 0.6})
         .addTo(this.map);
     }
-
-
-
-
-/*    for (let data of this.ripeData) {
-      antPath([[data.src_latitude, data.src_longitude], [data.dst_latitude, data.dst_longitude]],
-        {color: '#FF0000', weight: 5, opacity: 0.6})
-        .addTo(this.map);
-
-      let labelIcon = Leaflet.divIcon({
-        className: 'label-icon',
-        html: `<div style="background-color: white; padding: 2px; border-radius: 3px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 5px 0 rgba(0,0,0,0.2);"><p style="color:black">Latency: ${data} ms</p></div>`,
-        iconSize: [200, 20] // size of the icon
-      })
-
-      // Add the label to the map at the desired coordinates
-      // @ts-ignore
-      const labelCoordinates: LatLngExpression = [(data.src_latitude + data.src_longitude) / 2, (data.dst_latitude + data.dst_longitude) / 2];
-      Leaflet.marker(labelCoordinates, {icon: labelIcon}).addTo(this.map!);
-
-
-    }*/
-
     await this.hideLoading()
   }
 

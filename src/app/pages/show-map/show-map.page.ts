@@ -83,8 +83,10 @@ export class ShowMapPage implements OnInit, OnDestroy{
 
 
     for (let data of this.ripeData) {
+      //generate a random color
+      let randomColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
       antPath([[data.fromLatitude, data.fromLongitude], [data.toLatitude, data.toLongitude]],
-        {color: '#FF0000', weight: 5, opacity: 0.6})
+        {color:randomColor, weight: 5, opacity: 0.6})
         .addTo(this.map);
 
       let labelIcon = Leaflet.divIcon({
