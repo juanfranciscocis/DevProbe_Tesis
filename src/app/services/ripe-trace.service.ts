@@ -131,6 +131,21 @@ export class RipeTraceService {
     return ripeData;
   }
 
+  async getAllResultsByDescription(orgName:string, productObjective:string, description:string):Promise<Traceroute[]>{
+    try {
+      let path = 'teams/' + orgName + '/products/' + productObjective + '/ripe_trace';
+      console.log(path);
+      let ref = doc(this.firestore, path, description);
+      const fetchOrg = await getDoc(ref);
+      const ripeData = fetchOrg.data();
+      return ripeData as Traceroute[];
+    }catch (e) {
+      console.log(e);
+      return [];
+    }
+
+  }
+
 
 
 
