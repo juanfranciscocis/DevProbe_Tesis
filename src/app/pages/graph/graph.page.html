@@ -4,11 +4,11 @@
   <ion-grid>
     <app-title [title]="'Graph'"></app-title>
     <ion-row class="lg:m-10 md:m-10">
-      <ion-col size="12" size-md="6" size-lg="6" class="flex flex-row justify-center">
+      <ion-col size="12" size-md="6" size-lg="6" class="flex flex-row justify-center" *ngFor="let country of countries">
         <ion-card class="w-full h-96 p-6 flex flex-col justify-center items-center">
-          <h1 class="text-6xl font-bold  text-blue-500">Graph</h1>
+          <h1 class="text-6xl font-bold text-blue-500">{{ country }}</h1>
           <br>
-            <div echarts [options]="options!" class="demo-chart  h-full w-full"></div>
+          <div echarts [options]="countryOptions[country]" class="demo-chart h-full w-full"></div>
         </ion-card>
       </ion-col>
     </ion-row>

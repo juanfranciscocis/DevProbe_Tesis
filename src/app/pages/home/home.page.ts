@@ -79,6 +79,6 @@ export class HomePage {
 
 
   goToProduct(productObjective: string | undefined) {
-    this.router.navigate(['/graph'], {queryParams: {product: productObjective}});
+    this.router.navigate(['/graph-data-for'], {queryParams: {product: productObjective}});
   }
 }

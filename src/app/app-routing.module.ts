@@ -69,7 +69,7 @@ const routes: Routes = [
   },
   {
     path: 'graph',
-    loadChildren: () => import('./pages/graph/graph.module').then( m => m.GraphPageModule),
+    loadChildren: () => import('./pages/graph/graph.module').then(m => m.GraphPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
@@ -87,6 +87,10 @@ const routes: Routes = [
   {
     path: 'show-map-trace',
     loadChildren: () => import('./pages/show-map-trace/show-map-trace.module').then( m => m.ShowMapTracePageModule)
+  },
+  {
+    path: 'graph-data-for',
+    loadChildren: () => import('./pages/graph-data-for/graph-data-for.module').then( m => m.GraphDataForPageModule)
   },
 ];
 
