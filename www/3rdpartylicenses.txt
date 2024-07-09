@@ -60,6 +60,9 @@ Apache-2.0
 @firebase/util
 Apache-2.0
 
+@firebase/vertexai-preview
+Apache-2.0
+
 @firebase/webchannel-wrapper
 Apache-2.0
 
@@ -326,6 +329,8 @@ firebase/app
 firebase/auth
 
 firebase/firestore
+
+firebase/vertexai-preview
 
 idb
 ISC

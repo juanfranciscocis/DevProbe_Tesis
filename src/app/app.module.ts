@@ -12,6 +12,7 @@ import {environment} from "../environments/environment.prod";
 import {getAuth, provideAuth} from "@angular/fire/auth";
 import {HttpClientModule} from "@angular/common/http";
 import {NgxEchartsDirective, NgxEchartsModule, provideEcharts} from "ngx-echarts";
+import {getVertexAI, provideVertexAI} from "@angular/fire/vertexai-preview";
 
 @NgModule({
   declarations: [AppComponent],
@@ -31,6 +32,7 @@ import {NgxEchartsDirective, NgxEchartsModule, provideEcharts} from "ngx-echarts
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
+    provideVertexAI(() => getVertexAI()),
     HttpClientModule,
     provideEcharts()
   ],
