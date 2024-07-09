@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { GraphPage } from './graph.page';
+import { GraphTracePage } from './graph-trace.page';
 
-describe('GraphPage', () => {
-  let component: GraphPage;
-  let fixture: ComponentFixture<GraphPage>;
+describe('GraphTracePage', () => {
+  let component: GraphTracePage;
+  let fixture: ComponentFixture<GraphTracePage>;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GraphPage);
+    fixture = TestBed.createComponent(GraphTracePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

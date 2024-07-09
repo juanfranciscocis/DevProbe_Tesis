@@ -22,12 +22,12 @@ export class GraphDataForPage implements OnInit {
   }
 
   goToLatencyGraph() {
-    this.router.navigate(['/graph'], {queryParams: {product: this.productObjective}});
+    this.router.navigate(['/graph-latency'], {queryParams: {product: this.productObjective}});
 
   }
 
   goToTraceGraph() {
-    this.router.navigate(['/graph'], {queryParams: {product: this.productObjective}});
+    this.router.navigate(['/graph-trace'], {queryParams: {product: this.productObjective}});
 
   }
 }

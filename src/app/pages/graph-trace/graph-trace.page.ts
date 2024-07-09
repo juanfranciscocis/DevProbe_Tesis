@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import type { EChartsOption } from 'echarts';
-import { RipeService } from "../../services/ripe.service";
-import { ActivatedRoute } from "@angular/router";
-import { User } from "../../interfaces/user";
-import {options} from "ionicons/icons";
+import type {EChartsOption} from "echarts";
+import {User} from "../../interfaces/user";
+import {RipeService} from "../../services/ripe.service";
+import {ActivatedRoute} from "@angular/router";
+import {RipeTraceService} from "../../services/ripe-trace.service";
+import {refresh} from "ionicons/icons";
 
 @Component({
-  selector: 'app-graph',
-  templateUrl: './graph.page.html',
-  styleUrls: ['./graph.page.scss'],
+  selector: 'app-graph-trace',
+  templateUrl: './graph-trace.page.html',
+  styleUrls: ['./graph-trace.page.scss'],
 })
-export class GraphPage implements OnInit {
+export class GraphTracePage implements OnInit {
 
   options: EChartsOption | undefined;
   orgName: string = '';
@@ -21,7 +22,7 @@ export class GraphPage implements OnInit {
   countryOptions: { [key: string]: EChartsOption } = {};
 
   constructor(
-    private ripeService: RipeService,
+    private ripeService: RipeTraceService,
     private route: ActivatedRoute
   ) {}
 
@@ -42,7 +43,7 @@ export class GraphPage implements OnInit {
 
     this.data = [];
 
-    this.getResultsHistoryforLatency().then(() => {
+    this.getResultsHistoryforRtt().then(() => {
       this.groupByDate().then(() => {
         this.groupByCountry().then(() => {
           this.populateCountries();
@@ -52,7 +53,7 @@ export class GraphPage implements OnInit {
     });
   }
 
-  async getResultsHistoryforLatency() {
+  async getResultsHistoryforRtt() {
     await this.ripeService.getHistoryResults(this.orgName, this.productObjective).then(r => {
       for (let i = 0; i < r.length; i++) {
         // split the id
@@ -71,12 +72,13 @@ export class GraphPage implements OnInit {
 
         let toSave = {
           id: idString,
-          data: historyData,
           date: date,
           time: time,
+          data: historyData
         };
         this.data.push(toSave);
       }
+      console.log(this.data);
     });
   }
 
@@ -102,7 +104,11 @@ export class GraphPage implements OnInit {
         groupedData[date] = {};
       }
       for (let i = 0; i < data.length; i++) {
-        let country = data[i].countryFrom;
+        let country = data[i].src_country;
+        //if the country == No country found, then ignore
+        if (country === 'No country found') {
+          continue;
+        }
         if (!groupedData[date][country]) {
           groupedData[date][country] = [];
         }
@@ -124,29 +130,47 @@ export class GraphPage implements OnInit {
     console.log(this.countries);
   }
 
+  getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
   generateCountryOptions() {
     for (let country of this.countries) {
-      const xAxisData = [];
+      const xAxisData: string[] = [];
       const data1: number[] = [];
       for (let date in this.data) {
-        xAxisData.push(date);
         let sum = 0;
         let count = 0;
         if (this.data[date][country]) {
           for (let i = 0; i < this.data[date][country].length; i++) {
-            sum += this.data[date][country][i].latency;
-            count++;
+            let data = this.data[date][country][i];
+            for (let j = 0; j < data.result.length; j++) {
+              // Check if the rtt is a number and not undefined
+              if (typeof data.result[j].result[0].rtt === 'number') {
+                sum += data.result[j].result[0].rtt;
+                count++;
+              }
+            }
           }
-          data1.push(sum / count);
-        } else {
-          data1.push(0);  // Or handle no data case as needed
+          if (count > 0) { // Only add dates with data
+            xAxisData.push(date);
+            data1.push(sum / count);  // Calculate average RTT for the country on this date
+          }
         }
       }
+
+      const randomColor = this.getRandomColor();
 
       this.countryOptions[country] = {
         legend: {
           data: [country],
           align: 'left',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
         },
         tooltip: {},
         xAxis: {
@@ -162,6 +186,9 @@ export class GraphPage implements OnInit {
             name: country,
             type: 'bar',
             data: data1,
+            itemStyle: {
+              color: randomColor,
+            },
             animationDelay: i => i * 10,
           },
         ],
@@ -171,5 +198,11 @@ export class GraphPage implements OnInit {
     }
   }
 
-  ngOnInit(): void {}
+  refresh() {
+    window.location.reload();
+  }
+
+  ngOnInit() {
+  }
+
 }

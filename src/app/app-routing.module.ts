@@ -68,8 +68,8 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
-    path: 'graph',
-    loadChildren: () => import('./pages/graph/graph.module').then(m => m.GraphPageModule),
+    path: 'graph-latency',
+    loadChildren: () => import('./pages/graph-latency/graph-latency.module').then(m => m.GraphPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
@@ -91,6 +91,10 @@ const routes: Routes = [
   {
     path: 'graph-data-for',
     loadChildren: () => import('./pages/graph-data-for/graph-data-for.module').then( m => m.GraphDataForPageModule)
+  },
+  {
+    path: 'graph-trace',
+    loadChildren: () => import('./pages/graph-trace/graph-trace.module').then( m => m.GraphTracePageModule)
   },
 ];
 

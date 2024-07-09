@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { GraphPageRoutingModule } from './graph-routing.module';
+import { GraphPageRoutingModule } from './graph-latency-routing.module';
 
-import { GraphPage } from './graph.page';
+import { GraphLatencyPage } from './graph-latency.page';
 import {NgxEchartsDirective} from "ngx-echarts";
 import {ComponentsModule} from "../../components/components.module";
 
@@ -19,6 +19,6 @@ import {ComponentsModule} from "../../components/components.module";
     NgxEchartsDirective,
     ComponentsModule
   ],
-  declarations: [GraphPage]
+  declarations: [GraphLatencyPage]
 })
 export class GraphPageModule {}

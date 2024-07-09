@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { GraphPage } from './graph.page';
+import { GraphTracePage } from './graph-trace.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: GraphPage
+    component: GraphTracePage
   }
 ];
 
@@ -14,4 +14,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class GraphPageRoutingModule {}
+export class GraphTracePageRoutingModule {}
