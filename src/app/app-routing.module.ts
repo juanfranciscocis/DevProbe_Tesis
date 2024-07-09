@@ -74,31 +74,38 @@ const routes: Routes = [
   },
   {
     path: 'trace-chooser',
-    loadChildren: () => import('./pages/trace-chooser/trace-chooser.module').then( m => m.TraceChooserPageModule)
+    loadChildren: () => import('./pages/trace-chooser/trace-chooser.module').then( m => m.TraceChooserPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'trace-test',
-    loadChildren: () => import('./pages/trace-test/trace-test.module').then( m => m.TraceTestPageModule)
+    loadChildren: () => import('./pages/trace-test/trace-test.module').then( m => m.TraceTestPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'trace-results',
-    loadChildren: () => import('./pages/trace-results/trace-results.module').then( m => m.TraceResultsPageModule)
+    loadChildren: () => import('./pages/trace-results/trace-results.module').then( m => m.TraceResultsPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'show-map-trace',
-    loadChildren: () => import('./pages/show-map-trace/show-map-trace.module').then( m => m.ShowMapTracePageModule)
+    loadChildren: () => import('./pages/show-map-trace/show-map-trace.module').then( m => m.ShowMapTracePageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'graph-data-for',
-    loadChildren: () => import('./pages/graph-data-for/graph-data-for.module').then( m => m.GraphDataForPageModule)
+    loadChildren: () => import('./pages/graph-data-for/graph-data-for.module').then( m => m.GraphDataForPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'graph-trace',
-    loadChildren: () => import('./pages/graph-trace/graph-trace.module').then( m => m.GraphTracePageModule)
+    loadChildren: () => import('./pages/graph-trace/graph-trace.module').then( m => m.GraphTracePageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'ai',
-    loadChildren: () => import('./pages/ai/ai.module').then( m => m.AiPageModule)
+    loadChildren: () => import('./pages/ai/ai.module').then( m => m.AiPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
 ];
 
