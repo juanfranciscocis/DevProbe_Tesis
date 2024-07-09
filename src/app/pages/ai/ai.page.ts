@@ -9,6 +9,7 @@ import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
 export class AiPage implements OnInit {
   question: string | undefined;
   private vertexAI:VertexAI = inject(VertexAI);
+  answer: string | undefined;
 
 
   constructor() { }
@@ -20,6 +21,7 @@ export class AiPage implements OnInit {
     const model = getGenerativeModel(this.vertexAI, {model: "gemini-1.5-flash"});
     model.generateContent(this.question!).then(response => {
       console.log(response.response.text());
+      this.answer = response.response.text();
     });
   }
 
