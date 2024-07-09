@@ -96,6 +96,10 @@ const routes: Routes = [
     path: 'graph-trace',
     loadChildren: () => import('./pages/graph-trace/graph-trace.module').then( m => m.GraphTracePageModule)
   },
+  {
+    path: 'ai',
+    loadChildren: () => import('./pages/ai/ai.module').then( m => m.AiPageModule)
+  },
 ];
 
 @NgModule({
