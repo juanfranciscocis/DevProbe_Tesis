@@ -82,19 +82,29 @@ export class GraphTracePage implements OnInit {
     });
   }
 
-  async groupByDate() {
-    // create a dictionary to group the data by date
-    let groupedData: any = {};
-    for (let i = 0; i < this.data.length; i++) {
-      let date = this.data[i].date;
-      if (!groupedData[date]) {
-        groupedData[date] = [];
-      }
-      groupedData[date].push(...this.data[i]['data']);
+async groupByDate() {
+  // create a dictionary to group the data by date
+  let groupedData: any = {};
+  for (let i = 0; i < this.data.length; i++) {
+    let date = this.data[i].date;
+    if (!groupedData[date]) {
+      groupedData[date] = [];
     }
-    this.data = groupedData;
-    console.log(this.data);
+    groupedData[date].push(...this.data[i]['data']);
   }
+
+  // sort the dates
+  const sortedDates = Object.keys(groupedData).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
+  // create a new object with sorted dates
+  let sortedGroupedData: any = {};
+  for (let date of sortedDates) {
+    sortedGroupedData[date] = groupedData[date];
+  }
+
+  this.data = sortedGroupedData;
+  console.log(this.data);
+}
 
   async groupByCountry() {
     let groupedData: any = {};

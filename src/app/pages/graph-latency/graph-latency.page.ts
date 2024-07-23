@@ -26,74 +26,61 @@ export class GraphLatencyPage implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-  async ionViewWillEnter() {
+async ionViewWillEnter() {
+  this.route.queryParams.subscribe(params => {
+    this.productObjective = params['product'];
+  });
 
-    // get parameters from the URL
-    this.route.queryParams.subscribe(params => {
-      this.productObjective = params['product'];
-    });
+  const userString = localStorage.getItem('user');
+  if (!userString) return;
 
-    // get the user
-    const userString = localStorage.getItem('user');
-    if (!userString) {
-      return;
+  this.user = JSON.parse(userString);
+  this.orgName = this.user.orgName!;
+  this.data = [];
+
+  await this.getResultsHistoryforLatency();
+  await this.groupByDate();
+  await this.groupByCountry();
+  await this.populateCountries();
+  this.generateCountryOptions();
+}
+
+async getResultsHistoryforLatency() {
+  const results = await this.ripeService.getHistoryResults(this.orgName, this.productObjective);
+  results.forEach(result => {
+    const [_, idString, day, month, year, time] = result.id.split('-');
+    const date = `${month}/${day}/${year}`;
+
+    // @ts-ignore
+    const historyData = result.data.data;
+
+    this.data.push({ id: idString, data: historyData, date, time });
+  });
+}
+
+async groupByDate() {
+  // create a dictionary to group the data by date
+  let groupedData: any = {};
+  for (let i = 0; i < this.data.length; i++) {
+    let date = this.data[i].date;
+    if (!groupedData[date]) {
+      groupedData[date] = [];
     }
-    this.user = JSON.parse(userString);
-    this.orgName = this.user.orgName!;
-
-    this.data = [];
-
-    this.getResultsHistoryforLatency().then(() => {
-      this.groupByDate().then(() => {
-        this.groupByCountry().then(() => {
-          this.populateCountries();
-          this.generateCountryOptions();
-        });
-      });
-    });
+    groupedData[date].push(...this.data[i]['data']);
   }
 
-  async getResultsHistoryforLatency() {
-    await this.ripeService.getHistoryResults(this.orgName, this.productObjective).then(r => {
-      for (let i = 0; i < r.length; i++) {
-        // split the id
-        let id = r[i].id.split('-');
-        let idString = id[1];
+  // sort the dates
+  const sortedDates = Object.keys(groupedData).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-        let day = id[2];
-        let month = id[3];
-        let year = id[4];
-        let date = month + '/' + day + '/' + year;
-
-        let time = id[5];
-
-        // @ts-ignore
-        let historyData = r[i]['data']['data'];
-
-        let toSave = {
-          id: idString,
-          data: historyData,
-          date: date,
-          time: time,
-        };
-        this.data.push(toSave);
-      }
-    });
+  // create a new object with sorted dates
+  let sortedGroupedData: any = {};
+  for (let date of sortedDates) {
+    sortedGroupedData[date] = groupedData[date];
   }
 
-  async groupByDate() {
-    // create a dictionary to group the data by date
-    let groupedData: any = {};
-    for (let i = 0; i < this.data.length; i++) {
-      let date = this.data[i].date;
-      if (!groupedData[date]) {
-        groupedData[date] = [];
-      }
-      groupedData[date].push(...this.data[i]['data']);
-    }
-    this.data = groupedData;
-    console.log(this.data);
-  }
+  this.data = sortedGroupedData;
+  console.log(this.data);
+}
 
   async groupByCountry() {
     let groupedData: any = {};
