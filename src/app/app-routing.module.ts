@@ -107,6 +107,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/ai/ai.module').then( m => m.AiPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
+  {
+    path: 'flame-graph',
+    loadChildren: () => import('./pages/flame-graph/flame-graph.module').then( m => m.FlameGraphPageModule)
+  },
 ];
 
 @NgModule({
