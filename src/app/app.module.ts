@@ -13,6 +13,7 @@ import {getAuth, provideAuth} from "@angular/fire/auth";
 import {HttpClientModule} from "@angular/common/http";
 import {NgxEchartsDirective, NgxEchartsModule, provideEcharts} from "ngx-echarts";
 import {getVertexAI, provideVertexAI} from "@angular/fire/vertexai-preview";
+import {NgxFlamegraphModule} from "ngx-flamegraph";
 
 @NgModule({
   declarations: [AppComponent],
@@ -25,6 +26,7 @@ import {getVertexAI, provideVertexAI} from "@angular/fire/vertexai-preview";
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     }),
+    NgxFlamegraphModule
 
   ],
   providers: [
