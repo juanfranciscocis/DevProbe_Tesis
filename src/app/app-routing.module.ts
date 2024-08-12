@@ -109,7 +109,8 @@ const routes: Routes = [
   },
   {
     path: 'flame-graph',
-    loadChildren: () => import('./pages/flame-graph/flame-graph.module').then( m => m.FlameGraphPageModule)
+    loadChildren: () => import('./pages/flame-graph/flame-graph.module').then( m => m.FlameGraphPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
 ];
 

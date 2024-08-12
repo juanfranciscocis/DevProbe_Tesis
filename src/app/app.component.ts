@@ -40,6 +40,11 @@ export class AppComponent implements OnInit {
       icon:'radio'
     },
     {
+      title: 'Flamegraph',
+      url: '/flame-graph',
+      icon: 'flame'
+    },
+    {
       title: 'My Team',
       url: '/myteam',
       icon: 'people'
