@@ -1,14 +1,21 @@
 import { Injectable } from '@angular/core';
-import {collection, Firestore, getDocs} from "@angular/fire/firestore";
+import {collection, doc, Firestore, getDoc, getDocs} from "@angular/fire/firestore";
 import {Product} from "../interfaces/product";
+import {DocumentData} from "@angular/fire/compat/firestore";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
 })
 export class FlameGraphService {
 
+  url:string = 'https://cors-ea3m.onrender.com/https://devprobeapi.onrender.com/flame_graph_date';
+
+
+
   constructor(
-    private firestore: Firestore
+    private firestore: Firestore,
+    private http: HttpClient,
   ) { }
 
   async getProducts(orgName:string){
@@ -33,16 +40,21 @@ export class FlameGraphService {
     }
   }
 
-  async getFlameGraphByDate(orgName:string, productObjective:string, date:string){
+  async getFlameGraphByDate(orgName: string, productObjective: string, date: string) {
     try {
-      const collectionRef = collection(this.firestore, 'teams', orgName, 'products', productObjective, 'cpu_usage', date);
-      const flameGraph = await getDocs(collectionRef);
-      return flameGraph.docs.map(doc => doc.data());
-    } catch (e) {
-      console.log(e);
-      return [];
-    }
 
+      let body = {
+        "team": orgName,
+        "product": productObjective,
+        "date": date
+      }
+      //Get the flame graph
+      return   await this.http.post(this.url, body).toPromise();
+
+    }catch (e) {
+      console.log(e);
+      return {};
+    }
   }
 
 

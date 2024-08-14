@@ -6,6 +6,7 @@ import {Router} from "@angular/router";
 import {User} from "../../interfaces/user";
 import {FlameGraphService} from "../../services/flame-graph.service";
 
+
 @Component({
   selector: 'app-flame-graph-for',
   templateUrl: './flame-graph-for.page.html',
@@ -21,7 +22,7 @@ export class FlameGraphForPage implements OnInit {
     private router: Router
   ) {}
 
-  async ngOnInit() {
+  async ionViewWillEnter() {
     await this.getProducts();
   }
 
@@ -82,5 +83,8 @@ export class FlameGraphForPage implements OnInit {
 
   viewProduct(product: Product) {
 
+  }
+
+  ngOnInit(): void {
   }
 }

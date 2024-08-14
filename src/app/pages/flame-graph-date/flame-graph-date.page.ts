@@ -5,6 +5,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {User} from "../../interfaces/user";
 import {Product} from "../../interfaces/product";
 
+
 @Component({
   selector: 'app-flame-graph-date',
   templateUrl: './flame-graph-date.page.html',
@@ -23,7 +24,7 @@ export class FlameGraphDatePage implements OnInit {
     private route: ActivatedRoute,
   ) { }
 
-  async ngOnInit() {
+  async ionViewWillEnter() {
     this.getProductFromParams();
     await this.getDates();
   }
@@ -93,6 +94,9 @@ export class FlameGraphDatePage implements OnInit {
    */
   async hideLoading() {
     await this.loadingCtrl.dismiss();
+  }
+
+  ngOnInit(): void {
   }
 
 }

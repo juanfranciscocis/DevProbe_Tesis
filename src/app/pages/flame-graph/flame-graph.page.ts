@@ -5,6 +5,9 @@ import {FlameGraphService} from "../../services/flame-graph.service";
 import {LoadingController} from "@ionic/angular";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Product} from "../../interfaces/product";
+import {User} from "../../interfaces/user";
+
+
 
 
 @Component({
@@ -18,6 +21,10 @@ export class FlameGraphPage implements OnInit {
   date:string = ''
 
 
+
+
+
+
   // @ts-ignore
   config:FlameGraphConfig = {data}
 
@@ -29,9 +36,11 @@ export class FlameGraphPage implements OnInit {
     private route: ActivatedRoute,
   ) { }
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.getProductAndDateFromParams();
+    this.getFlameGraph();
   }
+
 
 
   /**
@@ -48,6 +57,145 @@ export class FlameGraphPage implements OnInit {
 
   }
 
+  async getFlameGraph() {
+    try {
+      await this.showLoading()
+      const userString = localStorage.getItem('user');
+
+      if (!userString) {
+        return;
+      }
+
+      const user: User = JSON.parse(userString);
+      const orgName:string = user.orgName!;
+      console.log(orgName);
+
+      const flameGraph = await this.flameGraphService.getFlameGraphByDate(orgName, this.product.productObjective!, this.date);
+      console.log(flameGraph);
+
+      let allRawData: RawData[] = [];
+
+      for (let key in flameGraph) {
+        // @ts-ignore
+        const data_to_transform = flameGraph?.[key];
+        console.log(data_to_transform);
+
+        for (let serverKey in data_to_transform) {
+          const rawData = this.transformToRawData(data_to_transform[serverKey][0]);
+          allRawData.push(rawData);
+        }
+
+      }
+
+      //Add the root node
+      allRawData = [{
+        label: "root",
+        value: 100,
+        children: allRawData
+      }];
+
+
+      this.config = {data: allRawData};
+      console.log(allRawData);
+
+
+
+
+
+
+
+
+
+      await this.hideLoading();
+
+
+
+
+
+      } catch (e) {
+      console.log(e);
+    }
+  }
+
+  /**
+   * Show a loading spinner.
+   */
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+    });
+    await loading.present();
+  }
+
+  /**
+   * Hide the loading spinner.
+   */
+  async hideLoading() {
+    await this.loadingCtrl.dismiss();
+  }
+
+
+  ngOnInit(): void {
+  }
+
+  average(values: string[]): number {
+    const numbers = values.map(Number);
+    const sum = numbers.reduce((acc, val) => acc + val, 0);
+    return sum / numbers.length;
+  }
+
+  transformToRawData(json: any): RawData {
+    const cpuUsage = json.cpu_usage ? this.average(json.cpu_usage) : 0;
+    const children: RawData[] = [];
+
+    // Loop through each key in the object
+    for (const key in json) {
+      if (key === "id" || key === "cpu_usage") continue;
+
+      const value = json[key];
+
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        // If the key is "sub_services", handle its children directly
+        if (key === "sub_services") {
+          for (const subKey in value) {
+            const subValue = value[subKey];
+            const subCpuUsage = subValue.cpu_usage ? this.average(subValue.cpu_usage) : 0;
+
+            const child: RawData = {
+              label: subKey,
+              value: subCpuUsage,
+              children: this.transformToRawData(subValue).children
+            };
+
+            children.push(child);
+          }
+        } else {
+          const childCpuUsage = value.cpu_usage ? this.average(value.cpu_usage) : 0;
+
+          const child: RawData = {
+            label: key,
+            value: childCpuUsage,
+            children: this.transformToRawData(value).children
+          };
+
+          children.push(child);
+        }
+      } else if (typeof value !== 'object') {
+        children.push({
+          label: key,
+          value: 0,
+          children: []
+        });
+      }
+    }
+
+    return {
+      label: json.id,
+      value: cpuUsage,
+      children: children
+    };
+  }
+
+
 
 
 
@@ -55,72 +203,11 @@ export class FlameGraphPage implements OnInit {
 }
 
 const data = [
-
   {
-    "label": "BDD",
-    "value": 22,
-    "children": [
-      {
-        "label": "SubService1",
-        "value": 50,
-        "children": [
-          {
-            "label": "SubSub1",
-            "value": 100,
-            "children": [
-              {
-                "label": "SubSubSub2",
-                "value": 75,
-                "children": []
-              },
-              {
-                "label": "SubSubSub1",
-                "value": 25,
-                "children": []
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "label": "SubService2",
-        "value": 80,
-        "children": []
-      }
-    ]
-  },
-  {
-    "label": "BDD2",
-    "value": 22,
-    "children": [
-      {
-        "label": "SubService1",
-        "value": 50,
-        "children": [
-          {
-            "label": "SubSub1",
-            "value": 100,
-            "children": [
-              {
-                "label": "SubSubSub2",
-                "value": 69.44444444444444,
-                "children": []
-              },
-              {
-                "label": "SubSubSub1",
-                "value": 30.555555555555557,
-                "children": []
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "label": "SubService2",
-        "value": 71.11111111111111,
-        "children": []
-      }
-    ]
+    label:"root",
+    value: 100,
+    children:[]
   }
-
 ] as RawData[];
+
+
