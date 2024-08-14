@@ -74,18 +74,31 @@ export class FlameGraphPage implements OnInit {
       console.log(flameGraph);
 
       let allRawData: RawData[] = [];
+      let keys = [];
 
       for (let key in flameGraph) {
         // @ts-ignore
         const data_to_transform = flameGraph?.[key];
-        console.log(data_to_transform);
 
-        for (let serverKey in data_to_transform) {
+        //get the keys
+        keys = Object.keys(data_to_transform);
+        console.log(keys);
+
+      //TODO:Add data to the flame graph
+
+
+
+     for (let serverKey in data_to_transform) {
           const rawData = this.transformToRawData(data_to_transform[serverKey][0]);
           allRawData.push(rawData);
         }
 
       }
+
+
+
+
+
 
       //Add the root node
       allRawData = [{
