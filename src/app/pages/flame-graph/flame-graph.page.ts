@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {FlameGraphConfig} from "ngx-flamegraph";
 import {RawData} from "ngx-flamegraph/lib/utils";
+import {FlameGraphService} from "../../services/flame-graph.service";
+import {LoadingController} from "@ionic/angular";
+import {ActivatedRoute, Router} from "@angular/router";
+import {Product} from "../../interfaces/product";
 
 
 @Component({
@@ -10,14 +14,41 @@ import {RawData} from "ngx-flamegraph/lib/utils";
 })
 export class FlameGraphPage implements OnInit {
 
+  product:Product = {}
+  date:string = ''
+
+
   // @ts-ignore
-  config:FlameGraphConfig = {data }
+  config:FlameGraphConfig = {data}
 
 
-  constructor() { }
+  constructor(
+    private flameGraphService: FlameGraphService,
+    private loadingCtrl: LoadingController,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) { }
 
   ngOnInit() {
+    this.getProductAndDateFromParams();
   }
+
+
+  /**
+   * This method gets the product and date from URL parameters.
+   */
+  getProductAndDateFromParams() {
+    // Get product from URL params
+    this.route.queryParams.subscribe(params => {
+      this.product = JSON.parse(params['product']);
+      this.date = params['date'];
+    });
+    console.log(this.product.productObjective);
+    console.log(this.date);
+
+  }
+
+
 
 
 

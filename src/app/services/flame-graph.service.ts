@@ -22,15 +22,27 @@ export class FlameGraphService {
     }
   }
 
-  async getDates(orgName:string, productObjective:string){
+  async getDates(orgName: string, productObjective: string) {
     try {
       const collectionRef = collection(this.firestore, 'teams', orgName, 'products', productObjective, 'cpu_usage');
       const dates = await getDocs(collectionRef);
-      return dates.docs.map(doc => doc.id as string);
+      return dates.docs.map(doc => doc.id);
     } catch (e) {
       console.log(e);
       return [];
     }
+  }
+
+  async getFlameGraphByDate(orgName:string, productObjective:string, date:string){
+    try {
+      const collectionRef = collection(this.firestore, 'teams', orgName, 'products', productObjective, 'cpu_usage', date);
+      const flameGraph = await getDocs(collectionRef);
+      return flameGraph.docs.map(doc => doc.data());
+    } catch (e) {
+      console.log(e);
+      return [];
+    }
+
   }
 
 

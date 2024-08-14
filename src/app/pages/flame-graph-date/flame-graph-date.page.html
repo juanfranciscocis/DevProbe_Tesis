@@ -3,7 +3,9 @@
 <ion-content [fullscreen]="true">
 
 
-
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
   <ion-grid>
     <app-title [title]="'Usage for date'"></app-title>
