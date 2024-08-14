@@ -41,7 +41,7 @@ export class AppComponent implements OnInit {
     },
     {
       title: 'Flamegraph',
-      url: '/flame-graph',
+      url: '/flame-graph-for',
       icon: 'flame'
     },
     {

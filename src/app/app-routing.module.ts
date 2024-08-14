@@ -112,6 +112,16 @@ const routes: Routes = [
     loadChildren: () => import('./pages/flame-graph/flame-graph.module').then( m => m.FlameGraphPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
+  {
+    path: 'flame-graph-for',
+    loadChildren: () => import('./pages/flame-graph-for/flame-graph-for.module').then( m => m.FlameGraphForPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+  },
+  {
+    path: 'flame-graph-date',
+    loadChildren: () => import('./pages/flame-graph-date/flame-graph-date.module').then( m => m.FlameGraphDatePageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+  },
 ];
 
 @NgModule({

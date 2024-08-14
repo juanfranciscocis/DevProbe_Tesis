@@ -1,0 +1,30 @@
+<app-header [title]="'Server Usage'"></app-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+
+  <ion-grid>
+    <app-title [title]="'Server usage for'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <p>Choose a  product to see the server usage.</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10">
+      <ion-col size="12">
+        <ion-list [inset]="true" class="bg-white">
+          @for (product of products; track product){
+            <ion-item color="dark" (click)="viewDatesForProduct(product)">
+              <ion-label>{{product.productObjective}}</ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+

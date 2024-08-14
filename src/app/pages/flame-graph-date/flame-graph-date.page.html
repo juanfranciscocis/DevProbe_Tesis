@@ -1,0 +1,27 @@
+<app-header-return [title]="'Usage for date'"></app-header-return>
+
+<ion-content [fullscreen]="true">
+
+
+
+
+  <ion-grid>
+    <app-title [title]="'Usage for date'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <p>Choose a date to see the server usage.</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10">
+      <ion-col size="12">
+        <ion-list [inset]="true" class="bg-white">
+          @for (date of dates; track date){
+            <ion-item color="dark" (click)="viewUsageForDate(date)">
+              <ion-label>{{date}}</ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

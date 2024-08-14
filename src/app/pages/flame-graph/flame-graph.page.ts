@@ -24,31 +24,72 @@ export class FlameGraphPage implements OnInit {
 }
 
 const data = [
+
   {
-    label: 'root',
-    value: 100,
-    children: [
+    "label": "BDD",
+    "value": 22,
+    "children": [
       {
-        label: 'cpu_usage',
-        value: 10,
-        children: [
+        "label": "SubService1",
+        "value": 50,
+        "children": [
           {
-            label: 'home',
-            value: 40,
-            children: []
-          },
-          {
-            label: 'about us',
-            value: 60,
-            children: []
+            "label": "SubSub1",
+            "value": 100,
+            "children": [
+              {
+                "label": "SubSubSub2",
+                "value": 75,
+                "children": []
+              },
+              {
+                "label": "SubSubSub1",
+                "value": 25,
+                "children": []
+              }
+            ]
           }
         ]
       },
       {
-        label: 'no_usage',
-        value: 100,
-        children: []
+        "label": "SubService2",
+        "value": 80,
+        "children": []
+      }
+    ]
+  },
+  {
+    "label": "BDD2",
+    "value": 22,
+    "children": [
+      {
+        "label": "SubService1",
+        "value": 50,
+        "children": [
+          {
+            "label": "SubSub1",
+            "value": 100,
+            "children": [
+              {
+                "label": "SubSubSub2",
+                "value": 69.44444444444444,
+                "children": []
+              },
+              {
+                "label": "SubSubSub1",
+                "value": 30.555555555555557,
+                "children": []
+              }
+            ]
+          }
+        ]
       },
+      {
+        "label": "SubService2",
+        "value": 71.11111111111111,
+        "children": []
+      }
     ]
   }
+
 ] as RawData[];
