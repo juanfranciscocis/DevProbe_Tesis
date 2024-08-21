@@ -119,26 +119,14 @@ export class FlameGraphPage implements OnInit {
         children: allRawData
       }];
 
-
       this.config = {data: allRawData};
       console.log("final object",allRawData);
 
-
-
-
-
-
-
-
-
       await this.hideLoading();
-
-
-
-
 
       } catch (e) {
       console.log(e);
+      await this.hideLoading();
     }
   }
 
@@ -221,10 +209,10 @@ export class FlameGraphPage implements OnInit {
   }
 
 
-
-
-
-
+  async doRefresh($event: any) {
+    await this.getFlameGraph();
+    $event.target.complete();
+  }
 }
 
 const data = [

@@ -8,6 +8,7 @@ import { FlameGraphPageRoutingModule } from './flame-graph-routing.module';
 
 import { FlameGraphPage } from './flame-graph.page';
 import {NgxFlamegraphModule} from "ngx-flamegraph";
+import {ComponentsModule} from "../../components/components.module";
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import {NgxFlamegraphModule} from "ngx-flamegraph";
         FormsModule,
         IonicModule,
         FlameGraphPageRoutingModule,
-        NgxFlamegraphModule
+        NgxFlamegraphModule,
+        ComponentsModule
     ],
   declarations: [FlameGraphPage]
 })
