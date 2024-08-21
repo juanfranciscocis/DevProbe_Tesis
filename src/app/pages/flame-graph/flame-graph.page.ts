@@ -17,29 +17,28 @@ import {User} from "../../interfaces/user";
 })
 export class FlameGraphPage implements OnInit {
 
-  product:Product = {}
-  date:string = ''
+    product:Product = {}
+    date:string = ''
 
 
 
 
 
 
-  // @ts-ignore
-  config:FlameGraphConfig = {data}
+    // @ts-ignore
+    config:FlameGraphConfig = {data}
 
+    constructor(
+        private flameGraphService: FlameGraphService,
+        private loadingCtrl: LoadingController,
+        private router: Router,
+        private route: ActivatedRoute,
+    ) { }
 
-  constructor(
-    private flameGraphService: FlameGraphService,
-    private loadingCtrl: LoadingController,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) { }
-
-  ionViewWillEnter() {
-    this.getProductAndDateFromParams();
-    this.getFlameGraph();
-  }
+    ionViewWillEnter() {
+        this.getProductAndDateFromParams();
+        this.getFlameGraph();
+    }
 
 
 
@@ -82,16 +81,29 @@ export class FlameGraphPage implements OnInit {
 
         //get the keys
         keys = Object.keys(data_to_transform);
-        console.log(keys);
+        console.log('keys',keys);
+        const lenKeys = keys.length;
+        const valueKeys = 100/lenKeys;
 
-      //TODO:Add data to the flame graph
+        for (let serv in keys){
+            const children:RawData[] = [];
+            for(let i = 0; i < data_to_transform[keys[serv]].length; i++){
+                children[i] = this.transformToRawData(data_to_transform[keys[serv]][i])
+            }
+            console.log('server1',children);
+        const rawData: RawData = {
+            label: keys[serv],
+            value: valueKeys,
+            children: [
+                ...children
+            ]
+            };
+            allRawData.push(rawData);
 
 
-
-     for (let serverKey in data_to_transform) {
-          const rawData = this.transformToRawData(data_to_transform[serverKey][0]);
-          allRawData.push(rawData);
         }
+        console.log('server',allRawData);
+
 
       }
 
@@ -109,7 +121,7 @@ export class FlameGraphPage implements OnInit {
 
 
       this.config = {data: allRawData};
-      console.log(allRawData);
+      console.log("final object",allRawData);
 
 
 
