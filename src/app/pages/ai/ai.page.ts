@@ -24,6 +24,7 @@ export class AiPage implements OnInit {
       this.answer = response.response.text();
     });
 
+
   }
 
 }
