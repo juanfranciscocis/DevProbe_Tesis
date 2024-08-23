@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
 import type { EChartsOption } from "echarts";
 import { User } from "../../interfaces/user";
 import { RipeService } from "../../services/ripe.service";
 import { ActivatedRoute } from "@angular/router";
 import { RipeTraceService } from "../../services/ripe-trace.service";
 import { refresh } from "ionicons/icons";
+import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
+import {AiMessage} from "../../interfaces/ai-message";
 
 /**
  * Component for displaying graph trace data.
@@ -24,7 +26,12 @@ export class GraphTracePage implements OnInit {
   countries: string[] = [];
   countryOptions: { [key: string]: EChartsOption } = {};
 
-  aiModal: boolean = false;
+  @ViewChild('messagesContainer') private messagesContainer: ElementRef | undefined;
+  aiModal: boolean = true;
+  message: string = '';
+  vertexAI: VertexAI = inject(VertexAI);
+  messages:AiMessage[] = []
+
 
   /**
    * Constructor for GraphTracePage.
@@ -258,15 +265,60 @@ export class GraphTracePage implements OnInit {
   ngOnInit() {
   }
 
-  ai(country: string) {
-    console.log(country);
-  }
+
 
   /**
    * Toggles the AI modal.
    */
-  toggleAiModal() {
+  toggleAiModal(country?: string) {
     this.aiModal = !this.aiModal;
+
+    if (country) {
+      console.log('Country: ' + country);
+    }
+
   }
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
+
+  private scrollToBottom(): void {
+    if (this.messagesContainer) {
+      try {
+        this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+      } catch (err) {
+        console.error('Error al hacer scroll:', err);
+      }
+    }
+  }
+
+  sendMessage() {
+    if (this.message === '') {
+      console.log('Message is empty');
+      return;
+    }
+
+    this.messages.push({ message: this.message, from: 'User' });
+
+    const model = getGenerativeModel(this.vertexAI, { model: "gemini-1.5-flash" });
+    model.generateContent(this.message).then(response => {
+      const answer = response.response.text();
+      const from = 'AI';
+      this.messages.push({ message: answer, from: from });
+
+    }).then(() => {
+      this.message = '';
+      this.scrollToBottom(); // Asegurarte de hacer scroll hacia abajo después de recibir el mensaje
+    });
+
+
+  }
+
+
+
+
+
+
 
 }
