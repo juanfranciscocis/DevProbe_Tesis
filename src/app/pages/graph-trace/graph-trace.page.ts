@@ -27,7 +27,7 @@ export class GraphTracePage implements OnInit {
   countryOptions: { [key: string]: EChartsOption } = {};
 
   @ViewChild('messagesContainer') private messagesContainer: ElementRef | undefined;
-  aiModal: boolean = true;
+  aiModal: boolean = false
   message: string = '';
   vertexAI: VertexAI = inject(VertexAI);
   messages:AiMessage[] = []
