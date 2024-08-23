@@ -270,7 +270,7 @@ export class GraphTracePage implements OnInit {
   /**
    * Toggles the AI modal.
    */
-  toggleAiModal(country?: string) {
+  toggleAiModal(country?: string, danger?: boolean) {
     this.aiModal = !this.aiModal;
 
     if (country) {

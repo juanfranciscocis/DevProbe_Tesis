@@ -14,6 +14,10 @@
       <ion-col size="12" size-md="6" size-lg="6" class="flex flex-row justify-center relative" *ngFor="let country of countries">
 
         <div class="absolute z-10 w-full flex flex-row justify-end ">
+            <ion-avatar class="h-12 w-12 bg-red-600 p-2" id="hover-trigger-{{country}}-danger">
+              <ion-icon  (click)="toggleAiModal(country, true)" class="w-full h-full" name="warning-outline"></ion-icon>
+            </ion-avatar>
+          <div class="m-1"></div>
           <ion-avatar class="h-12 w-12 bg-purple-400 p-2" id="hover-trigger-{{country}}">
             <ion-icon  (click)="toggleAiModal(country)" class="w-full h-full" name="color-wand-outline"></ion-icon>
           </ion-avatar>
@@ -22,6 +26,12 @@
         <ion-popover trigger="hover-trigger-{{country}}" triggerAction="hover" class="w-96" >
           <ng-template>
             <ion-content class="ion-padding">Ask DevProbe AI to analyze the traceroute data for {{country}}.</ion-content>
+          </ng-template>
+        </ion-popover>
+
+        <ion-popover trigger="hover-trigger-{{country}}-danger" triggerAction="hover" class="w-96" >
+          <ng-template>
+            <ion-content class="ion-padding">Ask DevProbe AI to analyze the traceroute data for {{country}}, is there a problem?</ion-content>
           </ng-template>
         </ion-popover>
 
