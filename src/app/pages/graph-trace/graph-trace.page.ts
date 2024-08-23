@@ -7,6 +7,7 @@ import { RipeTraceService } from "../../services/ripe-trace.service";
 import { refresh } from "ionicons/icons";
 import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
 import {AiMessage} from "../../interfaces/ai-message";
+import {CountryAi} from "../../interfaces/country-ai";
 
 /**
  * Component for displaying graph trace data.
@@ -43,9 +44,9 @@ export class GraphTracePage implements OnInit {
       },
       {
         role: "user",
-        parts: [{text:"Gracias, te voy a entregar un json con datos en unos minutos, necesito que lo analices y me des un resumen de los datos, este json contiene datos del uso de cpu, imagina que " +
-            "que es un json donde se monitorea al servidor, tu analisis tiene que ser detallado, si encuentras inconsistencias en los datos, por favor mencionalas, en " +
-            "caso de que creas que ocurrio un ataque cibernetico menciona el posible ataque, si crees que hay pocos datos para hacer un verdadero analisis mencionalo "}],
+        parts: [{text:"Gracias, te voy a entregar un json con datos en unos minutos, necesito que lo analices y me des un resumen de los datos, este json contiene datos de varios traceroutes por un pais especifico, imagina que " +
+            ",tu analisis tiene que ser detallado, si encuentras inconsistencias en los datos, por favor mencionalas, en " +
+            "caso de que creas que puede haber un error de ruteo por favor mencionalo, si encuentras algo interesante, por favor mencionalo, en resumen, necesito un analisis detallado de los datos"}],
       },
       {
         role: "model",
@@ -91,14 +92,10 @@ export class GraphTracePage implements OnInit {
       this.groupByDate().then(() => {
         this.groupByCountry().then(() => {
           this.populateCountries();
-          this.generateCountryOptions();
+          this.generateCountryOptions()
         });
       });
     });
-
-
-
-
   }
 
   /**
@@ -293,11 +290,27 @@ export class GraphTracePage implements OnInit {
   /**
    * Toggles the AI modal.
    */
-  toggleAiModal(country?: string, danger?: boolean) {
+  async toggleAiModal(country?: string, danger?: boolean) {
     this.aiModal = !this.aiModal;
 
     if (country) {
       console.log('Country: ' + country);
+      // @ts-ignore
+      const data = this.countryOptions[country]!.series[0]!.data;
+      // @ts-ignore
+      const dates = this.countryOptions[country]!.xAxis!.data;
+      console.log(data);
+      console.log(dates);
+
+      const countryAi: CountryAi = {
+        country: country,
+        data: {
+          date: dates,
+          data: data
+        }
+      }
+
+      await this.sendMessage(countryAi)
     }
 
   }
@@ -316,18 +329,35 @@ export class GraphTracePage implements OnInit {
     }
   }
 
-  async sendMessage() {
+  async sendMessage(contryData?:CountryAi) {
+
+    //send the data to the AI with the country data
+    if (contryData) {
+      console.log('Country data:', contryData);
+      //transform the data to a string
+      const data = JSON.stringify(contryData);
+      const result = await this.chat.sendMessage(data);
+      this.messages.push({message: result.response.text(), from: 'AI'});
+      console.log('Message:', this.message);
+      this.message = '';
+      return;
+    }
+
+
+
+    //send the message to the AI
     if (this.message === '') {
       console.log('Message is empty');
       return;
     }
-
     this.messages.push({message: this.message, from: 'User'});
-
     const result = await this.chat.sendMessage(this.message);
     this.messages.push({message: result.response.text(), from: 'AI'});
     this.message = '';
   }
+
+
+
 
 
 
