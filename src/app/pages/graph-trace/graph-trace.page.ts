@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import type {EChartsOption} from "echarts";
-import {User} from "../../interfaces/user";
-import {RipeService} from "../../services/ripe.service";
-import {ActivatedRoute} from "@angular/router";
-import {RipeTraceService} from "../../services/ripe-trace.service";
-import {refresh} from "ionicons/icons";
+import type { EChartsOption } from "echarts";
+import { User } from "../../interfaces/user";
+import { RipeService } from "../../services/ripe.service";
+import { ActivatedRoute } from "@angular/router";
+import { RipeTraceService } from "../../services/ripe-trace.service";
+import { refresh } from "ionicons/icons";
 
+/**
+ * Component for displaying graph trace data.
+ */
 @Component({
   selector: 'app-graph-trace',
   templateUrl: './graph-trace.page.html',
@@ -21,19 +24,29 @@ export class GraphTracePage implements OnInit {
   countries: string[] = [];
   countryOptions: { [key: string]: EChartsOption } = {};
 
+  aiModal: boolean = false;
+
+  /**
+   * Constructor for GraphTracePage.
+   * @param ripeService - Service for fetching trace data.
+   * @param route - Activated route for accessing query parameters.
+   */
   constructor(
     private ripeService: RipeTraceService,
     private route: ActivatedRoute
   ) {}
 
+  /**
+   * Lifecycle hook that is called when the component is about to enter and become active.
+   * Fetches user data and trace results, then processes the data.
+   */
   async ionViewWillEnter() {
-
-    // get parameters from the URL
+    // Get parameters from the URL
     this.route.queryParams.subscribe(params => {
       this.productObjective = params['product'];
     });
 
-    // get the user
+    // Get the user from local storage
     const userString = localStorage.getItem('user');
     if (!userString) {
       return;
@@ -43,6 +56,7 @@ export class GraphTracePage implements OnInit {
 
     this.data = [];
 
+    // Fetch and process trace results
     this.getResultsHistoryforRtt().then(() => {
       this.groupByDate().then(() => {
         this.groupByCountry().then(() => {
@@ -51,12 +65,19 @@ export class GraphTracePage implements OnInit {
         });
       });
     });
+
+
+
+
   }
 
+  /**
+   * Fetches the history results for RTT (Round Trip Time) and processes the data.
+   */
   async getResultsHistoryforRtt() {
     await this.ripeService.getHistoryResults(this.orgName, this.productObjective).then(r => {
       for (let i = 0; i < r.length; i++) {
-        // split the id
+        // Split the id
         let id = r[i].id.split('-');
         let idString = id[1];
 
@@ -82,30 +103,36 @@ export class GraphTracePage implements OnInit {
     });
   }
 
-async groupByDate() {
-  // create a dictionary to group the data by date
-  let groupedData: any = {};
-  for (let i = 0; i < this.data.length; i++) {
-    let date = this.data[i].date;
-    if (!groupedData[date]) {
-      groupedData[date] = [];
+  /**
+   * Groups the data by date.
+   */
+  async groupByDate() {
+    // Create a dictionary to group the data by date
+    let groupedData: any = {};
+    for (let i = 0; i < this.data.length; i++) {
+      let date = this.data[i].date;
+      if (!groupedData[date]) {
+        groupedData[date] = [];
+      }
+      groupedData[date].push(...this.data[i]['data']);
     }
-    groupedData[date].push(...this.data[i]['data']);
+
+    // Sort the dates
+    const sortedDates = Object.keys(groupedData).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
+    // Create a new object with sorted dates
+    let sortedGroupedData: any = {};
+    for (let date of sortedDates) {
+      sortedGroupedData[date] = groupedData[date];
+    }
+
+    this.data = sortedGroupedData;
+    console.log(this.data);
   }
 
-  // sort the dates
-  const sortedDates = Object.keys(groupedData).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-
-  // create a new object with sorted dates
-  let sortedGroupedData: any = {};
-  for (let date of sortedDates) {
-    sortedGroupedData[date] = groupedData[date];
-  }
-
-  this.data = sortedGroupedData;
-  console.log(this.data);
-}
-
+  /**
+   * Groups the data by country.
+   */
   async groupByCountry() {
     let groupedData: any = {};
     for (let date in this.data) {
@@ -115,7 +142,7 @@ async groupByDate() {
       }
       for (let i = 0; i < data.length; i++) {
         let country = data[i].src_country;
-        //if the country == No country found, then ignore
+        // If the country is 'No country found', then ignore
         if (country === 'No country found') {
           continue;
         }
@@ -129,6 +156,9 @@ async groupByDate() {
     console.log(this.data);
   }
 
+  /**
+   * Populates the list of countries from the data.
+   */
   async populateCountries() {
     const countriesSet = new Set<string>();
     for (let date in this.data) {
@@ -140,6 +170,10 @@ async groupByDate() {
     console.log(this.countries);
   }
 
+  /**
+   * Generates a random color in hexadecimal format.
+   * @returns A random color string.
+   */
   getRandomColor() {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -149,6 +183,9 @@ async groupByDate() {
     return color;
   }
 
+  /**
+   * Generates ECharts options for each country.
+   */
   generateCountryOptions() {
     for (let country of this.countries) {
       const xAxisData: string[] = [];
@@ -208,11 +245,28 @@ async groupByDate() {
     }
   }
 
+  /**
+   * Refreshes the page by reloading the window.
+   */
   refresh() {
     window.location.reload();
   }
 
+  /**
+   * Lifecycle hook that is called after Angular has initialized all data-bound properties.
+   */
   ngOnInit() {
+  }
+
+  ai(country: string) {
+    console.log(country);
+  }
+
+  /**
+   * Toggles the AI modal.
+   */
+  toggleAiModal() {
+    this.aiModal = !this.aiModal;
   }
 
 }

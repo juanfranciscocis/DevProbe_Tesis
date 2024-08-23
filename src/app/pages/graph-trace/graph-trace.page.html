@@ -11,15 +11,111 @@
       </ion-col>
     </ion-row>
     <ion-row class="lg:m-10 md:m-10">
-      <ion-col size="12" size-md="6" size-lg="6" class="flex flex-row justify-center" *ngFor="let country of countries">
+      <ion-col size="12" size-md="6" size-lg="6" class="flex flex-row justify-center relative" *ngFor="let country of countries">
+
+        <div class="absolute z-10 w-full flex flex-row justify-end ">
+          <ion-avatar class="h-12 w-12 bg-purple-400 p-2" id="hover-trigger-{{country}}">
+            <ion-icon  (click)="ai(country)" class="w-full h-full" name="color-wand-outline"></ion-icon>
+          </ion-avatar>
+        </div>
+
+        <ion-popover trigger="hover-trigger-{{country}}" triggerAction="hover" class="w-96" >
+          <ng-template>
+            <ion-content class="ion-padding">Ask DevProbe AI to analyze the traceroute data for {{country}}.</ion-content>
+          </ng-template>
+        </ion-popover>
+
         <ion-card class="w-full h-96 p-6 flex flex-col justify-center items-center">
           <ion-card-title class="">
           <h1 class="text-6xl font-bold text-white">{{ country }}</h1>
           </ion-card-title>
           <br>
-          <div echarts [options]="countryOptions[country]" class="demo-chart h-full w-full min-w-full"></div>
+          <div  echarts [options]="countryOptions[country]" class="demo-chart h-full w-full min-w-full"></div>
         </ion-card>
+
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <ion-fab class="m-2 z-10" vertical="bottom" horizontal="end" slot="fixed"  (click)="toggleAiModal()">
+    <ion-avatar class="bg-purple-300 p-4">
+      <ion-icon class="w-full h-full" name="chatbubble-outline"></ion-icon>
+    </ion-avatar>
+  </ion-fab>
+
+
+
+
+
 </ion-content>
+
+
+
+
+
+<div class="fixed bottom-0 right-0 h-full w-full bg-black bg-opacity-50 z-10 r" id="ai-modal" [class.hidden]="!aiModal">
+  <div class="h-2/3 md:h-1/2 lg:h-1/2 w-full md:w-1/3 lg:w-1/3 bg-purple-300 p-4 absolute right-0 bottom-0 z-50 flex flex-col rounded-tl-2xl rounded-tr-2xl">
+
+    <div  class="w-full bg-purple-400 flex flex-row justify-center items-center p-2 mb-2 rounded-3xl" >
+      <div class="flex flex-row justify-center items-center bg-purple-300 w-full  rounded-3xl">
+        <ion-title class="text-white">DevProbe AI</ion-title>
+      </div>
+      <div class="m-1"></div>
+      <div class="flex flex-row justify-center items-center bg-purple-300 w-1/6 h-full  rounded-3xl" (click)="toggleAiModal()">
+        <ion-icon name="close-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- El contenedor de mensajes con scroll -->
+    <div class="flex-grow overflow-y-auto bg-purple-200 p-2 rounded-3xl">
+      <!-- Mensajes de ejemplo -->
+      <div class="rounded-3xl bg-purple-400 w-2/3 m-1">
+        <p class="text-white p-4">DevProbe AI</p>
+      </div>
+      <div class="rounded-3xl bg-purple-600 w-2/3 m-1 ml-auto">
+        <p class="text-white p-4">my chat ajsjsajd jasjdjsad jas djasdnasjdjsa</p>
+      </div>
+      <!-- Más mensajes de ejemplo... -->
+      <div class="rounded-3xl bg-purple-400 w-2/3 m-1">
+        <p class="text-white p-4">DevProbe AI</p>
+      </div>
+      <div class="rounded-3xl bg-purple-600 w-2/3 m-1 ml-auto">
+        <p class="text-white p-4">my chat ajsjsajd jasjdjsad jas djasdnasjdjsa</p>
+      </div>
+      <div class="rounded-3xl bg-purple-400 w-2/3 m-1">
+        <p class="text-white p-4">DevProbe AI</p>
+      </div>
+      <div class="rounded-3xl bg-purple-600 w-2/3 m-1 ml-auto">
+        <p class="text-white p-4">my chat ajsjsajd jasjdjsad jas djasdnasjdjsa</p>
+      </div>
+      <div class="rounded-3xl bg-purple-400 w-2/3 m-1">
+        <p class="text-white p-4">DevProbe AI</p>
+      </div>
+      <div class="rounded-3xl bg-purple-600 w-2/3 m-1 ml-auto">
+        <p class="text-white p-4">my chat ajsjsajd jasjdjsad jas djasdnasjdjsa</p>
+      </div>
+      <div class="rounded-3xl bg-purple-400 w-2/3 m-1">
+        <p class="text-white p-4">DevProbe AI</p>
+      </div>
+      <div class="rounded-3xl bg-purple-600 w-2/3 m-1 ml-auto">
+        <p class="text-white p-4">my chat ajsjsajd jasjdjsad jas djasdnasjdjsa</p>
+      </div>
+      <div class="rounded-3xl bg-purple-400 w-2/3 m-1">
+        <p class="text-white p-4">DevProbe AI</p>
+      </div>
+      <div class="rounded-3xl bg-purple-600 w-2/3 m-1 ml-auto">
+        <p class="text-white p-4">my chat ajsjsajd jasjdjsad jas djasdnasjdjsa</p>
+      </div>
+      <!-- Fin de mensajes de ejemplo -->
+    </div>
+
+    <!-- Input y botón en la parte inferior -->
+    <div class="flex flex-row mt-2 p-2">
+      <ion-textarea  placeholder="Ask..." class="flex-grow bg-purple-600 rounded-2xl"></ion-textarea>
+      <div class="m-1"></div>
+      <div class="w-1/3 bg-purple-800 rounded-3xl flex flex-row justify-center items-center hover:bg-purple-400">
+        <span class="text-white">Send</span>
+      </div>
+    </div>
+  </div>
+</div>
