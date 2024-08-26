@@ -122,6 +122,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/flame-graph-date/flame-graph-date.module').then( m => m.FlameGraphDatePageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
+  {
+    path: 'mk',
+    loadChildren: () => import('./pages/mk/mk.module').then( m => m.MkPageModule)
+  },
 ];
 
 @NgModule({

@@ -1,0 +1,29 @@
+<ion-header [translucent]="true" class="">
+  <ion-toolbar>
+    <ion-title>mk</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true" class="">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">mk</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <div>
+    <markdown id="mk" [data]="markdown" class="no-style"></markdown>
+  </div>
+
+  <ion-button (click)="addCSS()" expand="block">Add CSS</ion-button>
+
+
+
+</ion-content>
+
+<style>
+  #mk h1 {
+    font-size: large;
+  }
+
+</style>

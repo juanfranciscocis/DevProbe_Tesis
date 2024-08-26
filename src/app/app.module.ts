@@ -14,6 +14,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {NgxEchartsDirective, NgxEchartsModule, provideEcharts} from "ngx-echarts";
 import {getVertexAI, provideVertexAI} from "@angular/fire/vertexai-preview";
 import {NgxFlamegraphModule} from "ngx-flamegraph";
+import {MarkdownModule} from "ngx-markdown";
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,7 +27,8 @@ import {NgxFlamegraphModule} from "ngx-flamegraph";
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     }),
-    NgxFlamegraphModule
+    NgxFlamegraphModule,
+    MarkdownModule.forRoot(),
 
   ],
   providers: [
