@@ -215,11 +215,13 @@ async groupByDate() {
 
   ngOnInit(): void {}
 
+
   /**
    * Toggles the AI modal.
    */
   async toggleAiModal(country?: string, danger?: boolean) {
     this.aiModal = !this.aiModal;
+
     if (country) {
       console.log('Country: ' + country);
       // @ts-ignore
@@ -237,7 +239,9 @@ async groupByDate() {
         }
       }
 
-      await this.sendMessage(countryAi)
+      await this.sendMessage(countryAi).then(() => {
+        this.chatStyle();
+      })
     }
 
   }
@@ -257,9 +261,6 @@ async groupByDate() {
   }
 
   async sendMessage(contryData?:CountryAi) {
-
-
-
     //send the data to the AI with the country data
     if (contryData) {
       await this.showLoading();
@@ -267,7 +268,8 @@ async groupByDate() {
       //transform the data to a string
       const data = JSON.stringify(contryData);
       const result = await this.chat.sendMessage(data);
-      this.messages.push({message: result.response.text(), from: 'AI'});
+      const length = this.messages.length;
+      this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
       console.log('Message:', this.message);
       this.message = '';
       await this.hideLoading();
@@ -281,13 +283,35 @@ async groupByDate() {
       console.log('Message is empty');
       return;
     }
-    this.messages.push({message: this.message, from: 'User'});
+
+    let length = this.messages.length;
+    this.messages.push({message: this.message, from: 'User', id: length.toString()});
     const result = await this.chat.sendMessage(this.message);
-    this.messages.push({message: result.response.text(), from: 'AI'});
+    length = this.messages.length;
+    this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
     this.message = '';
+    return;
+  }
 
+  chatStyle(){
+    //obtener el elemento id mk-0
+    const length = this.messages.length;
+    const element = document.getElementById('mk-' + (length - 1));
 
+    console.log(element);
+    //a los elementos h1 dentro de mk agregar font-size 20px
+    if (!element) return;
 
+    let h1 = element.getElementsByTagName("h1");
+    let h2 = element.getElementsByTagName("h2");
+    for (var i = 0; i < h1.length; i++) {
+      h1[i].style.fontSize = "2.5em";
+      h1[i].style.fontWeight = "bold";
+    }
+    for (var i = 0; i < h2.length; i++) {
+      h2[i].style.fontSize = "2em";
+      h2[i].style.fontWeight = "bold";
+    }
   }
 
 

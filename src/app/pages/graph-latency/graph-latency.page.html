@@ -61,13 +61,13 @@
     <div class="flex-grow overflow-y-auto bg-gray-400 p-2 rounded-3xl" #messagesContainer>
       <div *ngFor="let msg of messages" class="flex flex-col">
         <!-- Mensajes de usuario -->
-        <div *ngIf="msg.from === 'User'" class="rounded-3xl bg-gray-800 w-2/3 m-1 ml-auto">
-          <p class="text-white p-4">{{ msg.message }}</p>
+        <div *ngIf="msg.from === 'User'" class="rounded-3xl bg-gray-800 w-2/3 m-1 ml-auto p-2">
+          <markdown class="text-white p-4 m-2">{{ msg.message }}</markdown>
         </div>
 
         <!-- Mensajes de AI -->
-        <div *ngIf="msg.from === 'AI'" class="rounded-3xl bg-gray-500 w-2/3 m-1">
-          <p class="text-white p-4">{{ msg.message }}</p>
+        <div *ngIf="msg.from === 'AI'" class="rounded-3xl bg-gray-500 w-2/3 m-1 p-2 pr-2">
+          <markdown id="mk-{{msg.id}}"  class="text-white p-4 m-2">{{ msg.message }}</markdown>
         </div>
       </div>
     </div>
