@@ -9,6 +9,7 @@ import { GraphTracePageRoutingModule } from './graph-trace-routing.module';
 import { GraphTracePage } from './graph-trace.page';
 import {ComponentsModule} from "../../components/components.module";
 import {NgxEchartsDirective} from "ngx-echarts";
+import {MarkdownComponent} from "ngx-markdown";
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import {NgxEchartsDirective} from "ngx-echarts";
     IonicModule,
     GraphTracePageRoutingModule,
     ComponentsModule,
-    NgxEchartsDirective
+    NgxEchartsDirective,
+    MarkdownComponent
   ],
   declarations: [GraphTracePage]
 })

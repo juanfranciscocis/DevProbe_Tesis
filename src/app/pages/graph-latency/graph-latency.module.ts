@@ -9,16 +9,18 @@ import { GraphPageRoutingModule } from './graph-latency-routing.module';
 import { GraphLatencyPage } from './graph-latency.page';
 import {NgxEchartsDirective} from "ngx-echarts";
 import {ComponentsModule} from "../../components/components.module";
+import {MarkdownComponent} from "ngx-markdown";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    GraphPageRoutingModule,
-    NgxEchartsDirective,
-    ComponentsModule
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        GraphPageRoutingModule,
+        NgxEchartsDirective,
+        ComponentsModule,
+        MarkdownComponent
+    ],
   declarations: [GraphLatencyPage]
 })
 export class GraphPageModule {}

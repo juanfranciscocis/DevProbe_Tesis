@@ -8,6 +8,7 @@ import { refresh } from "ionicons/icons";
 import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
 import {AiMessage} from "../../interfaces/ai-message";
 import {CountryAi} from "../../interfaces/country-ai";
+import {LoadingController} from "@ionic/angular";
 
 /**
  * Component for displaying graph trace data.
@@ -64,7 +65,8 @@ export class GraphTracePage implements OnInit {
    */
   constructor(
     private ripeService: RipeTraceService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private loadingCtrl: LoadingController
   ) {}
 
   /**
@@ -286,7 +288,6 @@ export class GraphTracePage implements OnInit {
   }
 
 
-
   /**
    * Toggles the AI modal.
    */
@@ -310,7 +311,9 @@ export class GraphTracePage implements OnInit {
         }
       }
 
-      await this.sendMessage(countryAi)
+      await this.sendMessage(countryAi).then(() => {
+        this.chatStyle();
+      })
     }
 
   }
@@ -330,16 +333,18 @@ export class GraphTracePage implements OnInit {
   }
 
   async sendMessage(contryData?:CountryAi) {
-
     //send the data to the AI with the country data
     if (contryData) {
+      await this.showLoading();
       console.log('Country data:', contryData);
       //transform the data to a string
       const data = JSON.stringify(contryData);
       const result = await this.chat.sendMessage(data);
-      this.messages.push({message: result.response.text(), from: 'AI'});
+      const length = this.messages.length;
+      this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
       console.log('Message:', this.message);
       this.message = '';
+      await this.hideLoading();
       return;
     }
 
@@ -350,15 +355,53 @@ export class GraphTracePage implements OnInit {
       console.log('Message is empty');
       return;
     }
-    this.messages.push({message: this.message, from: 'User'});
+
+    let length = this.messages.length;
+    this.messages.push({message: this.message, from: 'User', id: length.toString()});
     const result = await this.chat.sendMessage(this.message);
-    this.messages.push({message: result.response.text(), from: 'AI'});
+    length = this.messages.length;
+    this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
     this.message = '';
+    return;
+  }
+
+  chatStyle(){
+    //obtener el elemento id mk-0
+    const length = this.messages.length;
+    const element = document.getElementById('mk-' + (length - 1));
+
+    console.log(element);
+    //a los elementos h1 dentro de mk agregar font-size 20px
+    if (!element) return;
+
+    let h1 = element.getElementsByTagName("h1");
+    let h2 = element.getElementsByTagName("h2");
+    for (var i = 0; i < h1.length; i++) {
+      h1[i].style.fontSize = "2.5em";
+      h1[i].style.fontWeight = "bold";
+    }
+    for (var i = 0; i < h2.length; i++) {
+      h2[i].style.fontSize = "2em";
+      h2[i].style.fontWeight = "bold";
+    }
   }
 
 
+  /**
+   * Show a loading spinner.
+   */
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+    });
+    await loading.present();
+  }
 
-
+  /**
+   * Hide the loading spinner.
+   */
+  async hideLoading() {
+    await this.loadingCtrl.dismiss();
+  }
 
 
 
