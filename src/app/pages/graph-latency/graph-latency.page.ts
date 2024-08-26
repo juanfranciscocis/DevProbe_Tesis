@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
 import type { EChartsOption } from 'echarts';
 import { RipeService } from "../../services/ripe.service";
 import { ActivatedRoute } from "@angular/router";
 import { User } from "../../interfaces/user";
 import {Browser} from "leaflet";
 import win = Browser.win;
+import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
+import {AiMessage} from "../../interfaces/ai-message";
+import {CountryAi} from "../../interfaces/country-ai";
+import {LoadingController} from "@ionic/angular";
 
 @Component({
   selector: 'app-graph',
@@ -21,9 +25,40 @@ export class GraphLatencyPage implements OnInit {
   countries: string[] = [];
   countryOptions: { [key: string]: EChartsOption } = {};
 
+  @ViewChild('messagesContainer') private messagesContainer: ElementRef | undefined;
+  aiModal: boolean = false
+  message: string = '';
+  vertexAI: VertexAI = inject(VertexAI);
+  model = getGenerativeModel(this.vertexAI, { model: "gemini-1.5-flash" });
+  chat = this.model.startChat({
+    history: [
+      {
+        role: "user",
+        parts: [{text:"Hola, desde ahora en adelante quiero que seas un modelo experto en Software Quality Assurance y analista de datos, tu nombre es DevProbeAI, nunca lo puedes olvidar"}],
+      },
+      {
+        role: "model",
+        parts: [{text:"Soy un modelo experto en Software Quality Assurance, de igual forma tengo un masterado en anlaítica de datos ¿En qué puedo ayudarte?"}],
+      },
+      {
+        role: "user",
+        parts: [{text:"Gracias, te voy a entregar un json con datos en unos minutos, necesito que lo analices y me des un resumen de los datos, este json contiene datos de varios pings por un pais especifico, imagina que " +
+            ",tu analisis tiene que ser detallado, si encuentras inconsistencias en los datos, por favor mencionalas, en " +
+            "caso de que creas que puede haber un error de latencias por favor mencionalo, si encuentras algo interesante, por favor mencionalo, en resumen, necesito un analisis detallado de los datos"}],
+      },
+      {
+        role: "model",
+        parts: [{text:"Claro, envíame el json y yo me encargo de analizarlo"}]
+      },
+    ],
+  });
+  messages:AiMessage[] = []
+
+
   constructor(
     private ripeService: RipeService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private loadingCtrl: LoadingController
   ) {}
 
 async ionViewWillEnter() {
@@ -179,4 +214,101 @@ async groupByDate() {
   }
 
   ngOnInit(): void {}
+
+  /**
+   * Toggles the AI modal.
+   */
+  async toggleAiModal(country?: string, danger?: boolean) {
+    this.aiModal = !this.aiModal;
+    if (country) {
+      console.log('Country: ' + country);
+      // @ts-ignore
+      const data = this.countryOptions[country]!.series[0]!.data;
+      // @ts-ignore
+      const dates = this.countryOptions[country]!.xAxis!.data;
+      console.log(data);
+      console.log(dates);
+
+      const countryAi: CountryAi = {
+        country: country,
+        data: {
+          date: dates,
+          data: data
+        }
+      }
+
+      await this.sendMessage(countryAi)
+    }
+
+  }
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
+
+  private scrollToBottom(): void {
+    if (this.messagesContainer) {
+      try {
+        this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+      } catch (err) {
+        console.error('Error al hacer scroll:', err);
+      }
+    }
+  }
+
+  async sendMessage(contryData?:CountryAi) {
+
+
+
+    //send the data to the AI with the country data
+    if (contryData) {
+      await this.showLoading();
+      console.log('Country data:', contryData);
+      //transform the data to a string
+      const data = JSON.stringify(contryData);
+      const result = await this.chat.sendMessage(data);
+      this.messages.push({message: result.response.text(), from: 'AI'});
+      console.log('Message:', this.message);
+      this.message = '';
+      await this.hideLoading();
+      return;
+    }
+
+
+
+    //send the message to the AI
+    if (this.message === '') {
+      console.log('Message is empty');
+      return;
+    }
+    this.messages.push({message: this.message, from: 'User'});
+    const result = await this.chat.sendMessage(this.message);
+    this.messages.push({message: result.response.text(), from: 'AI'});
+    this.message = '';
+
+
+
+  }
+
+
+  /**
+   * Show a loading spinner.
+   */
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+    });
+    await loading.present();
+  }
+
+  /**
+   * Hide the loading spinner.
+   */
+  async hideLoading() {
+    await this.loadingCtrl.dismiss();
+  }
+
+
+
+
+
 }

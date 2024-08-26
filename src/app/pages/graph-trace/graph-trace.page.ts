@@ -36,7 +36,7 @@ export class GraphTracePage implements OnInit {
     history: [
       {
         role: "user",
-        parts: [{text:"Hola, desde ahora en adelante quiero que seas un modelo experto en Software Quality Assurance y analista de datos"}],
+        parts: [{text:"Hola, desde ahora en adelante quiero que seas un modelo experto en Software Quality Assurance y analista de datos, tu nombre es DevProbeAI, nunca lo puedes olvidar"}],
       },
       {
         role: "model",
@@ -50,7 +50,7 @@ export class GraphTracePage implements OnInit {
       },
       {
         role: "model",
-        parts: [{text:"Claro, envíame el json y yo me encargo de analizarlo, desde ahora me voy a llamar DevProbeAI, siempre recordare mi nombre (DevProbeAI) ."}]
+        parts: [{text:"Claro, envíame el json y yo me encargo de analizarlo"}]
       },
     ],
   });
