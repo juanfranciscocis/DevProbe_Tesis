@@ -23,7 +23,7 @@ export class FlameGraphComparePage implements OnInit {
 
 
   aiAnalytic:AiMessage[] = []
-  @ViewChild('messagesContainer') private messagesContainer: ElementRef | undefined;
+  @ViewChild('messagesContainer2') private messagesContainer: ElementRef | undefined;
   aiModal: boolean = false
   message: string = '';
   vertexAI: VertexAI = inject(VertexAI);
@@ -51,6 +51,7 @@ export class FlameGraphComparePage implements OnInit {
     ],
   });
   messages:AiMessage[] = []
+  wasChatOpen: boolean = false;
 
 
   constructor(
@@ -66,6 +67,7 @@ export class FlameGraphComparePage implements OnInit {
     this.getFlameGraph().then(() => {
       this.sendMessage().then(() => {
         this.chatStyle();
+
       });
     });
   }
@@ -284,6 +286,8 @@ export class FlameGraphComparePage implements OnInit {
       h2[i].style.fontSize = "2em";
       h2[i].style.fontWeight = "bold";
     }
+
+    this.scrollToBottom();
   }
 
   async sendMessage() {
@@ -296,14 +300,46 @@ export class FlameGraphComparePage implements OnInit {
       this.aiAnalytic.push({message: result.response.text(), from: 'AI', id: length.toString()});
       await this.hideLoading();
       console.log('AI Analytic:', this.aiAnalytic);
+      this.scrollToBottom();
       return;
     }
+
+    const result = await this.chat.sendMessage(this.message);
+    const length = this.messages.length;
+    this.messages.push({message: this.message, from: 'User', id: length.toString()});
+    this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
+
+    this.message = '';
+    this.scrollToBottom();
 
 
   }
 
+  private scrollToBottom(): void {
+    if (this.messagesContainer) {
+      try {
+        //scroll to the bottom of the chat
+        this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight + 10000000;
+      } catch (err) {
+        console.error('Error al hacer scroll:', err);
+      }
+    }
+  }
+
+  toggleAiModal() {
+    if (this.message === '') {
+      return;
+    }
 
 
+    this.aiModal = !this.aiModal;
+    this.wasChatOpen = this.aiModal;
+
+    this.sendMessage().then(() => {
+      this.chatStyle();
+    });
+
+  }
 }
 
 const data = [
