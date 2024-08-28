@@ -7,19 +7,36 @@
 
   <app-title [title]="'Compare Flame Graphs'"></app-title>
 
-  <ion-row class="lg:m-10">
-    <ion-col size="12">
-      <ng-container *ngFor="let date of datesForComparison">
-        <ion-card class="p-5">
-          <ion-card class="bg-transparent">
-            <h3>{{ date }}</h3>
-            <div class="wrapper-responsive">
-              <ngx-flamegraph [config]="configurations[date]"></ngx-flamegraph>
-            </div>
+
+  <ion-row class="lg:m-10 md:m-10">
+    <ion-col *ngFor="let date of datesForComparison" size="12" size-md="4" size-lg="4" class="">
+      <ion-card class="w-full">
+        <ng-container>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Data for: {{date}}</ion-card-title>
+            </ion-card-header>
+          <ngx-flamegraph [config]="configurations[date]" ></ngx-flamegraph>
           </ion-card>
-        </ion-card>
-      </ng-container>
+        </ng-container>
+      </ion-card>
     </ion-col>
   </ion-row>
+
+  <ion-row class="lg:m-10 md:m-10">
+    <ion-col size="12" size-md="12" size-lg="12" class="flex flex-row justify-center">
+      <ion-card class="min-w-full">
+        <ion-card-header>
+          <ion-card-title>DevProbe AI Analytic</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <markdown class="text-white">{{aiAnalytic}}</markdown>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+
+
+
 
 </ion-content>

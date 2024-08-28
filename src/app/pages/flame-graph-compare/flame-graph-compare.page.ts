@@ -15,7 +15,9 @@ export class FlameGraphComparePage implements OnInit {
 
   product: Product = {};
   datesForComparison: string[] = [];
+  lenDates: number = 0;
   configurations: { [key: string]: { data: RawData[] } } = {};
+  aiAnalytic: string = '# holaaaa';
 
   constructor(
     private flameGraphService: FlameGraphService,
@@ -108,6 +110,8 @@ export class FlameGraphComparePage implements OnInit {
       this.product = JSON.parse(params['product']);
       this.datesForComparison = JSON.parse(params['dates']);
     });
+
+    this.lenDates = this.datesForComparison.length;
     console.log(this.product.productObjective);
     console.log(this.datesForComparison);
 
