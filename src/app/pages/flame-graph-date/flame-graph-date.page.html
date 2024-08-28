@@ -25,5 +25,26 @@
         </ion-list>
       </ion-col>
     </ion-row>
+    <app-title [title]="'Compare two dates'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <p>Choose two dates to compare the server usage.</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10">
+      <ion-col size="12">
+        <ion-list [inset]="true" class="bg-white">
+          @for (date of dates; track date){
+            <ion-item color="dark">
+              <ion-checkbox justify="space-between" (ionChange)="onCheckBoxChange($event, date)">{{date}}</ion-checkbox>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-col>
+      <ion-col size="12" class="ion-text-center">
+        <ion-button (click)="compareDates()" [disabled]="!isCompareButtonEnabled">Compare</ion-button>
+      </ion-col>
+    </ion-row>
+
   </ion-grid>
 </ion-content>

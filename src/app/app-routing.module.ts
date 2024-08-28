@@ -122,6 +122,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/flame-graph-date/flame-graph-date.module').then( m => m.FlameGraphDatePageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
+  {
+    path: 'flame-graph-compare',
+    loadChildren: () => import('./pages/flame-graph-compare/flame-graph-compare.module').then( m => m.FlameGraphComparePageModule)
+  },
 ];
 
 @NgModule({

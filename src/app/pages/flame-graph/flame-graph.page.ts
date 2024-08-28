@@ -19,12 +19,6 @@ export class FlameGraphPage implements OnInit {
 
     product:Product = {}
     date:string = ''
-
-
-
-
-
-
     // @ts-ignore
     config:FlameGraphConfig = {data}
 

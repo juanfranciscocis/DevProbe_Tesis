@@ -16,6 +16,9 @@ export class FlameGraphDatePage implements OnInit {
   dates:string[] = [];
   product:Product = {}
 
+  checkedForComparison: string[] = [];
+  isCompareButtonEnabled = false;
+
 
   constructor(
     private flameGraphService: FlameGraphService,
@@ -99,4 +102,22 @@ export class FlameGraphDatePage implements OnInit {
   ngOnInit(): void {
   }
 
+  onCheckBoxChange($event: any, date: string) {
+    if ($event.detail.checked) {
+      this.checkedForComparison.push(date);
+    } else {
+      this.checkedForComparison = this.checkedForComparison.filter(d => d !== date);
+    }
+
+    if (this.checkedForComparison.length > 1) {
+      this.isCompareButtonEnabled = true;
+    } else {
+      this.isCompareButtonEnabled = false;
+    }
+
+  }
+
+  compareDates() {
+    this.router.navigate(['/flame-graph-compare'], {queryParams: {product: JSON.stringify(this.product), dates: JSON.stringify(this.checkedForComparison)}});
+  }
 }
