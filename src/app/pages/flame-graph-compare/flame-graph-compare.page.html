@@ -10,11 +10,11 @@
   @if (lenDates>=3){
   <ion-row class="lg:m-10 md:m-10">
     <ion-col *ngFor="let date of datesForComparison" size="12" size-md="4" size-lg="4" class="">
-      <ion-card class="w-full">
+      <ion-card class="w-full min-h-full">
         <ng-container>
           <ion-card>
             <ion-card-header>
-              <ion-card-title>Data for: {{date}}</ion-card-title>
+              <ion-card-title><h1>Data for: {{date}}</h1></ion-card-title>
             </ion-card-header>
           <ngx-flamegraph [config]="configurations[date]" ></ngx-flamegraph>
           </ion-card>
@@ -27,7 +27,7 @@
   @if (lenDates<3){
     <ion-row class="lg:m-10 md:m-10">
       <ion-col *ngFor="let date of datesForComparison" size="12" size-md="6" size-lg="6" class="">
-        <ion-card class="w-full">
+        <ion-card class="w-full min-h-full">
           <ng-container>
             <ion-card>
               <ion-card-header>
@@ -45,10 +45,12 @@
     <ion-col size="12" size-md="12" size-lg="12" class="flex flex-row justify-center">
       <ion-card class="min-w-full">
         <ion-card-header>
-          <ion-card-title>DevProbe AI Analytic</ion-card-title>
+          <ion-card-title><h1 class="text-5xl font-bold">DevProbe AI Analytic</h1></ion-card-title>
         </ion-card-header>
         <ion-card-content>
-            <markdown class="text-white">{{aiAnalytic}}</markdown>
+          @for(msg of aiAnalytic;track msg){
+            <markdown id="analytics" class="text-white">{{msg.message}}</markdown>
+          }
         </ion-card-content>
       </ion-card>
     </ion-col>

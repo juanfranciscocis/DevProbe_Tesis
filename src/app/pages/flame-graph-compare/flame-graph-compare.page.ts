@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
 import { RawData } from "ngx-flamegraph/lib/utils";
 import { Product } from "../../interfaces/product";
 import { FlameGraphService } from "../../services/flame-graph.service";
 import { LoadingController } from "@ionic/angular";
 import { ActivatedRoute } from "@angular/router";
 import { User } from "../../interfaces/user";
+import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
+import {AiMessage} from "../../interfaces/ai-message";
 
 @Component({
   selector: 'app-flame-graph-compare',
@@ -17,7 +19,39 @@ export class FlameGraphComparePage implements OnInit {
   datesForComparison: string[] = [];
   lenDates: number = 0;
   configurations: { [key: string]: { data: RawData[] } } = {};
-  aiAnalytic: string = '# holaaaa';
+
+
+
+  aiAnalytic:AiMessage[] = []
+  @ViewChild('messagesContainer') private messagesContainer: ElementRef | undefined;
+  aiModal: boolean = false
+  message: string = '';
+  vertexAI: VertexAI = inject(VertexAI);
+  model = getGenerativeModel(this.vertexAI, { model: "gemini-1.5-flash" });
+  chat = this.model.startChat({
+    history: [
+      {
+        role: "user",
+        parts: [{text:"Hola, desde ahora en adelante quiero que seas un modelo experto en Software Quality Assurance y analista de datos, tu nombre es DevProbeAI, nunca lo puedes olvidar"}],
+      },
+      {
+        role: "model",
+        parts: [{text:"Soy un modelo experto en Software Quality Assurance, de igual forma tengo un masterado en anlaítica de datos ¿En qué puedo ayudarte?"}],
+      },
+      {
+        role: "user",
+        parts: [{text:"Gracias, te voy a entregar un json con datos en unos minutos, necesito que lo analices y me des un resumen de los datos, este json contiene datos de usos de un servidor por día, imagina que " +
+            ",tu analisis tiene que ser detallado, si encuentras inconsistencias en los datos, por favor mencionalas, en " +
+            "caso de que creas que puede haber un uso excesivo de algun servicio por favor mencionalo, si encuentras algo interesante, por favor mencionalo, en resumen, necesito un analisis detallado de los datos"}],
+      },
+      {
+        role: "model",
+        parts: [{text:"Claro, envíame el json y yo me encargo de analizarlo"}]
+      },
+    ],
+  });
+  messages:AiMessage[] = []
+
 
   constructor(
     private flameGraphService: FlameGraphService,
@@ -29,7 +63,11 @@ export class FlameGraphComparePage implements OnInit {
 
   ionViewWillEnter() {
     this.getProductAndDatesFromParams();
-    this.getFlameGraph();
+    this.getFlameGraph().then(() => {
+      this.sendMessage().then(() => {
+        this.chatStyle();
+      });
+    });
   }
 
 
@@ -129,7 +167,9 @@ export class FlameGraphComparePage implements OnInit {
 
 
   doRefresh($event: any) {
-
+    this.getFlameGraph().then(() => {
+      $event.target.complete();
+    });
   }
 
   /**
@@ -205,6 +245,61 @@ export class FlameGraphComparePage implements OnInit {
       value: cpuUsage,
       children: children
     };
+  }
+
+
+  chatStyle(){
+
+
+    const analytics = document.getElementById('analytics');
+    if (analytics){
+      let h1 = analytics.getElementsByTagName("h1");
+      let h2 = analytics.getElementsByTagName("h2");
+      for (var i = 0; i < h1.length; i++) {
+        h1[i].style.fontSize = "2em";
+        h1[i].style.fontWeight = "bold";
+      }
+      for (var i = 0; i < h2.length; i++) {
+        h2[i].style.fontSize = "1.6em";
+        h2[i].style.fontWeight = "bold";
+      }
+    }
+
+
+    //obtener el elemento id mk-0
+    const length = this.messages.length;
+    const element = document.getElementById('mk-' + (length - 1));
+
+    console.log(element);
+    //a los elementos h1 dentro de mk agregar font-size 20px
+    if (!element) return;
+
+    let h1 = element.getElementsByTagName("h1");
+    let h2 = element.getElementsByTagName("h2");
+    for (var i = 0; i < h1.length; i++) {
+      h1[i].style.fontSize = "2.5em";
+      h1[i].style.fontWeight = "bold";
+    }
+    for (var i = 0; i < h2.length; i++) {
+      h2[i].style.fontSize = "2em";
+      h2[i].style.fontWeight = "bold";
+    }
+  }
+
+  async sendMessage() {
+    if (this.aiAnalytic.length <= 0) {
+      await this.showLoading();
+      const data = JSON.stringify(this.configurations);
+      const result = await this.chat.sendMessage(data);
+      const length = this.messages.length;
+      this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
+      this.aiAnalytic.push({message: result.response.text(), from: 'AI', id: length.toString()});
+      await this.hideLoading();
+      console.log('AI Analytic:', this.aiAnalytic);
+      return;
+    }
+
+
   }
 
 
