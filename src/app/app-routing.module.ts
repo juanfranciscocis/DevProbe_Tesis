@@ -126,6 +126,18 @@ const routes: Routes = [
     path: 'flame-graph-compare',
     loadChildren: () => import('./pages/flame-graph-compare/flame-graph-compare.module').then( m => m.FlameGraphComparePageModule)
   },
+  {
+    path: 'board',
+    loadChildren: () => import('./pages/board/board.module').then( m => m.BoardPageModule)
+  },
+  {
+    path: 'render-restart',
+    loadChildren: () => import('./pages/render-restart/render-restart.module').then( m => m.RenderRestartPageModule)
+  },
+  {
+    path: 'render',
+    loadChildren: () => import('./pages/render/render.module').then( m => m.RenderPageModule)
+  },
 ];
 
 @NgModule({

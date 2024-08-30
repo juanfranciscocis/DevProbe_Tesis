@@ -1,0 +1,22 @@
+<app-header [title]="'Kanban Board'"></app-header>
+
+<ion-content [fullscreen]="true">
+  <app-title [title]="'Kanban Board'"></app-title>
+  <ion-row class="lg:m-10 md:m-10">
+    <ion-col size="12" size-md="12" size-lg="12" class="flex flex-row justify-center">
+      <div cdkDropListGroup class="kanban-board min-w-full min-h-full">
+        <div *ngFor="let list of lists" class="kanban-column flex flex-col justify-center items-center">
+          <h3>{{ list.name }}</h3>
+          <div cdkDropList [cdkDropListData]="list.items" (cdkDropListDropped)="drop($event)" class="kanban-list min-w-full">
+            <div *ngFor="let item of list.items" cdkDrag class="kanban-item">
+              {{ item }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </ion-col>
+  </ion-row>
+
+
+
+</ion-content>
