@@ -7,6 +7,7 @@ import { ActivatedRoute } from "@angular/router";
 import { User } from "../../interfaces/user";
 import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
 import {AiMessage} from "../../interfaces/ai-message";
+import {RenderRestartService} from "../../services/render-restart.service";
 
 @Component({
   selector: 'app-flame-graph-compare',
@@ -57,7 +58,8 @@ export class FlameGraphComparePage implements OnInit {
   constructor(
     private flameGraphService: FlameGraphService,
     private loadingCtrl: LoadingController,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private renderRestartService: RenderRestartService
   ) { }
 
   ngOnInit() {}
@@ -67,7 +69,7 @@ export class FlameGraphComparePage implements OnInit {
     this.getFlameGraph().then(() => {
       this.sendMessage().then(() => {
         this.chatStyle();
-
+        this.flameGraphService.hasRestarted = false;
       });
     });
   }

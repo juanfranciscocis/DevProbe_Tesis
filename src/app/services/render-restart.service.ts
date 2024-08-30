@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
+import {FlameGraphService} from "./flame-graph.service";
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +11,12 @@ export class RenderRestartService {
   auth = 'Bearer rnd_tAWW9ihQ19RaIAFzrHANjIG8wBX0';
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
   ) {
   }
 
   async restartService() {
+    console.log("Restarting service");
     try {
       let headers = {
         'Authorization': this.auth
@@ -22,7 +24,8 @@ export class RenderRestartService {
 
       let response: any = await this.http.post(this.url, {}, {headers: headers}).toPromise();
       console.log("res", response);
-      return response;
+      const status = response['status'];
+      return status;
     } catch (e) {
       console.log(e);
       return false;

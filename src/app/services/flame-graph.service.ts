@@ -3,6 +3,7 @@ import {collection, doc, Firestore, getDoc, getDocs} from "@angular/fire/firesto
 import {Product} from "../interfaces/product";
 import {DocumentData} from "@angular/fire/compat/firestore";
 import {HttpClient} from "@angular/common/http";
+import {RenderRestartService} from "./render-restart.service";
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +11,14 @@ import {HttpClient} from "@angular/common/http";
 export class FlameGraphService {
 
   url:string = 'https://cors-ea3m.onrender.com/https://devprobeapi.onrender.com/flame_graph_date';
+  hasRestarted = false;
 
 
 
   constructor(
     private firestore: Firestore,
     private http: HttpClient,
+    private renderRestartService:RenderRestartService,
   ) { }
 
   async getProducts(orgName:string){
@@ -40,19 +43,31 @@ export class FlameGraphService {
     }
   }
 
+  // @ts-ignore
   async getFlameGraphByDate(orgName: string, productObjective: string, date: string) {
     try {
-
       let body = {
         "team": orgName,
         "product": productObjective,
         "date": date
       }
       //Get the flame graph
-      return   await this.http.post(this.url, body).toPromise();
+      const res =    await this.http.post(this.url, body).toPromise();
+      return res;
 
     }catch (e) {
-      console.log(e);
+      console.log("Error", e);
+
+      if (!this.hasRestarted) {
+        await this.renderRestartService.restartService();
+      }
+      this.hasRestarted = true;
+      // @ts-ignore
+      if (e.status === 503) {
+        //wait for 5 seconds and retry
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        return await this.getFlameGraphByDate(orgName, productObjective, date);
+      }
       return {};
     }
   }
