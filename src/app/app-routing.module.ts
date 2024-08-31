@@ -134,10 +134,6 @@ const routes: Routes = [
     path: 'render-restart',
     loadChildren: () => import('./pages/render-restart/render-restart.module').then( m => m.RenderRestartPageModule)
   },
-  {
-    path: 'render',
-    loadChildren: () => import('./pages/render/render.module').then( m => m.RenderPageModule)
-  },
 ];
 
 @NgModule({
