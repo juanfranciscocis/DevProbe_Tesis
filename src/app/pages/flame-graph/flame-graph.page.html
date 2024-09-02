@@ -17,9 +17,15 @@
     <ion-col size="12">
       <ion-card class="p-5">
       <ion-card class="bg-transparent">
+        @if(this.usage_type === 'cpu'){
         <div class="wrapper-responsive">
-          <ngx-flamegraph [config]="config"></ngx-flamegraph>
+          <ngx-flamegraph [config]="data"></ngx-flamegraph>
         </div>
+        } @else {
+        <div class="wrapper-responsive">
+          <ngx-flamegraph [config]="data"></ngx-flamegraph>
+        </div>
+        }
       </ion-card>
       </ion-card>
     </ion-col>

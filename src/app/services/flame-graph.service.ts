@@ -9,7 +9,8 @@ import {HttpClient} from "@angular/common/http";
 })
 export class FlameGraphService {
 
-  url:string = 'https://devprobeapi.onrender.com/flame_graph_date';
+  url_cpu:string = 'https://devprobeapi.onrender.com/flame_graph_date';
+  url_mem:string = 'https://devprobeapi.onrender.com/flame_graph_memory_date';
 
 
 
@@ -29,9 +30,12 @@ export class FlameGraphService {
     }
   }
 
-  async getDates(orgName: string, productObjective: string) {
+  async getDates(orgName: string, productObjective: string, usage_type?: string | null | undefined) {
     try {
-      const collectionRef = collection(this.firestore, 'teams', orgName, 'products', productObjective, 'cpu_usage');
+      if (!usage_type){
+        usage_type = 'cpu_usage';
+      }
+      const collectionRef = collection(this.firestore, 'teams', orgName, 'products', productObjective, usage_type);
       const dates = await getDocs(collectionRef);
       return dates.docs.map(doc => doc.id);
     } catch (e) {
@@ -41,7 +45,7 @@ export class FlameGraphService {
   }
 
   // @ts-ignore
-  async getFlameGraphByDate(orgName: string, productObjective: string, date: string) {
+  async getFlameGraphByDate(orgName: string, productObjective: string, date: string, isUsageMemory?:boolean) {
     try {
       let body = {
         "team": orgName,
@@ -49,7 +53,11 @@ export class FlameGraphService {
         "date": date
       }
       //Get the flame graph
-      const res =    await this.http.post(this.url, body).toPromise();
+      if (isUsageMemory){
+        const res = await this.http.post(this.url_mem, body).toPromise();
+        return res;
+      }
+      const res =    await this.http.post(this.url_cpu, body).toPromise();
       return res;
 
     }catch (e) {

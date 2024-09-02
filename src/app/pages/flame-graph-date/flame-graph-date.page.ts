@@ -15,6 +15,7 @@ export class FlameGraphDatePage implements OnInit {
 
   dates:string[] = [];
   product:Product = {}
+  usage_type: string | undefined | null = '';
 
   checkedForComparison: string[] = [];
   isCompareButtonEnabled = false;
@@ -39,8 +40,10 @@ export class FlameGraphDatePage implements OnInit {
     // Get product from URL params
     this.route.queryParams.subscribe(params => {
       this.product = JSON.parse(params['product']);
+      this.usage_type = this.route.snapshot.queryParamMap.get('usage_type');
     });
     console.log(this.product.productObjective);
+    console.log(this.usage_type);
 
   }
 
@@ -56,7 +59,11 @@ export class FlameGraphDatePage implements OnInit {
       const user: User = JSON.parse(userString);
       const orgName:string = user.orgName!;
       console.log(orgName);
-      this.dates = await this.flameGraphService.getDates(orgName, this.product.productObjective!);
+      if (this.usage_type === "cpu"){
+        this.usage_type = undefined;
+      }
+      // @ts-ignore
+      this.dates = await this.flameGraphService.getDates(orgName, this.product.productObjective!, this.usage_type);
       console.log(this.dates);
       await this.hideLoading()
 
@@ -72,7 +79,7 @@ export class FlameGraphDatePage implements OnInit {
 
 
   async viewUsageForDate(date: string) {
-    await this.router.navigate(['/flame-graph'], {queryParams: {product: JSON.stringify(this.product), date: date}});
+    await this.router.navigate(['/flame-graph'], {queryParams: {product: JSON.stringify(this.product), date: date, usage_type: this.usage_type}});
   }
 
 
@@ -118,6 +125,6 @@ export class FlameGraphDatePage implements OnInit {
   }
 
   compareDates() {
-    this.router.navigate(['/flame-graph-compare'], {queryParams: {product: JSON.stringify(this.product), dates: JSON.stringify(this.checkedForComparison)}});
+    this.router.navigate(['/flame-graph-compare'], {queryParams: {product: JSON.stringify(this.product), dates: JSON.stringify(this.checkedForComparison), usage_type: this.usage_type}});
   }
 }

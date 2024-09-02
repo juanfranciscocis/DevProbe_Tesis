@@ -43,10 +43,17 @@ The '*ngFor' directive is used to loop over the 'menuItems' array and create a m
       <ion-content>
         <ion-list class="h-full">
           <ion-menu-toggle *ngFor="let item of menuItems" auto-hide="false">
+            @if (item.params){
+              <ion-item (click)="navigate(item)">
+                <ion-icon [name]="item.icon" slot="start"></ion-icon>
+                <ion-label color="primary">{{item.title}}</ion-label>
+              </ion-item>
+            }@else{
             <ion-item  [routerLink]="item.url">
               <ion-icon [name]="item.icon" slot="start"></ion-icon>
               <ion-label color="primary">{{item.title}}</ion-label>
             </ion-item>
+            }
           </ion-menu-toggle>
         </ion-list>
       </ion-content>

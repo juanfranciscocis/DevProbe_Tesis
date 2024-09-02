@@ -37,12 +37,19 @@ export class AppComponent implements OnInit {
     {
       title:'Trace Test',
       url:'/trace-chooser',
-      icon:'radio'
+      icon:'globe'
     },
     {
-      title: 'Flamegraph',
+      title: 'CPU Usage',
       url: '/flame-graph-for',
-      icon: 'flame'
+      params: { usage_type: 'cpu' },
+      icon: 'stats-chart'
+    },
+    {
+      title: 'Memory Usage',
+      url: '/flame-graph-for',
+      params: { usage_type: 'memory_usage' },
+      icon: 'swap-horizontal'
     },
     {
       title: 'My Team',
@@ -75,4 +82,11 @@ export class AppComponent implements OnInit {
       }
     });
   }
+
+  navigate(item: any) {
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate([item.url], { queryParams: item.params || {} });
+      });
+  }
+
 }

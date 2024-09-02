@@ -28,7 +28,7 @@ export class FlameGraphComparePage implements OnInit {
   message: string = '';
   vertexAI: VertexAI = inject(VertexAI);
   model = getGenerativeModel(this.vertexAI, { model: "gemini-1.5-flash" });
-  chat = this.model.startChat({
+  chatCPU = this.model.startChat({
     history: [
       {
         role: "user",
@@ -40,7 +40,29 @@ export class FlameGraphComparePage implements OnInit {
       },
       {
         role: "user",
-        parts: [{text:"Gracias, te voy a entregar un json con datos en unos minutos, necesito que lo analices y me des un resumen de los datos, este json contiene datos de usos de un servidor por día, imagina que " +
+        parts: [{text:"Gracias, te voy a entregar un json con datos en unos minutos, necesito que lo analices y me des un resumen de los datos, este json contiene datos de usos de CPU de un servidor por día, imagina que " +
+            ",tu analisis tiene que ser detallado, si encuentras inconsistencias en los datos, por favor mencionalas, en " +
+            "caso de que creas que puede haber un uso excesivo de algun servicio por favor mencionalo, si encuentras algo interesante, por favor mencionalo, en resumen, necesito un analisis detallado de los datos"}],
+      },
+      {
+        role: "model",
+        parts: [{text:"Claro, envíame el json y yo me encargo de analizarlo"}]
+      },
+    ],
+  });
+  chatMemory = this.model.startChat({
+    history: [
+      {
+        role: "user",
+        parts: [{text:"Hola, desde ahora en adelante quiero que seas un modelo experto en Software Quality Assurance y analista de datos, tu nombre es DevProbeAI, nunca lo puedes olvidar"}],
+      },
+      {
+        role: "model",
+        parts: [{text:"Soy un modelo experto en Software Quality Assurance, de igual forma tengo un masterado en anlaítica de datos ¿En qué puedo ayudarte?"}],
+      },
+      {
+        role: "user",
+        parts: [{text:"Gracias, te voy a entregar un json con datos en unos minutos, necesito que lo analices y me des un resumen de los datos, este json contiene datos de usos de MEMORIA de un servidor por día, imagina que " +
             ",tu analisis tiene que ser detallado, si encuentras inconsistencias en los datos, por favor mencionalas, en " +
             "caso de que creas que puede haber un uso excesivo de algun servicio por favor mencionalo, si encuentras algo interesante, por favor mencionalo, en resumen, necesito un analisis detallado de los datos"}],
       },
@@ -52,6 +74,7 @@ export class FlameGraphComparePage implements OnInit {
   });
   messages:AiMessage[] = []
   wasChatOpen: boolean = false;
+  usage_type: string | null = '';
 
 
   constructor(
@@ -73,72 +96,81 @@ export class FlameGraphComparePage implements OnInit {
 
 
 
-  async getFlameGraph() {
-    try {
-      await this.showLoading();
-      const userString = localStorage.getItem('user');
+async getFlameGraph() {
+  try {
+    await this.showLoading();
+    const userString = localStorage.getItem('user');
 
-      if (!userString) {
-        return;
-      }
-
-      const user: User = JSON.parse(userString);
-      const orgName: string = user.orgName!;
-      console.log(orgName);
-
-      this.configurations = {};
-
-      for (const date of this.datesForComparison) {
-        const flameGraph = await this.flameGraphService.getFlameGraphByDate(orgName, this.product.productObjective!, date);
-        console.log(flameGraph);
-
-        let allRawData: RawData[] = [];
-        let keys = [];
-
-        for (let key in flameGraph) {
-          // @ts-ignore
-          const data_to_transform = flameGraph?.[key];
-          keys = Object.keys(data_to_transform);
-          console.log('keys', keys);
-          const lenKeys = keys.length;
-          const valueKeys = 100 / lenKeys;
-
-          for (let serv in keys) {
-            const children: RawData[] = [];
-            for (let i = 0; i < data_to_transform[keys[serv]].length; i++) {
-              children[i] = this.transformToRawData(data_to_transform[keys[serv]][i]);
-            }
-            console.log('server1', children);
-            const rawData: RawData = {
-              label: keys[serv],
-              value: valueKeys,
-              children: [...children],
-            };
-            allRawData.push(rawData);
-          }
-          console.log('server', allRawData);
-        }
-
-        allRawData = [
-          {
-            label: 'root',
-            value: 100,
-            children: allRawData,
-          },
-        ];
-
-        // Save the configuration for this date
-        this.configurations[date] = { data: allRawData };
-      }
-
-      console.log('Final configurations', this.configurations);
-
-      await this.hideLoading();
-    } catch (e) {
-      console.log(e);
-      await this.hideLoading();
+    if (!userString) {
+      return;
     }
+
+    const user: User = JSON.parse(userString);
+    const orgName: string = user.orgName!;
+    console.log(orgName);
+
+    this.configurations = {};
+
+    for (const date of this.datesForComparison) {
+      let flameGraph;
+      if (this.usage_type === "memory_usage") {
+        flameGraph = await this.flameGraphService.getFlameGraphByDate(orgName, this.product.productObjective!, date, true);
+      } else {
+        flameGraph = await this.flameGraphService.getFlameGraphByDate(orgName, this.product.productObjective!, date);
+      }
+      console.log(flameGraph);
+
+      let allRawData: RawData[] = [];
+      let keys = [];
+
+      for (let key in flameGraph) {
+        // @ts-ignore
+        const data_to_transform = flameGraph?.[key];
+        keys = Object.keys(data_to_transform);
+        console.log('keys', keys);
+        const lenKeys = keys.length;
+        const valueKeys = 100 / lenKeys;
+
+        for (let serv in keys) {
+          const children: RawData[] = [];
+          for (let i = 0; i < data_to_transform[keys[serv]].length; i++) {
+            if (this.usage_type === "memory_usage") {
+              children[i] = this.transformToRawDataMemory(data_to_transform[keys[serv]][i]);
+            } else {
+              children[i] = this.transformToRawDataCPU(data_to_transform[keys[serv]][i]);
+            }
+          }
+          console.log('server1', children);
+          const rawData: RawData = {
+            label: keys[serv],
+            value: valueKeys,
+            children: [...children],
+          };
+          allRawData.push(rawData);
+        }
+        console.log('server', allRawData);
+      }
+
+      allRawData = [
+        {
+          label: 'root',
+          value: 100,
+          children: allRawData,
+        },
+      ];
+
+      // Save the configuration for this date
+      this.configurations[date] = { data: allRawData };
+    }
+
+    console.log('Final configurations', this.configurations);
+
+    await this.hideLoading();
+  } catch (e) {
+    console.log(e);
+    await this.hideLoading();
   }
+}
 
   /**
    * This method gets the product and date from URL parameters.
@@ -148,11 +180,13 @@ export class FlameGraphComparePage implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.product = JSON.parse(params['product']);
       this.datesForComparison = JSON.parse(params['dates']);
+      this.usage_type = this.route.snapshot.queryParamMap.get('usage_type');
     });
 
     this.lenDates = this.datesForComparison.length;
     console.log(this.product.productObjective);
     console.log(this.datesForComparison);
+    console.log(this.usage_type);
 
   }
 
@@ -196,7 +230,7 @@ export class FlameGraphComparePage implements OnInit {
     return sum / numbers.length;
   }
 
-  transformToRawData(json: any): RawData {
+  transformToRawDataCPU(json: any): RawData {
     const cpuUsage = json.cpu_usage ? this.average(json.cpu_usage) : 0;
     const children: RawData[] = [];
 
@@ -216,7 +250,7 @@ export class FlameGraphComparePage implements OnInit {
             const child: RawData = {
               label: subKey,
               value: subCpuUsage,
-              children: this.transformToRawData(subValue).children
+              children: this.transformToRawDataCPU(subValue).children
             };
 
             children.push(child);
@@ -227,7 +261,7 @@ export class FlameGraphComparePage implements OnInit {
           const child: RawData = {
             label: key,
             value: childCpuUsage,
-            children: this.transformToRawData(value).children
+            children: this.transformToRawDataCPU(value).children
           };
 
           children.push(child);
@@ -244,6 +278,58 @@ export class FlameGraphComparePage implements OnInit {
     return {
       label: json.id,
       value: cpuUsage,
+      children: children
+    };
+  }
+
+  transformToRawDataMemory(json: any): RawData {
+    const memoryUsage = json.memory_usage ? this.average(json.memory_usage) : 0;
+    const children: RawData[] = [];
+
+    // Loop through each key in the object
+    for (const key in json) {
+      if (key === "id" || key === "memory_usage") continue;
+
+      const value = json[key];
+
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        // If the key is "sub_services", handle its children directly
+        if (key === "sub_services") {
+          for (const subKey in value) {
+            const subValue = value[subKey];
+            const subMemoryUsage = subValue.memory_usage ? this.average(subValue.memory_usage) : 0;
+
+            const child: RawData = {
+              label: subKey,
+              value: subMemoryUsage,
+              children: this.transformToRawDataMemory(subValue).children
+            };
+
+            children.push(child);
+          }
+        } else {
+          const childMemoryUsage = value.memory_usage ? this.average(value.memory_usage) : 0;
+
+          const child: RawData = {
+            label: key,
+            value: childMemoryUsage,
+            children: this.transformToRawDataMemory(value).children
+          };
+
+          children.push(child);
+        }
+      } else if (typeof value !== 'object') {
+        children.push({
+          label: key,
+          value: 0,
+          children: []
+        });
+      }
+    }
+
+    return {
+      label: json.id,
+      value: memoryUsage,
       children: children
     };
   }
@@ -293,7 +379,12 @@ export class FlameGraphComparePage implements OnInit {
     if (this.aiAnalytic.length <= 0) {
       await this.showLoading();
       const data = JSON.stringify(this.configurations);
-      const result = await this.chat.sendMessage(data);
+      let result;
+      if (this.usage_type === 'memory_usage') {
+        result = await this.chatMemory.sendMessage(data);
+      }else {
+        result = await this.chatCPU.sendMessage(data);
+      }
       const length = this.messages.length;
       this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
       this.aiAnalytic.push({message: result.response.text(), from: 'AI', id: length.toString()});
@@ -303,7 +394,12 @@ export class FlameGraphComparePage implements OnInit {
       return;
     }
 
-    const result = await this.chat.sendMessage(this.message);
+    let result;
+    if (this.usage_type === 'memory_usage') {
+      result = await this.chatMemory.sendMessage(this.message);
+    }else {
+      result = await this.chatCPU.sendMessage(this.message);
+    }
     const length = this.messages.length;
     this.messages.push({message: this.message, from: 'User', id: length.toString()});
     this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});

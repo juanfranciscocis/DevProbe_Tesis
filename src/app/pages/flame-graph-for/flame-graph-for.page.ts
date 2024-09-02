@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Product} from "../../interfaces/product";
 import {ProductService} from "../../services/product.service";
 import {AlertController, LoadingController} from "@ionic/angular";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {User} from "../../interfaces/user";
 import {FlameGraphService} from "../../services/flame-graph.service";
 
@@ -15,11 +15,13 @@ import {FlameGraphService} from "../../services/flame-graph.service";
 export class FlameGraphForPage implements OnInit {
 
   products:Product[] = [];
+  usage_type: string | null = '';
 
   constructor(
     private flameGraphService: FlameGraphService,
     private loadingCtrl: LoadingController,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
   ) {}
 
   async ionViewWillEnter() {
@@ -28,15 +30,22 @@ export class FlameGraphForPage implements OnInit {
 
   async getProducts(){
     try {
-      await this.showLoading()
       const userString = localStorage.getItem('user');
-
       if (!userString) {
         return;
       }
-
       const user: User = JSON.parse(userString);
       const orgName:string = user.orgName!;
+
+
+       this.usage_type = this.activatedRoute.snapshot.queryParamMap.get('usage_type');
+       //if null set to default
+      if(this.usage_type === null){
+        this.usage_type = '';
+      }
+      console.log(this.usage_type);
+
+
       this.products = await this.flameGraphService.getProducts(orgName);
 
       //if no products, add a default product
@@ -48,14 +57,14 @@ export class FlameGraphForPage implements OnInit {
       }
 
 
-      await this.hideLoading()
+
     }catch (e) {
       console.log(e);
     }
   }
 
   async viewDatesForProduct(product: Product) {
-    await this.router.navigate(['/flame-graph-date'], {queryParams: {product: JSON.stringify(product)}});
+    await this.router.navigate(['/flame-graph-date'], {queryParams: {product: JSON.stringify(product), usage_type: this.usage_type}});
   }
 
 
@@ -65,26 +74,12 @@ export class FlameGraphForPage implements OnInit {
     event.target.complete();
   }
 
-  /**
-   * Show a loading spinner.
-   */
-  async showLoading() {
-    const loading = await this.loadingCtrl.create({
-    });
-    await loading.present();
-  }
-
-  /**
-   * Hide the loading spinner.
-   */
-  async hideLoading() {
-    await this.loadingCtrl.dismiss();
-  }
 
   viewProduct(product: Product) {
 
   }
 
   ngOnInit(): void {
+
   }
 }
