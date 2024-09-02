@@ -52,6 +52,11 @@ export class AppComponent implements OnInit {
       icon: 'swap-horizontal'
     },
     {
+      title: 'Software Testing',
+      url: '/software-testing',
+      icon: 'flask'
+    },
+    {
       title: 'My Team',
       url: '/myteam',
       icon: 'people'

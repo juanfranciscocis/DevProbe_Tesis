@@ -1,0 +1,76 @@
+<app-header-return [title]="'Create System Test'"></app-header-return>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <app-title [title]="'Create System Test'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <p>Fill the test from to create a system test.</p>
+        <p></p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card class="min-h-full flex flex-col p-8">
+          <ion-card-title class="bg-gray-600 p-2">
+            <ion-input placeholder="Test Title" type="text" class="text-3xl" [(ngModel)]="systemTest.title" ></ion-input>
+          </ion-card-title>
+          <br>
+          <ion-card-title class="bg-gray-600 p-2">
+            <ion-textarea placeholder="Test Description" type="text" class="text-sm" [(ngModel)]="systemTest.description"></ion-textarea>
+          </ion-card-title>
+          <br>
+          <ion-card-title class="">
+            <div class="flex flex-row items-center ">
+              <h1 class="text-4xl">Test Steps...</h1>
+              <div class="flex flex-row items-center bg-cyan-800 m-4 p-1" id="open-modal">
+                <ion-icon name="add"></ion-icon>
+              </div>
+            </div>
+          </ion-card-title>
+          <ion-card-content class="bg-gray-600">
+            <ion-list>
+              @for (step of systemTest["steps"] ; track testStepTitle){
+              <ion-item>
+                <ion-label>
+                  <h1>{{step.stepTitle}}</h1>
+                  <p>{{step.expectedResults}}</p>
+                </ion-label>
+                <ion-icon aria-hidden="true" name="trash" slot="end" (click)="delete(step.stepTitle)"></ion-icon>
+              </ion-item>
+              }
+            </ion-list>
+          </ion-card-content>
+          <br>
+          <ion-button color="primary" expand="block" fill="outline" (click)="createSystemTest()">Create System Test</ion-button>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-modal trigger="open-modal" (willDismiss)="onWillDismiss($event)">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="cancel()">Cancel</ion-button>
+          </ion-buttons>
+          <ion-title>Add Test Step</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="save()">Save</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="flex flex-col justify-center items-center">
+        <ion-card class="m-2 p-2">
+            <ion-label>Step</ion-label>
+            <ion-input type="text" [(ngModel)]="testStepTitle"></ion-input>
+          <br>
+            <ion-label>Expected</ion-label>
+            <ion-input type="text" [(ngModel)]="testExpectedResults"></ion-input>
+        </ion-card>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+</ion-content>

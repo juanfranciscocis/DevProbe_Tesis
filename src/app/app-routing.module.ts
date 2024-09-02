@@ -134,6 +134,26 @@ const routes: Routes = [
     path: 'render-restart',
     loadChildren: () => import('./pages/render-restart/render-restart.module').then( m => m.RenderRestartPageModule)
   },
+  {
+    path: 'software-testing',
+    loadChildren: () => import('./pages/software-testing/software-testing.module').then( m => m.SoftwareTestingPageModule)
+  },
+  {
+    path: 'system-tests',
+    loadChildren: () => import('./pages/system-tests/system-tests.module').then( m => m.SystemTestsPageModule)
+  },
+  {
+    path: 'create-system-test',
+    loadChildren: () => import('./pages/create-system-test/create-system-test.module').then( m => m.CreateSystemTestPageModule)
+  },
+  {
+    path: 'execute-system-test',
+    loadChildren: () => import('./pages/execute-system-test/execute-system-test.module').then( m => m.ExecuteSystemTestPageModule)
+  },
+  {
+    path: 'software-testing-chooser',
+    loadChildren: () => import('./pages/software-testing-chooser/software-testing-chooser.module').then( m => m.SoftwareTestingChooserPageModule)
+  },
 ];
 
 @NgModule({
