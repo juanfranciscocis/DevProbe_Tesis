@@ -1,7 +1,9 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {SystemTest} from "../../interfaces/system-test";
-import {AlertController, IonModal} from "@ionic/angular";
+import {AlertController, IonModal, LoadingController} from "@ionic/angular";
+import {SystemTestService} from "../../services/system-test.service";
+import {User} from "../../interfaces/user";
 
 @Component({
   selector: 'app-create-system-test',
@@ -24,9 +26,14 @@ export class CreateSystemTestPage implements OnInit {
 
   @ViewChild(IonModal) modal: IonModal | undefined;
 
+  private user: User = {};
+  private orgName: string = '';
+
   constructor(
     private activatedRoute: ActivatedRoute,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private systemTestService: SystemTestService,
+    private loadingCtrl: LoadingController
   ) { }
 
   ngOnInit() {
@@ -92,15 +99,59 @@ export class CreateSystemTestPage implements OnInit {
   }
 
 
-  createSystemTest() {
+  async createSystemTest() {
+    await this.showLoading();
     console.log(this.systemTest);
+
     if (!this.systemTest.title || !this.systemTest.description || this.systemTest.steps.length === 0) {
+      await this.hideLoading()
       this.showAlert('Please fill out the title, description, and at least one step.', 'Error').then(r =>
         console.log('Alert shown'));
       return;
     }
 
     // Save the system test to the database
+    const userString = localStorage.getItem('user');
+    if (!userString) return;
+
+    this.user = JSON.parse(userString);
+    this.orgName = this.user.orgName!;
+
+    console.log(this.orgName);
+    this.systemTestService.addSystemTest(this.orgName, this.productObjective, this.productStep, this.systemTest);
+
+    this.systemTest = {
+      title: '',
+      description: '',
+      steps: [],
+      type: 'system-test',
+      state: false
+    }
+
+    await this.hideLoading();
+
+
+  }
+
+  /**
+   * Show a loading spinner.
+   */
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+    });
+    await loading.present();
+  }
+
+  /**
+   * Hide the loading spinner.
+   */
+  async hideLoading() {
+    await this.loadingCtrl.dismiss();
+  }
+
+
+  doRefresh($event: any) {
+
 
   }
 }

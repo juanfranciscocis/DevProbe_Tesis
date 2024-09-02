@@ -1,6 +1,6 @@
 export interface Product {
   productObjective?: string;
-  productSteps?: string[];
+  productSteps?:string[];
   productServices?: string[];
   productSLOs?: string[];
 }

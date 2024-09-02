@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Product} from "../../interfaces/product";
+import {SystemTestService} from "../../services/system-test.service";
+import {SystemTest} from "../../interfaces/system-test";
+import {User} from "../../interfaces/user";
 
 @Component({
   selector: 'app-software-testing-chooser',
@@ -9,12 +12,15 @@ import {Product} from "../../interfaces/product";
 })
 export class SoftwareTestingChooserPage implements OnInit {
   productStep: string = '';
-  tests: string[] = ['Latency Test', 'Trace Test', 'CPU Usage', 'Memory Usage'];
+  systemTests: SystemTest[] = [];
   productObjective: string = '';
+  private user: User = {};
+  private orgName: string = '';
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private systemTestService: SystemTestService
   ) { }
 
   ngOnInit() {
@@ -22,6 +28,8 @@ export class SoftwareTestingChooserPage implements OnInit {
 
   ionViewWillEnter() {
     this.getProductFromParams();
+    this.getSystemTests();
+
   }
 
   /**
@@ -43,5 +51,26 @@ export class SoftwareTestingChooserPage implements OnInit {
       productObjective: this.productObjective,
       step: this.productStep
     }]);
+  }
+
+  getSystemTests() {
+    // Get User from local storage
+    const userString = localStorage.getItem('user');
+    if (!userString) return;
+
+    this.user = JSON.parse(userString);
+    this.orgName = this.user.orgName!;
+
+
+    // Get system tests from the service
+    this.systemTestService.getSystemTest(this.orgName, this.productObjective, this.productStep).then(r => {
+      this.systemTests = r;
+    });
+  }
+
+
+  doRefresh($event: any) {
+    this.getSystemTests();
+    $event.target.complete();
   }
 }
