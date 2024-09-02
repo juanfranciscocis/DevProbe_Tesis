@@ -1,5 +1,5 @@
 import {Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
-import { RawData } from "ngx-flamegraph/lib/utils";
+import {FlamegraphColor, RawData} from "ngx-flamegraph/lib/utils";
 import { Product } from "../../interfaces/product";
 import { FlameGraphService } from "../../services/flame-graph.service";
 import { LoadingController } from "@ionic/angular";
@@ -18,7 +18,12 @@ export class FlameGraphComparePage implements OnInit {
   product: Product = {};
   datesForComparison: string[] = [];
   lenDates: number = 0;
-  configurations: { [key: string]: { data: RawData[] } } = {};
+  configurations: { [key: string]: { data: RawData[], color:FlamegraphColor } } = {};
+  color: FlamegraphColor = {
+    hue: [50, 0],
+    saturation: [80, 80],
+    lightness: [55, 60]
+  };
 
 
 
@@ -83,9 +88,13 @@ export class FlameGraphComparePage implements OnInit {
     private route: ActivatedRoute,
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.configurations = {};
+  }
 
   ionViewWillEnter() {
+    this.configurations = {};
+    this.datesForComparison = [];
     this.getProductAndDatesFromParams();
     this.getFlameGraph().then(() => {
       this.sendMessage().then(() => {
@@ -115,8 +124,19 @@ async getFlameGraph() {
       let flameGraph;
       if (this.usage_type === "memory_usage") {
         flameGraph = await this.flameGraphService.getFlameGraphByDate(orgName, this.product.productObjective!, date, true);
+        this.color = {
+          hue: [140, 100], // Green hue
+          saturation: [60, 60],
+          lightness: [ 60,30]
+        };
       } else {
         flameGraph = await this.flameGraphService.getFlameGraphByDate(orgName, this.product.productObjective!, date);
+
+        this.color = {
+          hue: [50, 0],
+          saturation: [80, 80],
+          lightness: [55, 60]
+        };
       }
       console.log(flameGraph);
 
@@ -160,7 +180,7 @@ async getFlameGraph() {
       ];
 
       // Save the configuration for this date
-      this.configurations[date] = { data: allRawData };
+      this.configurations[date] = { data: allRawData, color: this.color };
     }
 
     console.log('Final configurations', this.configurations);

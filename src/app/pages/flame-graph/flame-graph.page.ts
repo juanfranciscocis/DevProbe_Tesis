@@ -76,7 +76,7 @@ async getFlameGraph() {
       this.color = {
         hue: [140, 100], // Green hue
         saturation: [60, 60],
-        lightness: [ 75,75]
+        lightness: [ 60,30]
       };
     } else {
       flameGraph = await this.flameGraphService.getFlameGraphByDate(orgName, this.product.productObjective!, this.date);
