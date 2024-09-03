@@ -13,44 +13,48 @@ import {EChartsOption} from "echarts";
   styleUrls: ['./software-testing-chooser.page.scss'],
 })
 export class SoftwareTestingChooserPage implements OnInit {
+
   productStep: string = '';
-  systemTests: SystemTest[] = [];
   productObjective: string = '';
+
   private user: User = {};
   private orgName: string = '';
 
-  passed: number = 0;
-  failed: number = 0;
+
+  systemTests: SystemTest[] = [];
+
+  passedSystemTests: number = 0;
+  failedSystemTests: number = 0;
 
   systemTestsChart: EChartsOption = {
-  tooltip: {
-    trigger: 'axis'
-  },
-  legend: {
-    data: ['Passed', 'Failed'],
-    left: 'left'
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    data: [] // This will be populated with execution dates
-  },
-  yAxis: {
-    type: 'value'
-  },
-  series: [
-    {
-      name: 'Passed',
-      type: 'line',
-      data: [] // This will be populated with the number of passed tests
+    tooltip: {
+      trigger: 'axis'
     },
-    {
-      name: 'Failed',
-      type: 'line',
-      data: [] // This will be populated with the number of failed tests
-    }
-  ]
-};
+    legend: {
+      data: ['Passed', 'Failed'],
+      left: 'left'
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: [] // This will be populated with execution dates
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: 'Passed',
+        type: 'line',
+        data: [] // This will be populated with the number of passed tests
+      },
+      {
+        name: 'Failed',
+        type: 'line',
+        data: [] // This will be populated with the number of failed tests
+      },
+    ]
+  };
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -65,8 +69,8 @@ export class SoftwareTestingChooserPage implements OnInit {
   async ionViewWillEnter() {
     this.getProductFromParams();
     await this.getSystemTests();
-    await this.calculatePassed();
-    await this.calculateGraphData();
+    await this.calculatePassedSystemTests();
+    await this.calculateGraphDataSystemTests();
   }
 
   /**
@@ -82,6 +86,10 @@ export class SoftwareTestingChooserPage implements OnInit {
     console.log(this.productStep);
   }
 
+
+  /**
+   * Methods to navigate.
+   */
   navigateToCreateSystemTest() {
     // Navigate to the system test creation page
     this.router.navigate(['/create-system-test', {
@@ -89,31 +97,6 @@ export class SoftwareTestingChooserPage implements OnInit {
       step: this.productStep
     }]);
   }
-
-  async getSystemTests() {
-    await this.showLoading()
-    // Get User from local storage
-    const userString = localStorage.getItem('user');
-    if (!userString) return;
-
-    this.user = JSON.parse(userString);
-    this.orgName = this.user.orgName!;
-
-
-    // Get system tests from the service
-    this.systemTestService.getSystemTest(this.orgName, this.productObjective, this.productStep).then(r => {
-      this.systemTests = r;
-    });
-
-    await this.hideLoading();
-  }
-
-
-  doRefresh($event: any) {
-    this.getSystemTests();
-    $event.target.complete();
-  }
-
   navigateToExecuteTest(testTitle:string) {
     this.router.navigate(['/execute-system-test', {
       productObjective: this.productObjective,
@@ -122,18 +105,21 @@ export class SoftwareTestingChooserPage implements OnInit {
     }]);
   }
 
-  async calculatePassed() {
+  /**
+   * Methods to calculate the number of passed and failed system tests.
+   */
+  async calculatePassedSystemTests() {
     await this.showLoading();
 
-    this.passed = 0;
-    this.failed = 0;
+    this.passedSystemTests = 0;
+    this.failedSystemTests = 0;
     await this.systemTestService.getSystemTestHistoryByStep(this.orgName, this.productObjective, this.productStep).then(r => {
       r.forEach((test: { state: boolean; }) => {
         if (test.state) {
-          this.passed++;
+          this.passedSystemTests++;
         }
         else {
-          this.failed++;
+          this.failedSystemTests++;
         }
       });
     });
@@ -142,34 +128,10 @@ export class SoftwareTestingChooserPage implements OnInit {
   }
 
   /**
-   * Show a loading spinner.
+   * Methods to calculate the data for the graph.
+   * @returns {Promise<void>}
    */
-  async showLoading() {
-    const loading = await this.loadingCtrl.create({
-    });
-    await loading.present();
-  }
-
-  /**
-   * Hide the loading spinner.
-   */
-  async hideLoading() {
-    await this.loadingCtrl.dismiss();
-  }
-
-
-  async deleteTest(title: string) {
-    let systemTest = this.systemTests.find((systemTest: { title: string; }) => systemTest.title === title);
-    if (!systemTest) return;
-    await this.systemTestService.deleteSystemTest(this.orgName, this.productObjective, this.productStep,systemTest).then(async () => {
-      await this.getSystemTests();
-    });
-    await this.calculatePassed();
-    await this.calculateGraphData();
-  }
-
-
-  async calculateGraphData() {
+  async calculateGraphDataSystemTests() {
     await this.showLoading();
     // Get the system test history
     await this.systemTestService.getSystemTestHistory(this.orgName, this.productObjective).then(r => {
@@ -240,5 +202,71 @@ export class SoftwareTestingChooserPage implements OnInit {
     });
     await this.hideLoading();
   }
+
+
+  /**
+   * Methods to show tests in each section.
+   */
+  async getSystemTests() {
+    await this.showLoading()
+    // Get User from local storage
+    const userString = localStorage.getItem('user');
+    if (!userString) return;
+
+    this.user = JSON.parse(userString);
+    this.orgName = this.user.orgName!;
+
+
+    // Get system tests from the service
+    this.systemTestService.getSystemTest(this.orgName, this.productObjective, this.productStep).then(r => {
+      this.systemTests = r;
+    });
+
+    await this.hideLoading();
+  }
+
+
+
+
+
+  async deleteTest(title: string) {
+    let systemTest = this.systemTests.find((systemTest: { title: string; }) => systemTest.title === title);
+    if (!systemTest) return;
+    await this.systemTestService.deleteSystemTest(this.orgName, this.productObjective, this.productStep,systemTest).then(async () => {
+      await this.getSystemTests();
+    });
+    await this.calculatePassedSystemTests();
+    await this.calculateGraphDataSystemTests();
+  }
+
+  /**
+   * Show a loading spinner.
+   */
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+    });
+    await loading.present();
+  }
+
+  /**
+   * Hide the loading spinner.
+   */
+  async hideLoading() {
+    await this.loadingCtrl.dismiss();
+  }
+
+  /**
+   * Refresh the data.
+   * @param $event
+   */
+  doRefresh($event: any) {
+    this.getSystemTests();
+    $event.target.complete();
+  }
+
+
+
+
+
 
 }
