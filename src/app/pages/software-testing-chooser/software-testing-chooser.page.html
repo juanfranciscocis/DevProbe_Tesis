@@ -47,12 +47,59 @@
         </ion-card>
       </ion-col>
     </ion-row>
-    <app-title [title]="'Created Tests'"></app-title>
+  </ion-grid>
+    <ion-grid>
+      <app-title [title]="'Unit Tests'"></app-title>
+      <ion-row class="lg:m-10 md:m-10">
+        <ion-col size="12" size-md="4" size-lg="4" class="">
+          <p>Created tests for product step: {{productStep}}</p>
+        </ion-col>
+      </ion-row>
+      <app-title [title]="'Integration Tests'"></app-title>
+      <ion-row class="lg:m-10 md:m-10">
+        <ion-col size="12" size-md="4" size-lg="4" class="">
+          <p>Created tests for product step: {{productStep}}</p>
+        </ion-col>
+      </ion-row>
+      <app-title [title]="'System Tests'"></app-title>
     <ion-row class="lg:m-10 md:m-10">
       <ion-col size="12" size-md="4" size-lg="4" class="">
-        <p>Created tests for product step: {{productStep}}</p>
+        <p>System tests results for product step: {{productStep}}</p>
       </ion-col>
     </ion-row>
+      <ion-row class="lg:m-10 md:m-10">
+        <ion-col size="6" size-md="6" size-lg="6" class="">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title class="flex flex-col justify-center items-center text-green-600">Passed Tests</ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="flex flex-col justify-center items-center">
+              <h1>{{passed}}</h1>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6" size-md="6" size-lg="6" class="">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title class="flex flex-col justify-center items-center text-red-800">Failed Tests</ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="flex flex-col justify-center items-center">
+              <h1>{{ failed }}</h1>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card>
+          <ion-card-content class="h-[25em]">
+            <div echarts [options]="systemTestsChart" class="demo-chart h-full w-full p-4"></div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
     <ion-row class="lg:m-10 md:m-10">
       <ion-col size="12" size-md="3" size-lg="3" class="" *ngFor="let test of systemTests">
         <ion-card>
@@ -60,10 +107,14 @@
             <ion-card-title>{{ test.title }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ion-button color="primary" expand="block" [routerLink]="['/execute-system-test']">Execute Test</ion-button>
+            <ion-button color="primary" expand="block" (click)="navigateToExecuteTest(test.title)">View Test Results</ion-button>
+            <ion-button color="primary" expand="block" (click)="navigateToExecuteTest(test.title)">Execute Test</ion-button>
+            <ion-button color="danger" expand="block" (click)="deleteTest(test.title)">Delete Test</ion-button>
           </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>
 </ion-content>
+
+

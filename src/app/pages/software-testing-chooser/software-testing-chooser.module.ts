@@ -8,6 +8,8 @@ import { SoftwareTestingChooserPageRoutingModule } from './software-testing-choo
 
 import { SoftwareTestingChooserPage } from './software-testing-chooser.page';
 import {ComponentsModule} from "../../components/components.module";
+import {NgxEchartsDirective} from "ngx-echarts";
+import {GraphPageRoutingModule} from "../graph-latency/graph-latency-routing.module";
 
 @NgModule({
     imports: [
@@ -15,7 +17,8 @@ import {ComponentsModule} from "../../components/components.module";
         FormsModule,
         IonicModule,
         SoftwareTestingChooserPageRoutingModule,
-        ComponentsModule
+        ComponentsModule,
+        NgxEchartsDirective,
     ],
   declarations: [SoftwareTestingChooserPage]
 })

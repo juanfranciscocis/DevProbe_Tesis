@@ -1,11 +1,41 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>execute_system_test</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header-return [title]="'Execute System Test'"></app-header-return>
 
 <ion-content [fullscreen]="true">
-  <ion-row>
+  <ion-grid>
     <app-title [title]="'Execute System Test'"></app-title>
-  </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card class="min-h-full flex flex-col p-8">
+          <ion-card-title class=" p-2">
+            <ion-label  class="text-4xl text-white font-bold">{{systemTest.title}}</ion-label>
+          </ion-card-title>
+          <br>
+          <ion-card-title class=" p-2">
+            <ion-label class="text-xl">{{systemTest.description}}</ion-label>
+          </ion-card-title>
+          <br>
+            <ion-list>
+              @for (step of systemTest["steps"] ; track systemTest.title){
+                <ion-item>
+                  <ion-label>
+                    <h1>{{step.stepTitle}}</h1>
+                    <p>{{step.expectedResults}}</p>
+                  </ion-label>
+                  @if (step.isComplete){
+                  <ion-icon aria-hidden="true" name="checkmark-circle" slot="end" color="success" (click)="okClick(step.stepTitle)"></ion-icon>
+                  <ion-icon aria-hidden="true" name="close-circle" slot="end" (click)="badClick(step.stepTitle)"></ion-icon>
+                  }
+                  @if (!step.isComplete){
+                  <ion-icon aria-hidden="true" name="checkmark-circle" slot="end" (click)="okClick(step.stepTitle)"></ion-icon>
+                  <ion-icon aria-hidden="true" name="close-circle" slot="end" color="danger" (click)="badClick(step.stepTitle)"></ion-icon>
+                  }
+                </ion-item>
+              }
+            </ion-list>
+          <br>
+          <ion-button color="primary" expand="block" fill="outline" (click)="save()">Save</ion-button>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
