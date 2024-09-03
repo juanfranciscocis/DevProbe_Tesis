@@ -13,17 +13,17 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule),
+    loadChildren: () => import('./pages/main_graphs/home/home.module').then(m => m.HomePageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'register',
-    loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule),
+    loadChildren: () => import('./pages/login_register/register/register.module').then(m => m.RegisterPageModule),
       ...canActivate(redirectLoggedInToHome)
   },
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule),
+    loadChildren: () => import('./pages/login_register/login/login.module').then(m => m.LoginPageModule),
     ...canActivate(redirectLoggedInToHome)
 
   },
@@ -34,72 +34,72 @@ const routes: Routes = [
   },
   {
     path: 'model-product',
-    loadChildren: () => import('./pages/model-product/model-product.module').then( m => m.ModelProductPageModule),
+    loadChildren: () => import('./pages/model_the_product/model-product/model-product.module').then(m => m.ModelProductPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'new-product',
-    loadChildren: () => import('./pages/new-product/new-product.module').then( m => m.NewProductPageModule),
+    loadChildren: () => import('./pages/model_the_product/new-product/new-product.module').then(m => m.NewProductPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'view-product',
-    loadChildren: () => import('./pages/view-product/view-product.module').then( m => m.ViewProductPageModule),
+    loadChildren: () => import('./pages/model_the_product/view-product/view-product.module').then(m => m.ViewProductPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'show-map',
-    loadChildren: () => import('./pages/show-map/show-map.module').then( m => m.ShowMapPageModule),
+    loadChildren: () => import('./pages/latency_test/show-map/show-map.module').then(m => m.ShowMapPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'latency-test',
-    loadChildren: () => import('./pages/latency-test/latency-test.module').then( m => m.LatencyTestPageModule),
+    loadChildren: () => import('./pages/latency_test/latency-test/latency-test.module').then(m => m.LatencyTestPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'latency-chooser',
-    loadChildren: () => import('./pages/latency-chooser/latency-chooser.module').then( m => m.LatencyChooserPageModule),
+    loadChildren: () => import('./pages/latency_test/latency-chooser/latency-chooser.module').then(m => m.LatencyChooserPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'latency-results',
-    loadChildren: () => import('./pages/latency-results/latency-results.module').then( m => m.LatencyResultsPageModule),
+    loadChildren: () => import('./pages/latency_test/latency-results/latency-results.module').then(m => m.LatencyResultsPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'graph-latency',
-    loadChildren: () => import('./pages/graph-latency/graph-latency.module').then(m => m.GraphPageModule),
+    loadChildren: () => import('./pages/main_graphs/latency_graph/graph-latency/graph-latency.module').then(m => m.GraphPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'trace-chooser',
-    loadChildren: () => import('./pages/trace-chooser/trace-chooser.module').then( m => m.TraceChooserPageModule),
+    loadChildren: () => import('./pages/trace_test/trace-chooser/trace-chooser.module').then(m => m.TraceChooserPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'trace-test',
-    loadChildren: () => import('./pages/trace-test/trace-test.module').then( m => m.TraceTestPageModule),
+    loadChildren: () => import('./pages/trace_test/trace-test/trace-test.module').then(m => m.TraceTestPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'trace-results',
-    loadChildren: () => import('./pages/trace-results/trace-results.module').then( m => m.TraceResultsPageModule),
+    loadChildren: () => import('./pages/trace_test/trace-results/trace-results.module').then(m => m.TraceResultsPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'show-map-trace',
-    loadChildren: () => import('./pages/show-map-trace/show-map-trace.module').then( m => m.ShowMapTracePageModule),
+    loadChildren: () => import('./pages/trace_test/show-map-trace/show-map-trace.module').then(m => m.ShowMapTracePageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'graph-data-for',
-    loadChildren: () => import('./pages/graph-data-for/graph-data-for.module').then( m => m.GraphDataForPageModule),
+    loadChildren: () => import('./pages/main_graphs/graph-data-for/graph-data-for.module').then(m => m.GraphDataForPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'graph-trace',
-    loadChildren: () => import('./pages/graph-trace/graph-trace.module').then( m => m.GraphTracePageModule),
+    loadChildren: () => import('./pages/main_graphs/traceroute_graph/graph-trace/graph-trace.module').then(m => m.GraphTracePageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
@@ -109,42 +109,42 @@ const routes: Routes = [
   },
   {
     path: 'flame-graph',
-    loadChildren: () => import('./pages/flame-graph/flame-graph.module').then( m => m.FlameGraphPageModule),
+    loadChildren: () => import('./pages/flame_graph/flame-graph/flame-graph.module').then(m => m.FlameGraphPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'flame-graph-for',
-    loadChildren: () => import('./pages/flame-graph-for/flame-graph-for.module').then( m => m.FlameGraphForPageModule),
+    loadChildren: () => import('./pages/flame_graph/flame-graph-for/flame-graph-for.module').then(m => m.FlameGraphForPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'flame-graph-date',
-    loadChildren: () => import('./pages/flame-graph-date/flame-graph-date.module').then( m => m.FlameGraphDatePageModule),
+    loadChildren: () => import('./pages/flame_graph/flame-graph-date/flame-graph-date.module').then(m => m.FlameGraphDatePageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'flame-graph-compare',
-    loadChildren: () => import('./pages/flame-graph-compare/flame-graph-compare.module').then( m => m.FlameGraphComparePageModule),
+    loadChildren: () => import('./pages/flame_graph/flame-graph-compare/flame-graph-compare.module').then(m => m.FlameGraphComparePageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'software-testing',
-    loadChildren: () => import('./pages/software-testing/software-testing.module').then( m => m.SoftwareTestingPageModule),
+    loadChildren: () => import('./pages/software_testing/software-testing/software-testing.module').then(m => m.SoftwareTestingPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'software-testing-chooser',
-    loadChildren: () => import('./pages/software-testing-chooser/software-testing-chooser.module').then( m => m.SoftwareTestingChooserPageModule),
+    loadChildren: () => import('./pages/software_testing/software-testing-chooser/software-testing-chooser.module').then(m => m.SoftwareTestingChooserPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'create-system-test',
-    loadChildren: () => import('./pages/create-system-test/create-system-test.module').then( m => m.CreateSystemTestPageModule),
+    loadChildren: () => import('./pages/software_testing/system_tests/create-system-test/create-system-test.module').then(m => m.CreateSystemTestPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'execute-system-test',
-    loadChildren: () => import('./pages/execute-system-test/execute-system-test.module').then( m => m.ExecuteSystemTestPageModule),
+    loadChildren: () => import('./pages/software_testing/system_tests/execute-system-test/execute-system-test.module').then(m => m.ExecuteSystemTestPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
 
@@ -166,11 +166,11 @@ const routes: Routes = [
   },
   {
     path: 'view-history-system-test',
-    loadChildren: () => import('./pages/view-history-system-test/view-history-system-test.module').then( m => m.ViewHistorySystemTestPageModule)
+    loadChildren: () => import('./pages/software_testing/system_tests/view-history-system-test/view-history-system-test.module').then(m => m.ViewHistorySystemTestPageModule)
   },
   {
     path: 'view-system-test',
-    loadChildren: () => import('./pages/view-system-test/view-system-test.module').then( m => m.ViewSystemTestPageModule)
+    loadChildren: () => import('./pages/software_testing/system_tests/view-system-test/view-system-test.module').then(m => m.ViewSystemTestPageModule)
   },
 
 ];
