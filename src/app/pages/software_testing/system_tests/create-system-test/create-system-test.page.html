@@ -13,17 +13,28 @@
       <ion-col size="12" size-md="12" size-lg="12" class="">
         <ion-card class="min-h-full flex flex-col p-8">
           <ion-card-title class="bg-gray-600 p-2">
+            <div class="flex flex-row items-center w-full">
+            <div class="w-full m-2">
             <ion-input placeholder="Test Title" type="text" class="text-3xl" [(ngModel)]="systemTest.title" ></ion-input>
+            </div>
+            </div>
           </ion-card-title>
           <br>
           <ion-card-title class="bg-gray-600 p-2">
-            <ion-textarea placeholder="Test Description" type="text" class="text-sm" [(ngModel)]="systemTest.description"></ion-textarea>
+            <div class="flex flex-row items-center w-full">
+              <div class="w-full m-2">
+                <ion-textarea placeholder="Test Description" type="text" class="text-sm" [(ngModel)]="systemTest.description"></ion-textarea>
+              </div>
+              <div class=" rounded-full p-3 bg-purple-800">
+                <ion-icon name="color-wand-outline" (click)="askAIForHelp('description')"></ion-icon>
+              </div>
+            </div>
           </ion-card-title>
           <br>
           <ion-card-title class="">
             <div class="flex flex-row items-center ">
               <h1 class="text-4xl">Test Steps...</h1>
-              <div class="flex flex-row items-center bg-cyan-800 m-4 p-1" id="open-modal">
+              <div class="flex flex-row items-center bg-cyan-800 m-4 p-1" id="open-modal" (click)="chatStyle()">
                 <ion-icon name="add"></ion-icon>
               </div>
             </div>
@@ -48,7 +59,7 @@
     </ion-row>
   </ion-grid>
 
-  <ion-modal trigger="open-modal" (willDismiss)="onWillDismiss($event)">
+  <ion-modal trigger="open-modal" (willPresent)="chatStyle()" (willDismiss)="onWillDismiss($event)">
     <ng-template>
       <ion-header>
         <ion-toolbar>
@@ -64,10 +75,44 @@
       <ion-content class="flex flex-col justify-center items-center">
         <ion-card class="m-2 p-2">
             <ion-label>Step</ion-label>
+          <div class="flex-row flex justify-center items-center w-full">
+            <div class="w-full m-2">
             <ion-input type="text" [(ngModel)]="testStepTitle"></ion-input>
+            </div>
+          </div>
           <br>
-            <ion-label>Expected</ion-label>
+          <ion-label>Expected</ion-label>
+          <div class="flex-row flex justify-center items-center w-full">
+            <div class="w-full m-2">
             <ion-input type="text" [(ngModel)]="testExpectedResults"></ion-input>
+            </div>
+          </div>
+        </ion-card>
+        <ion-card>
+          <ion-card-content>
+
+              @if (disableAI){
+                <div class=" rounded-full p-3 bg-gray-400 flex flex-row justify-center items-center">
+                <ion-icon name="color-wand-outline" class="hidden"></ion-icon>
+                </div>
+                }
+
+              @if (!disableAI){
+                <div class=" rounded-full p-3 bg-purple-800 flex flex-row justify-center items-center">
+                <ion-icon name="color-wand-outline" (click)="askAIForHelp('step')" ></ion-icon>
+                </div>
+              }
+
+          </ion-card-content>
+          <ion-card-content>
+            <ion-label>DevProbe AI Answer</ion-label>
+          </ion-card-content>
+          <ion-card-content>
+
+            @for (aiStep of aiSteps; track aiSteps){
+              <markdown id="mk-1" class="text-white ">{{aiStep.message}}</markdown>
+            }
+          </ion-card-content>
         </ion-card>
       </ion-content>
     </ng-template>

@@ -8,6 +8,7 @@ import { CreateSystemTestPageRoutingModule } from './create-system-test-routing.
 
 import { CreateSystemTestPage } from './create-system-test.page';
 import {ComponentsModule} from "../../../../components/components.module";
+import {MarkdownComponent} from "ngx-markdown";
 
 @NgModule({
     imports: [
@@ -15,7 +16,8 @@ import {ComponentsModule} from "../../../../components/components.module";
         FormsModule,
         IonicModule,
         CreateSystemTestPageRoutingModule,
-        ComponentsModule
+        ComponentsModule,
+        MarkdownComponent
     ],
   declarations: [CreateSystemTestPage]
 })
