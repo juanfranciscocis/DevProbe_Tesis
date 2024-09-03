@@ -97,8 +97,15 @@ export class SoftwareTestingChooserPage implements OnInit {
       step: this.productStep
     }]);
   }
-  navigateToExecuteTest(testTitle:string) {
+  navigateToExecuteSystemTest(testTitle:string) {
     this.router.navigate(['/execute-system-test', {
+      productObjective: this.productObjective,
+      step: this.productStep,
+      testTitle: testTitle
+    }]);
+  }
+  navigateToViewHistorySystemTest(testTitle:string) {
+    this.router.navigate(['/view-history-system-test', {
       productObjective: this.productObjective,
       step: this.productStep,
       testTitle: testTitle
@@ -140,24 +147,32 @@ export class SoftwareTestingChooserPage implements OnInit {
         .filter(key => r[key].productStep === this.productStep)
         .map(key => ({ timestamp: key, systemTest: r[key].systemTest }));
 
-      // Sort the data by timestamp
-      // @ts-ignore
-      for (let i = 0; i < filteredData.length; i++) {
-        for (let j = 0; j < filteredData.length - 1; j++) {
-          if (new Date(filteredData[j].timestamp).getTime() > new Date(filteredData[j + 1].timestamp).getTime()) {
-            let temp = filteredData[j];
-            filteredData[j] = filteredData[j + 1];
-            filteredData[j + 1] = temp;
-          }
-        }
-      }
+      // Sort the data by timestamp year, month, and day
+      filteredData.sort((a, b) => {
+        const dateA = new Date(a.timestamp).getTime();
+        const dateB = new Date(b.timestamp).getTime();
+        return dateA - dateB; // Sort in ascending order (oldest first)
+      });
 
       // count the number of passed and failed tests for each date
       let data = [
       ]
 
       for (let test of filteredData) {
-        let date = new Date(test.timestamp).toLocaleDateString();
+
+        let reordered = test.timestamp.split(' ')[0].split('-');
+        let ordered = [reordered[2], reordered[1], reordered[0]];
+        console.log(ordered);
+        let orderTimestamp = ordered.join('/');
+        console.log(orderTimestamp);
+
+        let addTime = test.timestamp.split(' ')[1];
+
+        let concat = orderTimestamp + ' ' + addTime;
+        console.log(concat);
+        let date = new Date(concat).toLocaleDateString();
+
+
         let passed = test.systemTest.state ? 1 : 0;
         let failed = test.systemTest.state ? 0 : 1;
 

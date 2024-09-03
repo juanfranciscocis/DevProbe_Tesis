@@ -1,0 +1,41 @@
+<app-header-return [title]="'System Test Result'"></app-header-return>
+
+
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <app-title [title]="'System Test Result'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card class="min-h-full flex flex-col p-8">
+          <ion-card-title class=" p-2">
+            <ion-label  class="text-4xl text-white font-bold">{{systemTest.title}}</ion-label>
+          </ion-card-title>
+          <br>
+          <ion-card-title class=" p-2">
+            <ion-label class="text-xl">{{systemTest.description}}</ion-label>
+          </ion-card-title>
+          <br>
+          <ion-list>
+            @for (step of systemTest["steps"] ; track systemTest.title){
+              <ion-item>
+                <ion-label>
+                  <h1>{{step.stepTitle}}</h1>
+                  <p>{{step.expectedResults}}</p>
+                </ion-label>
+                @if (step.isComplete){
+                  <ion-icon aria-hidden="true" name="checkmark-circle" slot="end" color="success"></ion-icon>
+                  <ion-icon aria-hidden="true" name="close-circle" slot="end"></ion-icon>
+                }
+                @if (!step.isComplete){
+                  <ion-icon aria-hidden="true" name="checkmark-circle" slot="end" ></ion-icon>
+                  <ion-icon aria-hidden="true" name="close-circle" slot="end" color="danger"></ion-icon>
+                }
+              </ion-item>
+            }
+          </ion-list>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

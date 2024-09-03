@@ -107,8 +107,8 @@
             <ion-card-title>{{ test.title }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ion-button color="primary" expand="block" (click)="navigateToExecuteTest(test.title)">View Test Results</ion-button>
-            <ion-button color="primary" expand="block" (click)="navigateToExecuteTest(test.title)">Execute Test</ion-button>
+            <ion-button color="primary" expand="block" (click)="navigateToViewHistorySystemTest(test.title)">View Test Results</ion-button>
+            <ion-button color="success" expand="block" (click)="navigateToExecuteSystemTest(test.title)">Execute Test</ion-button>
             <ion-button color="danger" expand="block" (click)="deleteTest(test.title)">Delete Test</ion-button>
           </ion-card-content>
         </ion-card>

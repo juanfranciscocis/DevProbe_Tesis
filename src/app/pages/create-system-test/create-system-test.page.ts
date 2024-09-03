@@ -130,6 +130,9 @@ export class CreateSystemTestPage implements OnInit {
 
     await this.hideLoading();
 
+    // Navigate to the last page
+    window.history.back();
+
 
   }
 

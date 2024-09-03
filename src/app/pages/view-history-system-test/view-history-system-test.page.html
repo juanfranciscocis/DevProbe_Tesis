@@ -1,0 +1,67 @@
+<app-header-return [title]="'History System Tests: ' + testTitle"></app-header-return>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <app-title [title]="'History System Tests: '+testTitle"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <p>System tests results for product step: {{productStep}}. Test title: {{testTitle}}</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="6" size-md="6" size-lg="6" class="">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title class="flex flex-col justify-center items-center text-green-600">Passed Tests</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="flex flex-col justify-center items-center">
+            <h1>{{passed}}</h1>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6" size-md="6" size-lg="6" class="">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title class="flex flex-col justify-center items-center text-red-800">Failed Tests</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="flex flex-col justify-center items-center">
+            <h1>{{failed}}</h1>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card>
+          <ion-card-content>
+            <ion-list>
+              @for (test of systemTestHistory; track systemTestHistory){
+                <ion-item>
+                  <ion-label>
+                    <h1 class="text-white">{{test.systemTest.title}} - {{test.timestamp}}</h1>
+                  </ion-label>
+                  @if (test.systemTest.state){
+                    <ion-icon aria-hidden="true" name="checkmark-circle" slot="end" color="success"></ion-icon>
+                    <ion-icon aria-hidden="true" name="close-circle" slot="end" color=""></ion-icon>
+                    <ion-icon aria-hidden="true" name="trash" slot="end" color="" (click)="delete(test.timestamp)"></ion-icon>
+                    <ion-icon aria-hidden="true" name="eye" slot="start" color="" (click)="navigateToViewHistorySystemTest(test)"></ion-icon>
+                  }
+                  @if (!test.systemTest.state){
+                    <ion-icon aria-hidden="true" name="checkmark-circle" slot="end" color=""></ion-icon>
+                    <ion-icon aria-hidden="true" name="close-circle" slot="end" color="danger"></ion-icon>
+                    <ion-icon aria-hidden="true" name="trash" slot="end" color="" (click)="delete(test.timestamp)"></ion-icon>
+                    <ion-icon aria-hidden="true" name="eye" slot="start" color="" (click)="navigateToViewHistorySystemTest(test)"></ion-icon>
+                  }
+
+                </ion-item>
+              }
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

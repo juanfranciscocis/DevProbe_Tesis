@@ -51,7 +51,8 @@ export class SystemTestService {
 
     // Get current date and time
     const now = new Date();
-    const timestamp = `${now.getDate()}/${now.getMonth()}/${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+    const timestamp = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+    console.log(timestamp);
 
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) {
@@ -77,6 +78,50 @@ export class SystemTestService {
     }
     return [];
   }
+
+  async getSystemTestHistoryByTitle(orgName: string, productObjective: string, productStep: string, testTitle: string) {
+    const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'software_testing', 'system_tests_history');
+    const docSnap = await getDoc(docRef);
+    let result = [];
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      for (let key in data) {
+        if (data[key].systemTest.title === testTitle && data[key].productStep === productStep) {
+          result.push({timestamp: key, systemTest: data[key].systemTest});
+        }
+      }
+    }
+    return result;
+  }
+
+  async getSystemTestByTimestamp(orgName: string, productObjective: string, productStep: string, testTitle: string, timestamp: string) {
+    const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'software_testing', 'system_tests_history');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      for (let key in data) {
+        if (data[key].systemTest.title === testTitle && key === timestamp && data[key].productStep === productStep) {
+          return data[key].systemTest;
+        }
+      }
+    }
+    return {};
+    }
+
+  async deleteSystemTestHistoryByKey(orgName: string, productObjective: string, productStep: string, testTitle: string, timestamp: string) {
+    const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'software_testing', 'system_tests_history');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      for (let key in data) {
+        if (data[key].systemTest.title === testTitle && key === timestamp && data[key].productStep === productStep) {
+          delete data[key];
+        }
+      }
+      await setDoc(docRef, data);
+    }
+  }
+
 
   async getSystemTestHistory(orgName: string, productObjective: string) {
     const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'software_testing', 'system_tests_history');

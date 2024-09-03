@@ -124,36 +124,55 @@ const routes: Routes = [
   },
   {
     path: 'flame-graph-compare',
-    loadChildren: () => import('./pages/flame-graph-compare/flame-graph-compare.module').then( m => m.FlameGraphComparePageModule)
-  },
-  {
-    path: 'board',
-    loadChildren: () => import('./pages/board/board.module').then( m => m.BoardPageModule)
-  },
-  {
-    path: 'render-restart',
-    loadChildren: () => import('./pages/render-restart/render-restart.module').then( m => m.RenderRestartPageModule)
+    loadChildren: () => import('./pages/flame-graph-compare/flame-graph-compare.module').then( m => m.FlameGraphComparePageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'software-testing',
-    loadChildren: () => import('./pages/software-testing/software-testing.module').then( m => m.SoftwareTestingPageModule)
-  },
-  {
-    path: 'system-tests',
-    loadChildren: () => import('./pages/system-tests/system-tests.module').then( m => m.SystemTestsPageModule)
-  },
-  {
-    path: 'create-system-test',
-    loadChildren: () => import('./pages/create-system-test/create-system-test.module').then( m => m.CreateSystemTestPageModule)
-  },
-  {
-    path: 'execute-system-test',
-    loadChildren: () => import('./pages/execute-system-test/execute-system-test.module').then( m => m.ExecuteSystemTestPageModule)
+    loadChildren: () => import('./pages/software-testing/software-testing.module').then( m => m.SoftwareTestingPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'software-testing-chooser',
-    loadChildren: () => import('./pages/software-testing-chooser/software-testing-chooser.module').then( m => m.SoftwareTestingChooserPageModule)
+    loadChildren: () => import('./pages/software-testing-chooser/software-testing-chooser.module').then( m => m.SoftwareTestingChooserPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
+  {
+    path: 'create-system-test',
+    loadChildren: () => import('./pages/create-system-test/create-system-test.module').then( m => m.CreateSystemTestPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+  },
+  {
+    path: 'execute-system-test',
+    loadChildren: () => import('./pages/execute-system-test/execute-system-test.module').then( m => m.ExecuteSystemTestPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+  },
+
+
+
+
+
+
+
+  {
+    path: 'board',
+    loadChildren: () => import('./pages/board/board.module').then( m => m.BoardPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+  },
+  {
+    path: 'render-restart',
+    loadChildren: () => import('./pages/render-restart/render-restart.module').then( m => m.RenderRestartPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+  },
+  {
+    path: 'view-history-system-test',
+    loadChildren: () => import('./pages/view-history-system-test/view-history-system-test.module').then( m => m.ViewHistorySystemTestPageModule)
+  },
+  {
+    path: 'view-system-test',
+    loadChildren: () => import('./pages/view-system-test/view-system-test.module').then( m => m.ViewSystemTestPageModule)
+  },
+
 ];
 
 @NgModule({
