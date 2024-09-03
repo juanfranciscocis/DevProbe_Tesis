@@ -36,6 +36,7 @@ export class CreateSystemTestPage implements OnInit {
   aiSteps:AiMessage[] = [];
   extraData: string = '';
   disableAI: boolean = false;
+  showContext: boolean = false;
 
 
 
@@ -211,14 +212,14 @@ export class CreateSystemTestPage implements OnInit {
 
       if (!this.systemTest.title || this.systemTest.title === '') {
         await this.hideLoading();
-        this.showAlert('Please fill out the title of the test before asking for help with the description.', 'Error').then(r =>
+        await this.showAlert('Please fill out the title of the test before asking for help with the description.', 'Error').then(r =>
           console.log('Alert shown'));
         return;
       }
 
 
       let chat = this.model.startChat(forDescription as any);
-      let msg = "Given this test title:" + this.systemTest.title + "I need help to create the description of the test, just give me the test main objective";
+      let msg = "Given this test title:" + this.systemTest.title + ". Here is more information about the test: " + this.extraData + "I need help to create the description of the test, just give me the test main objective";
       console.log(msg);
       await chat.sendMessage(msg).then(response => {
         this.systemTest.description = response.response.text();
@@ -231,7 +232,7 @@ export class CreateSystemTestPage implements OnInit {
 
       if (!this.systemTest.title || this.systemTest.title === '' || !this.systemTest.description || this.systemTest.description === '') {
         await this.hideLoading();
-        this.showAlert('Please fill out the title and description of the test before asking for help with the steps.', 'Error').then(r =>
+        await this.showAlert('Please fill out the title and description of the test before asking for help with the steps.', 'Error').then(r =>
           console.log('Alert shown'));
         return;
       }
@@ -299,11 +300,54 @@ export class CreateSystemTestPage implements OnInit {
     }
 
     for (var i = 0; i < ul.length; i++) {
-      ul[i].style.fontSize = "1em";
-      // add a - before the text
-      ul[i].innerHTML = " - " + ul[i].innerHTML;
-      console.log(ul[i].innerHTML);
+      //get the ul li elements
+      let ulLi = ul[i].getElementsByTagName("li");
+      for (var j = 0; j < ulLi.length; j++) {
+        ulLi[j].style.fontSize = "0.5em";
+        // add a - before the text
+        ulLi[j].innerHTML = "- " + ulLi[j].innerHTML;
+        console.log(ulLi[j].innerHTML);
+      }
     }
 
   }
+
+
+
+
+  giveContext() {
+    let alertButtons = ['Give Context', 'Cancel'];
+    let alertInputs = [
+      {
+        name: 'context',
+        type: 'text',
+        placeholder: 'Give AI Context'
+      }
+    ];
+
+    this.showAlertWithInputs('Give Global Test Context', 'Please provide the AI with some context, provide code, HTML, or instructions.' , alertButtons, alertInputs).then(r =>
+      console.log('Alert shown')
+    );
+  }
+
+  async showAlertWithInputs(header:string, message:string, buttons:string[], inputs:any[]) {
+    const alert = await this.alertCtrl.create({
+      header: header,
+      message: message,
+      buttons: buttons,
+      inputs: inputs
+    });
+    await alert.present();
+
+    // Get the alert inputs
+    const { data } = await alert.onDidDismiss();
+    console.log(data);
+    if (data.values) {
+      this.extraData = data.values.context;
+      this.showContext = true;
+    }
+    console.log(this.extraData);
+  }
+
+
 }

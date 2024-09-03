@@ -89,21 +89,24 @@
           </div>
         </ion-card>
         <ion-card>
-          <ion-card-content>
+
 
               @if (disableAI){
-                <div class=" rounded-full p-3 bg-gray-400 flex flex-row justify-center items-center">
+                <ion-card-content class="hidden">
+                <div class=" rounded-full p-3 bg-gray-400 flex flex-row justify-center items-center hidden">
                 <ion-icon name="color-wand-outline" class="hidden"></ion-icon>
                 </div>
+                </ion-card-content>
                 }
 
               @if (!disableAI){
+                <ion-card-content class="">
                 <div class=" rounded-full p-3 bg-purple-800 flex flex-row justify-center items-center">
                 <ion-icon name="color-wand-outline" (click)="askAIForHelp('step')" ></ion-icon>
                 </div>
+                </ion-card-content>
               }
 
-          </ion-card-content>
           <ion-card-content>
             <ion-label>DevProbe AI Answer</ion-label>
           </ion-card-content>
@@ -118,4 +121,11 @@
     </ng-template>
   </ion-modal>
 
+  <ion-fab class="m-2 z-10" vertical="bottom" horizontal="end" slot="fixed"  (click)="giveContext()">
+    <ion-avatar class="bg-purple-300 p-4">
+      <ion-icon class="w-full h-full" name="chatbubble-outline"></ion-icon>
+    </ion-avatar>
+  </ion-fab>
+
 </ion-content>
+
