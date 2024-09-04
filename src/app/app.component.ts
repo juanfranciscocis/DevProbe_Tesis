@@ -61,6 +61,11 @@ export class AppComponent implements OnInit {
       url: '/myteam',
       icon: 'people'
     },
+    {
+      title:'Settings',
+      url:'/settings',
+      icon:'settings'
+    }
   ];
 
   /**

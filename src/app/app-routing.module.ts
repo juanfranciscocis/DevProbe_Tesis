@@ -176,6 +176,10 @@ const routes: Routes = [
     path: 'create-unit-test',
     loadChildren: () => import('./pages/software_testing/unit_tests/create-unit-test/create-unit-test.module').then( m => m.CreateUnitTestPageModule)
   },
+  {
+    path: 'settings',
+    loadChildren: () => import('./pages/settings/settings.module').then( m => m.SettingsPageModule)
+  },
 
 ];
 
