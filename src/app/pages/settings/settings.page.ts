@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
-import {AlertController} from "@ionic/angular";
+import {AlertController, LoadingController} from "@ionic/angular";
+import {GithubService} from "../../services/github.service";
+import {User} from "../../interfaces/user";
+import {GitSyncData} from "../../interfaces/git-sync-data";
 
 @Component({
   selector: 'app-settings',
@@ -13,13 +16,32 @@ export class SettingsPage implements OnInit {
   repoName: string = '';
   branchName: string = '';
 
+  user: User = {};
+  orgname: string = '';
+
   constructor(
     private authService:AuthService,
     private router:Router,
-    private alertCtrl:AlertController
+    private alertCtrl:AlertController,
+    private githubService: GithubService,
+    private loadingCtrl: LoadingController
   ) { }
 
   ngOnInit() {
+  }
+
+  async ionViewWillEnter() {
+
+    //Get User
+    this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null;
+    if (!this.user) {
+      await this.showAlert('No user found', 'Error');
+      return;
+    }
+
+    this.orgname = this.user.orgName || '';
+
+    await this.getSyncRepo();
   }
 
   async logout() {
@@ -27,11 +49,30 @@ export class SettingsPage implements OnInit {
     await this.router.navigate(['/login']);
   }
 
+  async getSyncRepo() {
+    await this.showLoading();
+
+    const gitSyncData:GitSyncData =  await this.githubService.getSyncRepo(this.orgname);
+    if (gitSyncData) {
+      this.gitKey = gitSyncData.key;
+      this.repoName = gitSyncData.repo;
+      this.branchName = gitSyncData.branch;
+    }
+
+    await this.hideLoading();
+  }
+
   async syncRepo() {
+    await this.showLoading();
     if (!this.gitKey || !this.repoName || !this.branchName || this.gitKey === '' || this.repoName === '' || this.branchName === '') {
       await this.showAlert('Please fill in all fields', 'Error');
       return;
     }
+
+    await this.githubService.syncRepo(this.orgname, this.gitKey, this.repoName, this.branchName);
+
+    await this.hideLoading();
+
   }
 
   /**
@@ -46,6 +87,23 @@ export class SettingsPage implements OnInit {
       buttons: ['OK']
     });
     await alert.present();
+  }
+
+
+  /**
+   * Show a loading spinner.
+   */
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+    });
+    await loading.present();
+  }
+
+  /**
+   * Hide the loading spinner.
+   */
+  async hideLoading() {
+    await this.loadingCtrl.dismiss();
   }
 
 }

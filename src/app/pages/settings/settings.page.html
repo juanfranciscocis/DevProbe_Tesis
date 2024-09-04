@@ -17,30 +17,36 @@
           <ion-card-content>
             <p  class="text-white"> Add a GitHub key to sync with your GitHub repo. You will be able to create tests with DevProbeAI. <a class="text-blue-500" href="https://github.com/settings/tokens">Get A GitHub Key Here !!!</a> </p>
           </ion-card-content>
+            <ion-card>
           <ion-card-content>
             <ion-label>GitHub Key</ion-label>
             <ion-input [(ngModel)]="gitKey" placeholder="Enter your key here..."  class="text-white"></ion-input>
           </ion-card-content>
+            </ion-card>
         </ion-card>
           <ion-card class="p-5">
             <ion-card-title class="text-2xl">2. Repo Name</ion-card-title>
             <ion-card-content>
               <p  class="text-white"> Add the name of the repo you want to sync with DevProbeAI. </p>
             </ion-card-content>
+            <ion-card>
             <ion-card-content>
               <ion-label>Repo Name</ion-label>
               <ion-input [(ngModel)]="repoName" placeholder="Enter your repo name here..."  class="text-white"></ion-input>
             </ion-card-content>
+            </ion-card>
           </ion-card>
           <ion-card class="p-5">
             <ion-card-title class="text-2xl">3. Branch Name</ion-card-title>
             <ion-card-content>
               <p class="text-white"> Add the name of the branch you want to sync with DevProbeAI. </p>
             </ion-card-content>
+            <ion-card>
             <ion-card-content>
               <ion-label>Branch Name</ion-label>
               <ion-input [(ngModel)]="branchName" placeholder="Enter your branch name here..."  class="text-white"></ion-input>
             </ion-card-content>
+            </ion-card>
         </ion-card>
           <ion-button  color='primary' class="min-w-full" (click)="syncRepo()">Sync Repo</ion-button>
         </ion-card>
