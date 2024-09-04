@@ -97,6 +97,13 @@ export class SoftwareTestingChooserPage implements OnInit {
       step: this.productStep
     }]);
   }
+  navigateToCreateUnitTest() {
+    // Navigate to the system test creation page
+    this.router.navigate(['/create-unit-test', {
+      productObjective: this.productObjective,
+      step: this.productStep
+    }]);
+  }
   navigateToExecuteSystemTest(testTitle:string) {
     this.router.navigate(['/execute-system-test', {
       productObjective: this.productObjective,
@@ -111,6 +118,7 @@ export class SoftwareTestingChooserPage implements OnInit {
       testTitle: testTitle
     }]);
   }
+
 
   /**
    * Methods to calculate the number of passed and failed system tests.

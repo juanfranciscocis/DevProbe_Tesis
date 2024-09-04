@@ -172,6 +172,10 @@ const routes: Routes = [
     path: 'view-system-test',
     loadChildren: () => import('./pages/software_testing/system_tests/view-system-test/view-system-test.module').then(m => m.ViewSystemTestPageModule)
   },
+  {
+    path: 'create-unit-test',
+    loadChildren: () => import('./pages/software_testing/unit_tests/create-unit-test/create-unit-test.module').then( m => m.CreateUnitTestPageModule)
+  },
 
 ];
 

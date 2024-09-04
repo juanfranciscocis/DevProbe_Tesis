@@ -1,0 +1,94 @@
+<app-header-return [title]="'Create Unit Test'"></app-header-return>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <app-title [title]="'Create Unit Test'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <p>Unit tests are used to test individual units of code. They are typically written by developers to test the
+          smallest piece of code, such as a function or method.</p>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="lg:m-10 md:m-10">
+
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-segment value="default">
+          <ion-segment-button value="default"  (click)="segment = 'git'" >
+            <ion-label>GitHub + Dev Probe AI</ion-label>
+          </ion-segment-button>
+          <ion-segment-button (click)="segment = 'devprobeai'" value="devprobeai">
+            <ion-label>Dev Probe AI</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-col>
+
+      @if (segment === 'git'){
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card class="m-2 p-5">
+          <ion-card>
+          <ion-card-header>
+            <ion-card-title class="text-white text-3xl">Choose a file to create a unit test</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-card>
+              <ion-card-content>
+            <ion-select label="Select File From GitHub Repo" placeholder="">
+              @for (file of files; track file){
+                <ion-select-option value="{{file}}"  (click)="askForFile(file)" >{{ file }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-card-content>
+            </ion-card>
+          </ion-card-content>
+          <ion-card-header>
+            <ion-card-title class="text-white text-3xl">DevProbeAI Auto-Generated Unit Test</ion-card-title>
+          </ion-card-header>
+          <ion-card>
+            <ion-card-content>
+              <p> Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+
+Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+              </p>
+            </ion-card-content>
+          </ion-card>
+          </ion-card>
+          <div class="w-full flex flex-row justify-center">
+          <ion-card-header>
+            <ion-card-title class="text-white text-3xl">OR</ion-card-title>
+          </ion-card-header>
+          </div>
+          <ion-card>
+          <ion-card-header>
+            <ion-card-title class="text-white text-3xl">My Unit Test</ion-card-title>
+          </ion-card-header>
+          <ion-card>
+            <ion-card-content>
+              <ion-textarea placeholder="Paste Code" class="w-full h-96">
+              </ion-textarea>
+            </ion-card-content>
+          </ion-card>
+          <ion-button color="primary" expand="block" fill="outline" (click)="saveUnitTest()">Create Unit Test</ion-button>
+        </ion-card>
+        </ion-card>
+      </ion-col>
+      }
+
+      @else if (segment === 'devprobeai'){
+        <ion-col size="12" size-md="12" size-lg="12" class="">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Paste Code</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      }
+
+    </ion-row>
+  </ion-grid>
+</ion-content>
