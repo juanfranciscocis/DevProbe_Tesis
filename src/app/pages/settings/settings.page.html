@@ -48,6 +48,18 @@
             </ion-card-content>
             </ion-card>
         </ion-card>
+          <ion-card class="p-5">
+            <ion-card-title class="text-2xl">4. Owner Name</ion-card-title>
+            <ion-card-content>
+              <p class="text-white"> Add the name of the owner of the repo you want to sync with DevProbeAI. </p>
+            </ion-card-content>
+            <ion-card>
+              <ion-card-content>
+                <ion-label>Owner Name</ion-label>
+                <ion-input [(ngModel)]="owner" placeholder="Enter your branch name here..."  class="text-white"></ion-input>
+              </ion-card-content>
+            </ion-card>
+          </ion-card>
           <ion-button  color='primary' class="min-w-full" (click)="syncRepo()">Sync Repo</ion-button>
         </ion-card>
       </ion-col>

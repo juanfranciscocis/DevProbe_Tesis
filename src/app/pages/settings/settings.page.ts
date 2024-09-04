@@ -15,6 +15,7 @@ export class SettingsPage implements OnInit {
   gitKey: string = '';
   repoName: string = '';
   branchName: string = '';
+  owner: string = '';
 
   user: User = {};
   orgname: string = '';
@@ -57,6 +58,7 @@ export class SettingsPage implements OnInit {
       this.gitKey = gitSyncData.key;
       this.repoName = gitSyncData.repo;
       this.branchName = gitSyncData.branch;
+      this.owner = gitSyncData.owner;
     }
 
     await this.hideLoading();
@@ -64,12 +66,12 @@ export class SettingsPage implements OnInit {
 
   async syncRepo() {
     await this.showLoading();
-    if (!this.gitKey || !this.repoName || !this.branchName || this.gitKey === '' || this.repoName === '' || this.branchName === '') {
+    if (!this.gitKey || !this.repoName || !this.branchName || !this.owner || this.gitKey === '' || this.repoName === '' || this.branchName === '' || this.owner === '') {
       await this.showAlert('Please fill in all fields', 'Error');
       return;
     }
 
-    await this.githubService.syncRepo(this.orgname, this.gitKey, this.repoName, this.branchName);
+    await this.githubService.syncRepo(this.orgname, this.gitKey, this.repoName, this.branchName, this.owner);
 
     await this.hideLoading();
 
