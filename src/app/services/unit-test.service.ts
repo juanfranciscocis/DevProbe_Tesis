@@ -33,4 +33,13 @@ export class UnitTestService {
 
   }
 
+  async getUnitTests(orgName: string, productObjective: string, productStep: string) {
+    const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'software_testing', 'unit_tests');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return data[productStep];
+    }
+    return [];
+  }
 }

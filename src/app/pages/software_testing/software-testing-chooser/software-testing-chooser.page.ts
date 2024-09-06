@@ -6,6 +6,8 @@ import {SystemTest} from "../../../interfaces/system-test";
 import {User} from "../../../interfaces/user";
 import {LoadingController} from "@ionic/angular";
 import {EChartsOption} from "echarts";
+import {UnitTestService} from "../../../services/unit-test.service";
+import {UnitTest} from "../../../interfaces/unit-test";
 
 @Component({
   selector: 'app-software-testing-chooser',
@@ -22,6 +24,7 @@ export class SoftwareTestingChooserPage implements OnInit {
 
 
   systemTests: SystemTest[] = [];
+  unitTests: UnitTest[] = [];
 
   passedSystemTests: number = 0;
   failedSystemTests: number = 0;
@@ -56,21 +59,41 @@ export class SoftwareTestingChooserPage implements OnInit {
     ]
   };
 
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private systemTestService: SystemTestService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private unitTestService: UnitTestService
   ) { }
 
   ngOnInit() {
   }
 
   async ionViewWillEnter() {
+    await this.showLoading();
     this.getProductFromParams();
-    await this.getSystemTests();
-    await this.calculatePassedSystemTests();
-    await this.calculateGraphDataSystemTests();
+    await this.getUser();
+
+    //Unit Tests
+    await this.getUnitTests();
+
+    //System Tests
+    try {
+      await this.getSystemTests().then(async () => {
+        await this.calculatePassedSystemTests().then(async () => {
+          await this.calculateGraphDataSystemTests().then(async () => {
+            await this.graphSystemTests();
+          });
+        })
+      });
+    }catch (e) {
+      console.log(e);
+    }
+
+    await this.hideLoading();
+
   }
 
   /**
@@ -123,9 +146,10 @@ export class SoftwareTestingChooserPage implements OnInit {
   /**
    * Methods to calculate the number of passed and failed system tests.
    */
-  async calculatePassedSystemTests() {
-    await this.showLoading();
+  async calculatePassedUnitTests() {
 
+  }
+  async calculatePassedSystemTests() {
     this.passedSystemTests = 0;
     this.failedSystemTests = 0;
     await this.systemTestService.getSystemTestHistoryByStep(this.orgName, this.productObjective, this.productStep).then(r => {
@@ -138,118 +162,121 @@ export class SoftwareTestingChooserPage implements OnInit {
         }
       });
     });
-
-    await this.hideLoading();
   }
 
   /**
    * Methods to calculate the data for the graph.
    * @returns {Promise<void>}
    */
+  async calculateGraphDataUnitTests() {}
   async calculateGraphDataSystemTests() {
-    await this.showLoading();
     // Get the system test history
-    await this.systemTestService.getSystemTestHistory(this.orgName, this.productObjective).then(r => {
-      // Filter the data to only include the system tests for the specified product step
-      const filteredData = Object.keys(r)
-        .filter(key => r[key].productStep === this.productStep)
-        .map(key => ({ timestamp: key, systemTest: r[key].systemTest }));
-
-      // Sort the data by timestamp year, month, and day
-      filteredData.sort((a, b) => {
-        const dateA = new Date(a.timestamp).getTime();
-        const dateB = new Date(b.timestamp).getTime();
-        return dateA - dateB; // Sort in ascending order (oldest first)
-      });
-
-      // count the number of passed and failed tests for each date
-      let data = [
-      ]
-
-      for (let test of filteredData) {
-
-        let reordered = test.timestamp.split(' ')[0].split('-');
-        let ordered = [reordered[2], reordered[1], reordered[0]];
-        console.log(ordered);
-        let orderTimestamp = ordered.join('/');
-        console.log(orderTimestamp);
-
-        let addTime = test.timestamp.split(' ')[1];
-
-        let concat = orderTimestamp + ' ' + addTime;
-        console.log(concat);
-        let date = new Date(concat).toLocaleDateString();
-
-
-        let passed = test.systemTest.state ? 1 : 0;
-        let failed = test.systemTest.state ? 0 : 1;
-
-        let index = data.findIndex((d: { date: string; }) => d.date === date);
-        if (index === -1) {
-          data.push({ date, passed, failed });
-        }
-        else {
-          data[index].passed += passed;
-          data[index].failed += failed;
-        }
-      }
-
-      console.log(data);
-
-      // Populate the chart data
-      this.systemTestsChart.xAxis = {
-        type: 'category',
-        boundaryGap: false,
-        data: data.map((d: { date: string; }) => d.date)
-      };
-      this.systemTestsChart.series = [
-        {
-          name: 'Passed',
-          type: 'line',
-          data: data.map((d: { passed: number; }) => d.passed)
-        },
-        {
-          name: 'Failed',
-          type: 'line',
-          data: data.map((d: { failed: number; }) => d.failed)
-        }
-      ];
-
-      console.log(this.systemTestsChart.xAxis.data);
-      console.log(this.systemTestsChart.series[0].data);  // Passed data
-      console.log(this.systemTestsChart.series[1].data);  // Failed data
-
-      this.systemTestsChart = { ...this.systemTestsChart };
-
-
-    });
-    await this.hideLoading();
+    let filteredData: { timestamp: string; systemTest: SystemTest; }[] = [];
+    const getSystemTests = await this.systemTestService.getSystemTestHistory(this.orgName, this.productObjective);
+    // Filter the data to only include the system tests for the specified product step
+    filteredData = Object.keys(getSystemTests)
+      .filter(key => getSystemTests[key].productStep === this.productStep)
+      .map(key => ({timestamp: key, systemTest: getSystemTests[key].systemTest}));
+    return filteredData;
   }
 
+  /**
+   * Methods to populate the graph.
+   */
+  async graphUnitTests() {
+
+  }
+  async graphSystemTests() {
+    const filteredData = await this.calculateGraphDataSystemTests();
+
+    // count the number of passed and failed tests for each date
+    let data = []
+
+    for (let test of filteredData) {
+
+      let reordered = test.timestamp.split(' ')[0].split('-');
+      let ordered = [reordered[2], reordered[1], reordered[0]];
+      let orderTimestamp = ordered.join('/');
+
+      let addTime = test.timestamp.split(' ')[1];
+
+      let concat = orderTimestamp + ' ' + addTime;
+      let date = new Date(concat).toLocaleDateString();
+
+      let passed = test.systemTest.state ? 1 : 0;
+      let failed = test.systemTest.state ? 0 : 1;
+
+      let index = data.findIndex((d: { date: string; }) => d.date === date);
+      if (index === -1) {
+        data.push({date, passed, failed});
+      } else {
+        data[index].passed += passed;
+        data[index].failed += failed;
+      }
+    }
+
+
+    // Sort the data by date
+    data.sort((a: { date: string; }, b: { date: string; }) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      // @ts-ignore
+      return dateA - dateB; // Sort in ascending order (oldest first)
+    });
+
+    // Populate the chart data
+    this.systemTestsChart.xAxis = {
+      type: 'category',
+      boundaryGap: false,
+      data: data.map((d: { date: string; }) => d.date)
+    };
+    this.systemTestsChart.series = [
+      {
+        name: 'Passed',
+        type: 'line',
+        data: data.map((d: { passed: number; }) => d.passed)
+      },
+      {
+        name: 'Failed',
+        type: 'line',
+        data: data.map((d: { failed: number; }) => d.failed)
+      }
+    ];
+
+
+    this.systemTestsChart = {...this.systemTestsChart};
+
+  }
 
   /**
    * Methods to show tests in each section.
    */
-  async getSystemTests() {
+  async getUnitTests() {
     await this.showLoading()
-    // Get User from local storage
-    const userString = localStorage.getItem('user');
-    if (!userString) return;
-
-    this.user = JSON.parse(userString);
-    this.orgName = this.user.orgName!;
-
-
+    // Get unit tests from the service
+    this.unitTestService.getUnitTests(this.orgName, this.productObjective, this.productStep).then(r => {
+      this.unitTests = r;
+    });
+    await this.hideLoading();
+  }
+  async getSystemTests() {
     // Get system tests from the service
     this.systemTestService.getSystemTest(this.orgName, this.productObjective, this.productStep).then(r => {
       this.systemTests = r;
     });
 
-    await this.hideLoading();
   }
 
 
-
+  /**
+   * Methods to get the user.
+   */
+  async getUser() {
+  const userString = localStorage.getItem('user');
+  if (!userString) return;
+  this.user = JSON.parse(userString);
+  this.orgName = this.user.orgName!;
+}
 
 
   async deleteTest(title: string) {
@@ -286,9 +313,6 @@ export class SoftwareTestingChooserPage implements OnInit {
     this.getSystemTests();
     $event.target.complete();
   }
-
-
-
 
 
 
