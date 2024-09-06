@@ -4,7 +4,7 @@ import {Product} from "../../../interfaces/product";
 import {SystemTestService} from "../../../services/system-test.service";
 import {SystemTest} from "../../../interfaces/system-test";
 import {User} from "../../../interfaces/user";
-import {LoadingController} from "@ionic/angular";
+import {AlertController, LoadingController} from "@ionic/angular";
 import {EChartsOption} from "echarts";
 import {UnitTestService} from "../../../services/unit-test.service";
 import {UnitTest} from "../../../interfaces/unit-test";
@@ -65,7 +65,8 @@ export class SoftwareTestingChooserPage implements OnInit {
     private router: Router,
     private systemTestService: SystemTestService,
     private loadingCtrl: LoadingController,
-    private unitTestService: UnitTestService
+    private unitTestService: UnitTestService,
+    private alertCtrl: AlertController
   ) { }
 
   ngOnInit() {
@@ -252,12 +253,10 @@ export class SoftwareTestingChooserPage implements OnInit {
    * Methods to show tests in each section.
    */
   async getUnitTests() {
-    await this.showLoading()
     // Get unit tests from the service
     this.unitTestService.getUnitTests(this.orgName, this.productObjective, this.productStep).then(r => {
       this.unitTests = r;
     });
-    await this.hideLoading();
   }
   async getSystemTests() {
     // Get system tests from the service
@@ -266,6 +265,33 @@ export class SoftwareTestingChooserPage implements OnInit {
     });
 
   }
+
+
+  /**
+   * Show Alert to tell the user a way to automate the unit test result.
+   */
+  async infoAutomateUnitState(title: string) {
+    await this.showAlert('You can automate the result of this unit test (' + title + ') by sending a status update to the /unit_test_state API endpoint.', 'Automate Unit Test State');
+  }
+
+  /**
+   * Send a status update to the /unit_test_state API endpoint.
+   */
+  async automateUnitState(title: string) {
+    await this.showLoading();
+    // Send a status update to the /unit_test_state API endpoint
+    await this.unitTestService.updateUnitTestState(this.orgName, this.productObjective, this.productStep, title).then(async r => {
+      if (r) {
+        await this.getUnitTests();
+        await this.hideLoading();
+      }else {
+        await this.hideLoading();
+        await this.showAlert('There was an error updating the unit test state.', 'Error');
+      }
+    });
+    await this.hideLoading();
+  }
+
 
 
   /**
@@ -312,6 +338,20 @@ export class SoftwareTestingChooserPage implements OnInit {
   doRefresh($event: any) {
     this.getSystemTests();
     $event.target.complete();
+  }
+
+  /**
+   * Show an alert with the given message.
+   *
+   * @param {string} message - The message to show in the alert.
+   */
+  async showAlert(message:string, header:string) {
+    const alert = await this.alertCtrl.create({
+      header: header,
+      message:message,
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 
 

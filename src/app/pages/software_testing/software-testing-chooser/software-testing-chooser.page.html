@@ -48,6 +48,12 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+
+
+  <br>
+
+
+
     <ion-grid>
       <app-title [title]="'Unit Tests'"></app-title>
       <ion-row class="lg:m-10 md:m-10">
@@ -55,12 +61,51 @@
           <p>Created tests for product step: {{productStep}}</p>
         </ion-col>
       </ion-row>
+      <ion-row class="lg:m-10 md:m-10">
+        @for (unit of unitTests; track unit){
+        <ion-col size="12" size-md="3" size-lg="3" class="">
+          <ion-card>
+            <ion-card-header class="flex-row flex justify-between items-center">
+              <ion-card-title>{{unit.title}}</ion-card-title>
+              <ion-icon name="information-circle" class="text-xl" (click)="infoAutomateUnitState(unit.title)"></ion-icon>
+            </ion-card-header>
+            <ion-card-content class="flex flex-col justify-center items-center">
+              <p> Change the Test State: </p>
+              <div class="flex flex-row justify-center items-center">
+                @if (unit.state){
+                  <ion-icon name="checkmark-circle" class="text-green-600 text-3xl"></ion-icon>
+                  <ion-icon name="close-circle" class="text-3xl" (click)="automateUnitState(unit.title)"></ion-icon>
+                }
+                @if (!unit.state){
+                  <ion-icon name="checkmark-circle" class="text-3xl" (click)="automateUnitState(unit.title)"></ion-icon>
+                  <ion-icon name="close-circle" class="text-red-800 text-3xl"></ion-icon>
+                }
+              </div>
+            </ion-card-content>
+            <ion-card-content>
+              <ion-button color="danger" expand="block" (click)="deleteTest(unit.title)">Delete Test</ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        }
+      </ion-row>
+
+      <br>
+
+
+
       <app-title [title]="'Integration Tests'"></app-title>
       <ion-row class="lg:m-10 md:m-10">
         <ion-col size="12" size-md="4" size-lg="4" class="">
           <p>Created tests for product step: {{productStep}}</p>
         </ion-col>
       </ion-row>
+
+
+      <br>
+
+
+
       <app-title [title]="'System Tests'"></app-title>
     <ion-row class="lg:m-10 md:m-10">
       <ion-col size="12" size-md="4" size-lg="4" class="">

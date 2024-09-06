@@ -6,6 +6,7 @@ import {AiMessage} from "../../../../interfaces/ai-message";
 import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
 import {UnitTestService} from "../../../../services/unit-test.service";
 import {ActivatedRoute} from "@angular/router";
+import {LastStateChange} from "../../../../interfaces/unit-test";
 
 @Component({
   selector: 'app-create-unit-test',
@@ -152,6 +153,14 @@ export class CreateUnitTestPage implements OnInit {
   async saveUnitTest() {
     await this.showLoading();
 
+    let date = new Date();
+    let srtDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+
+    const lastState:LastStateChange = {
+      date: srtDate,
+      state: false
+    }
+
     const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null;
     if (!user) {
       return;
@@ -163,7 +172,8 @@ export class CreateUnitTestPage implements OnInit {
         code: this.myUnitTest,
         state: false,
         type: 'unit-test',
-        title: this.title
+        title: this.title,
+        last_state_change: [lastState]
       });
       await this.hideLoading();
       await this.showAlert('Your Unit Test saved', 'Unit Test Saved');
@@ -179,7 +189,8 @@ export class CreateUnitTestPage implements OnInit {
         code: this.aiMessages[0].message,
         state: false,
         type: 'unit-test',
-        title: this.title
+        title: this.title,
+        last_state_change: [lastState]
       });
 
 

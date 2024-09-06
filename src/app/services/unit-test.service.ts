@@ -16,7 +16,14 @@ export class UnitTestService {
     const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'software_testing', 'unit_tests');
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      const data = docSnap.data();
+      let data = docSnap.data();
+      if (!data[productStep]) {
+        //there is data add a new key with the array
+        data[productStep] = [unitTest];
+        await setDoc(docRef, data);
+        console.log('Document created with ID: ', docRef.id);
+        return;
+      }
       //add to the array
       const arr = data[productStep] //get the array
       console.log(arr);
@@ -41,5 +48,30 @@ export class UnitTestService {
       return data[productStep];
     }
     return [];
+  }
+
+  async updateUnitTestState(orgName: string, productObjective: string, productStep: string, title: string) {
+    const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'software_testing', 'unit_tests');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()){
+      const data = docSnap.data();
+      const arr = data[productStep];
+      for (let i = 0; i < arr.length; i++){
+        if (arr[i].title === title){
+          arr[i].state = !arr[i].state;
+
+          const date = new Date();
+          const srtDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+
+          arr[i]. last_state_change.push({
+            date: srtDate,
+            state: arr[i].state
+          });
+          await setDoc(docRef, { [productStep]: arr });
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

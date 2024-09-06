@@ -19,12 +19,20 @@ export class SystemTestService {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
+
+      if (!data[productStep]) {
+        data[productStep] = [systemTest];
+        await setDoc(docRef, data);
+        console.log('Document created with ID: ', docRef.id);
+        return;
+      }
+
       //add to the array
-      const arr = data[productStep] //get the array
-      console.log(arr);
-      arr.push(systemTest); //add the new system test
-      await setDoc(docRef, { [productStep]: arr }); //update the array key:productStep with the new array
+      data[productStep].push(systemTest);
+      await setDoc(docRef, data);
       console.log('Document updated with ID: ', docSnap.id);
+
+
     } else {
       console.log('No such document!');
       //create the document
@@ -139,10 +147,8 @@ export class SystemTestService {
     let docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       let data = docSnap.data();
-      let arr = data[productStep];
-      let index = arr.indexOf(systemTest);
-      arr.splice(index, 1);
-      await setDoc(docRef, {[productStep]: arr});
+      data[productStep] = data[productStep].filter((test: { title: string; }) => test.title !== systemTest.title);
+      await setDoc(docRef, data);
     }
 
     // Delete the system test from the system_tests_history collection
