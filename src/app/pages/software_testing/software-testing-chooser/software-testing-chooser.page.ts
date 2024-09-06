@@ -275,11 +275,10 @@ export class SoftwareTestingChooserPage implements OnInit {
   }
 
   /**
-   * Send a status update to the /unit_test_state API endpoint.
+   * Send a status update and save to the database.
    */
-  async automateUnitState(title: string) {
+  async updateUnitState(title: string) {
     await this.showLoading();
-    // Send a status update to the /unit_test_state API endpoint
     await this.unitTestService.updateUnitTestState(this.orgName, this.productObjective, this.productStep, title).then(async r => {
       if (r) {
         await this.getUnitTests();
@@ -291,6 +290,34 @@ export class SoftwareTestingChooserPage implements OnInit {
     });
     await this.hideLoading();
   }
+
+  /**
+   * Methods to delete tests.
+   */
+  async deleteUnitTest(title: string) {
+    await this.showLoading() ;
+    let unitTest = this.unitTests.find((unitTest: { title: string; }) => unitTest.title === title);
+    if (!unitTest) return;
+    await this.unitTestService.deleteUnitTest(this.orgName, this.productObjective, this.productStep,unitTest).then(async () => {
+      await this.getUnitTests();
+    });
+    await this.hideLoading();
+  }
+  async deleteSystemTest(title: string) {
+    await this.showLoading();
+    let systemTest = this.systemTests.find((systemTest: { title: string; }) => systemTest.title === title);
+    if (!systemTest) return;
+    await this.systemTestService.deleteSystemTest(this.orgName, this.productObjective, this.productStep,systemTest).then(async () => {
+      await this.getSystemTests();
+    });
+    await this.calculatePassedSystemTests();
+    await this.calculateGraphDataSystemTests();
+    await this.graphSystemTests();
+    await this.hideLoading();
+  }
+
+
+
 
 
 
@@ -305,15 +332,6 @@ export class SoftwareTestingChooserPage implements OnInit {
 }
 
 
-  async deleteTest(title: string) {
-    let systemTest = this.systemTests.find((systemTest: { title: string; }) => systemTest.title === title);
-    if (!systemTest) return;
-    await this.systemTestService.deleteSystemTest(this.orgName, this.productObjective, this.productStep,systemTest).then(async () => {
-      await this.getSystemTests();
-    });
-    await this.calculatePassedSystemTests();
-    await this.calculateGraphDataSystemTests();
-  }
 
   /**
    * Show a loading spinner.

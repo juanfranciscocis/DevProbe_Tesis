@@ -24,11 +24,17 @@ export class UnitTestService {
         console.log('Document created with ID: ', docRef.id);
         return;
       }
+
+      //if there is a unit test with the same title, return
+      for (let i = 0; i < data[productStep].length; i++){
+        if (data[productStep][i].title === unitTest.title){
+          return;
+        }
+      }
+
       //add to the array
-      const arr = data[productStep] //get the array
-      console.log(arr);
-      arr.push(unitTest); //add the new system test
-      await setDoc(docRef, { [productStep]: arr }); //update the array key:productStep with the new array
+      data[productStep].push(unitTest); //add the new system test
+      await setDoc(docRef, data);
       console.log('Document updated with ID: ', docSnap.id);
     } else {
       console.log('No such document!');
@@ -55,19 +61,38 @@ export class UnitTestService {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()){
       const data = docSnap.data();
-      const arr = data[productStep];
-      for (let i = 0; i < arr.length; i++){
-        if (arr[i].title === title){
-          arr[i].state = !arr[i].state;
+      for (let i = 0; i < data[productStep].length; i++){
+        if (data[productStep][i].title === title){
+          data[productStep][i].state = !data[productStep][i].state;
 
           const date = new Date();
-          const srtDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+          let pushDate = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+          const last_state_change = {
+            date: pushDate,
+            state: data[productStep][i].state
+          }
 
-          arr[i]. last_state_change.push({
-            date: srtDate,
-            state: arr[i].state
-          });
-          await setDoc(docRef, { [productStep]: arr });
+
+
+          data[productStep][i].last_state_change = [...data[productStep][i].last_state_change, last_state_change];
+          await setDoc(docRef, data);
+
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  async deleteUnitTest(orgName: string, productObjective: string, productStep: string, unitTest: UnitTest) {
+    const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'software_testing', 'unit_tests');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      for (let i = 0; i < data[productStep].length; i++) {
+        if (data[productStep][i].title === unitTest.title) {
+          data[productStep].splice(i, 1);
+          await setDoc(docRef, data);
           return true;
         }
       }

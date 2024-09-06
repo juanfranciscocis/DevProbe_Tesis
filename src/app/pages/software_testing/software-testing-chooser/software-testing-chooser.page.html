@@ -74,16 +74,16 @@
               <div class="flex flex-row justify-center items-center">
                 @if (unit.state){
                   <ion-icon name="checkmark-circle" class="text-green-600 text-3xl"></ion-icon>
-                  <ion-icon name="close-circle" class="text-3xl" (click)="automateUnitState(unit.title)"></ion-icon>
+                  <ion-icon name="close-circle" class="text-3xl" (click)="updateUnitState(unit.title)"></ion-icon>
                 }
                 @if (!unit.state){
-                  <ion-icon name="checkmark-circle" class="text-3xl" (click)="automateUnitState(unit.title)"></ion-icon>
+                  <ion-icon name="checkmark-circle" class="text-3xl" (click)="updateUnitState(unit.title)"></ion-icon>
                   <ion-icon name="close-circle" class="text-red-800 text-3xl"></ion-icon>
                 }
               </div>
             </ion-card-content>
             <ion-card-content>
-              <ion-button color="danger" expand="block" (click)="deleteTest(unit.title)">Delete Test</ion-button>
+              <ion-button color="danger" expand="block" (click)="deleteUnitTest(unit.title)">Delete Test</ion-button>
             </ion-card-content>
           </ion-card>
         </ion-col>
@@ -154,7 +154,7 @@
           <ion-card-content>
             <ion-button color="primary" expand="block" (click)="navigateToViewHistorySystemTest(test.title)">View Test Results</ion-button>
             <ion-button color="success" expand="block" (click)="navigateToExecuteSystemTest(test.title)">Execute Test</ion-button>
-            <ion-button color="danger" expand="block" (click)="deleteTest(test.title)">Delete Test</ion-button>
+            <ion-button color="danger" expand="block" (click)="deleteSystemTest(test.title)">Delete Test</ion-button>
           </ion-card-content>
         </ion-card>
       </ion-col>
