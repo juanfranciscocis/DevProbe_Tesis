@@ -302,6 +302,7 @@ export class SoftwareTestingChooserPage implements OnInit {
       await this.getUnitTests();
     });
     await this.hideLoading();
+
   }
   async deleteSystemTest(title: string) {
     await this.showLoading();
