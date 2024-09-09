@@ -180,6 +180,10 @@ const routes: Routes = [
     path: 'settings',
     loadChildren: () => import('./pages/settings/settings.module').then( m => m.SettingsPageModule)
   },
+  {
+    path: 'create-integration-test',
+    loadChildren: () => import('./pages/software_testing/integration_tests/create-integration-test/create-integration-test.module').then( m => m.CreateIntegrationTestPageModule)
+  },
 
 ];
 

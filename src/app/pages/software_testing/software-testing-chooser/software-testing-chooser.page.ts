@@ -151,6 +151,13 @@ export class SoftwareTestingChooserPage implements OnInit {
   /**
    * Methods to navigate.
    */
+  navigateToCreateIntegrationTest() {
+    // Navigate to the integration test creation page
+    this.router.navigate(['/create-integration-test', {
+      productObjective: this.productObjective,
+      step: this.productStep
+    }]);
+  }
   navigateToCreateSystemTest() {
     // Navigate to the system test creation page
     this.router.navigate(['/create-system-test', {
@@ -561,4 +568,6 @@ export class SoftwareTestingChooserPage implements OnInit {
       await this.showAlert('There was an error copying the code to the clipboard.', 'Error');
     });
   }
+
+
 }

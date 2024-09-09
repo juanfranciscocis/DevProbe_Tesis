@@ -1,0 +1,91 @@
+<app-header-return [title]="'Create Integration Test'"></app-header-return>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <app-title [title]="'Create Integration Test'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <p>Create a new integration test for product step: {{productStep}}</p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-segment value="frontback">
+          <ion-segment-button value="frontback" (click)="segment  = 'frontback' ">
+            <ion-label>Frontend & Backend</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="api" (click)="segment = 'api'">
+            <ion-label>API</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="mytest" (click)="segment = 'mytest'">
+            <ion-label>My Test</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-col>
+    </ion-row>
+
+
+    @if (segment === 'frontback') {
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card class="flex flex-col justify-center items-center p-2">
+          <ion-card-header class="flex flex-col justify-center items-center">
+            <ion-card-title class="text-3xl">Upload a foto to create an integration test</ion-card-title>
+          </ion-card-header>
+          <ion-card  class="w-full">
+          <ion-card-content class="flex flex-col justify-center items-center">
+            <ion-input  class="flex flex-col justify-center items-center" type="file"  multiple (change)="onSelectedPhoto($event)"></ion-input>
+          </ion-card-content>
+          </ion-card>
+          <ion-card-header class="flex flex-col justify-center items-center">
+            <ion-card-title class="text-3xl">Framework to use</ion-card-title>
+          </ion-card-header>
+          <ion-card class="w-full">
+            <ion-card-content class="w-full flex flex-row justify-center items-center">
+            @for (framework of frameworks; track framework) {
+              <ion-chip (click)="framework.state = !framework.state" class="m-2" [color]="framework.state ? 'primary' : ''">
+                <ion-label>{{framework.name}}</ion-label>
+              </ion-chip>
+            }
+            </ion-card-content>
+          </ion-card>
+          <ion-card-header >
+            <ion-card-title class="text-3xl">Give AI more context</ion-card-title>
+          </ion-card-header>
+          <ion-card class="w-full">
+          <ion-card-content class="w-full">
+            <ion-textarea placeholder="Add code, html, css, or any other relevant information to help the AI understand the context of the integration test" [(ngModel)]="moreContext"></ion-textarea>
+          </ion-card-content>
+          </ion-card>
+          <ion-card-content class="flex flex-col justify-center items-center">
+            <ion-button (click)="sendToAIFrontBack()"> Ask DevProbeAI</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row >
+      @if (aiMessages.length > 0) {
+      <ion-row class="lg:m-10 md:m-10">
+        <ion-col size="12" size-md="12" size-lg="12" class="">
+          <ion-card class="flex flex-col justify-center items-center p-2">
+            <ion-card-header class="flex flex-col justify-center items-center">
+              <ion-card-title class="text-3xl">DevProbeAI Auto-Generated Integration Test</ion-card-title>
+            </ion-card-header>
+            <ion-card class="w-full">
+            <ion-card-content class="w-full">
+              @for (msg of aiMessages; track msg) {
+              <markdown class="text-white">{{msg.message}}</markdown>
+              }
+            </ion-card-content>
+            </ion-card>
+            <ion-card-content>
+              <ion-button (click)="saveIntegrationTest()" color="success">Save Integration Test</ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+        }
+    }
+  </ion-grid>
+</ion-content>
