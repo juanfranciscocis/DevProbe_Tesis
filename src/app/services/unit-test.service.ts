@@ -56,19 +56,19 @@ export class UnitTestService {
     return [];
   }
 
-  async updateUnitTestState(orgName: string, productObjective: string, productStep: string, title: string) {
+  async updateUnitTestState(orgName: string, productObjective: string, productStep: string, title: string, state: boolean) {
     const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'software_testing', 'unit_tests');
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()){
       const data = docSnap.data();
       for (let i = 0; i < data[productStep].length; i++){
         if (data[productStep][i].title === title){
-          data[productStep][i].state = !data[productStep][i].state;
+          data[productStep][i].state = state;
 
           const date = new Date();
-          let pushDate = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+          let srtDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
           const last_state_change = {
-            date: pushDate,
+            date: srtDate,
             state: data[productStep][i].state
           }
 
@@ -98,5 +98,15 @@ export class UnitTestService {
       }
     }
     return false;
+  }
+
+  async getUnitTestHistory(orgName: string, productObjective: string) {
+    const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'software_testing', 'unit_tests');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return data;
+    }
+    return {};
   }
 }

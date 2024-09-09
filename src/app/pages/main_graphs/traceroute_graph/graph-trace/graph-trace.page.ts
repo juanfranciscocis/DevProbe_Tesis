@@ -74,6 +74,7 @@ export class GraphTracePage implements OnInit {
    * Fetches user data and trace results, then processes the data.
    */
   async ionViewWillEnter() {
+
     // Get parameters from the URL
     this.route.queryParams.subscribe(params => {
       this.productObjective = params['product'];
@@ -95,10 +96,16 @@ export class GraphTracePage implements OnInit {
         this.groupByCountry().then(() => {
           this.populateCountries();
           this.generateCountryOptions()
-        });
+        })
       });
     });
+
+
+
+
   }
+
+
 
   /**
    * Fetches the history results for RTT (Round Trip Time) and processes the data.
@@ -272,6 +279,8 @@ export class GraphTracePage implements OnInit {
         animationDelayUpdate: i => i * 5,
       };
     }
+
+
   }
 
   /**
@@ -402,6 +411,10 @@ export class GraphTracePage implements OnInit {
   async hideLoading() {
     await this.loadingCtrl.dismiss();
   }
+
+
+
+
 
 
 

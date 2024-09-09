@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {Product} from "../../../interfaces/product";
 import {SystemTestService} from "../../../services/system-test.service";
 import {SystemTest} from "../../../interfaces/system-test";
 import {User} from "../../../interfaces/user";
@@ -22,13 +21,43 @@ export class SoftwareTestingChooserPage implements OnInit {
   private user: User = {};
   private orgName: string = '';
 
-
   systemTests: SystemTest[] = [];
   unitTests: UnitTest[] = [];
 
+  passedUnitTests:number = 0;
+  failedUnitTests:number = 0;
   passedSystemTests: number = 0;
   failedSystemTests: number = 0;
 
+  unitTestsChart: EChartsOption = {
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['Passed', 'Failed'],
+      left: 'left'
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: [] // This will be populated with test titles
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: 'Passed',
+        type: 'line',
+        data: [] // This will be populated with the number of passed tests
+      },
+      {
+        name: 'Failed',
+        type: 'line',
+        data: [] // This will be populated with the number of failed tests
+      },
+    ]
+  }
   systemTestsChart: EChartsOption = {
     tooltip: {
       trigger: 'axis'
@@ -49,12 +78,14 @@ export class SoftwareTestingChooserPage implements OnInit {
       {
         name: 'Passed',
         type: 'line',
-        data: [] // This will be populated with the number of passed tests
+        data: [], // This will be populated with the number of passed tests
+        color: 'green'
       },
       {
         name: 'Failed',
         type: 'line',
-        data: [] // This will be populated with the number of failed tests
+        data: [], // This will be populated with the number of failed tests,
+        color: 'red'
       },
     ]
   };
@@ -78,15 +109,21 @@ export class SoftwareTestingChooserPage implements OnInit {
     await this.getUser();
 
     //Unit Tests
-    await this.getUnitTests();
+    try {
+      await this.getUnitTests().then(async () => {
+        await this.calculatePassedUnitTests().then(async () => {
+            await this.graphUnitTests();
+        });
+      });
+    }catch (e) {
+      console.log(e);
+    }
 
     //System Tests
     try {
       await this.getSystemTests().then(async () => {
         await this.calculatePassedSystemTests().then(async () => {
-          await this.calculateGraphDataSystemTests().then(async () => {
             await this.graphSystemTests();
-          });
         })
       });
     }catch (e) {
@@ -145,10 +182,30 @@ export class SoftwareTestingChooserPage implements OnInit {
 
 
   /**
+   * Methods to copy the test code.
+   */
+  copyUnitTestCode(title: string) {
+    let unitTest = this.unitTests.find((unitTest: { title: string; }) => unitTest.title === title);
+    if (!unitTest) return;
+    this.copyCode(unitTest.code);
+  }
+
+
+  /**
    * Methods to calculate the number of passed and failed system tests.
    */
   async calculatePassedUnitTests() {
-
+    this.passedUnitTests = 0;
+    this.failedUnitTests = 0;
+    // Get the number of passed and failed unit tests
+    this.unitTests.forEach(test => {
+      if (test.state) {
+        this.passedUnitTests++;
+      }
+      else {
+        this.failedUnitTests++;
+      }
+    });
   }
   async calculatePassedSystemTests() {
     this.passedSystemTests = 0;
@@ -169,7 +226,24 @@ export class SoftwareTestingChooserPage implements OnInit {
    * Methods to calculate the data for the graph.
    * @returns {Promise<void>}
    */
-  async calculateGraphDataUnitTests() {}
+  async calculateGraphDataUnitTests() {
+    // Get the unit test history
+    let filteredData:UnitTest[] = [];
+    const getUnitTests = await this.unitTestService.getUnitTestHistory(this.orgName, this.productObjective);
+    console.log('unit tests',getUnitTests);
+    // Filter the data to only include the unit tests for the specified product step
+    const keys = Object.keys(getUnitTests);
+    //Data looks like this ej:
+    //UserTable: {2021-09-29 12:00:00: {unitTest: {title: "UserTable", code: "console.log('Hello World!')", state: true}}}
+    //We need to filter the data to only include the unit tests for the specified product step
+    for (let key of keys) {
+      if (key === this.productStep) {
+        filteredData.push(getUnitTests[key]);
+      }
+    }
+    console.log('filtrado',filteredData);
+    return filteredData[0];
+  }
   async calculateGraphDataSystemTests() {
     // Get the system test history
     let filteredData: { timestamp: string; systemTest: SystemTest; }[] = [];
@@ -185,6 +259,95 @@ export class SoftwareTestingChooserPage implements OnInit {
    * Methods to populate the graph.
    */
   async graphUnitTests() {
+    const filteredData = await this.calculateGraphDataUnitTests();
+
+    let data = []
+
+    // @ts-ignore
+    for (let test of filteredData) {
+      data.push(test.last_state_change );
+    }
+
+    //combine into one array
+    let combined = [].concat.apply([], data);
+
+    // Sort the data by date
+    combined.sort((a: { date: string; }, b: { date: string; }) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      // @ts-ignore
+      return dateA - dateB; // Sort in ascending order (oldest first)
+    });
+
+    console.log('combined',combined);
+
+    // Combine data by date
+    let dataByDate = [];
+
+    for (let test of combined) {
+      // @ts-ignore
+      let date = test.date.split(' ')[0];
+      // @ts-ignore
+      let state = test.state;
+
+      dataByDate.push({date, state});
+
+    }
+
+
+    // Count the number of passed and failed tests for each date
+    data = [];
+
+    for (let test of dataByDate) {
+      let index = data.findIndex((d: { date: string; }) => d.date === test.date);
+      if (index === -1) {
+        data.push({date: test.date, passed: test.state ? 1 : 0, failed: test.state ? 0 : 1});
+      } else {
+        if (test.state) {
+          data[index].passed++;
+        } else {
+          data[index].failed++;
+        }
+      }
+    }
+
+
+    // Populate the chart data
+    this.unitTestsChart.xAxis = {
+      type: 'category',
+      boundaryGap: false,
+      data: data.map((d: { date: string; }) => d.date)
+    };
+
+    this.unitTestsChart.series = [
+      {
+        name: 'Passed',
+        type: 'line',
+        data: data.map((d: { passed: number; }) => d.passed),
+        color: 'green'
+      },
+      {
+        name: 'Failed',
+        type: 'line',
+        data: data.map((d: { failed: number; }) => d.failed),
+        color: 'red'
+      }
+    ];
+
+
+
+    this.unitTestsChart = {...this.unitTestsChart};
+
+    //get the eleement by id unitChart
+    let unitChart = document.getElementById('unitChart');
+    console.log(unitChart);
+    //change width and height
+    unitChart!.style.width = '100%';
+    unitChart!.style.height = '25em';
+
+
+
+
 
   }
   async graphSystemTests() {
@@ -193,6 +356,7 @@ export class SoftwareTestingChooserPage implements OnInit {
     // count the number of passed and failed tests for each date
     let data = []
 
+    // @ts-ignore
     for (let test of filteredData) {
 
       let reordered = test.timestamp.split(' ')[0].split('-');
@@ -235,28 +399,39 @@ export class SoftwareTestingChooserPage implements OnInit {
       {
         name: 'Passed',
         type: 'line',
-        data: data.map((d: { passed: number; }) => d.passed)
+        data: data.map((d: { passed: number; }) => d.passed),
+        color: 'green'
       },
       {
         name: 'Failed',
         type: 'line',
-        data: data.map((d: { failed: number; }) => d.failed)
+        data: data.map((d: { failed: number; }) => d.failed),
+        color: 'red'
       }
     ];
 
 
     this.systemTestsChart = {...this.systemTestsChart};
 
+    //get the eleement by id systemChart
+    let systemChart = document.getElementById('systemChart');
+    console.log(systemChart);
+    //change width and height
+    systemChart!.style.width = '100%';
+    systemChart!.style.height = '25em';
+
   }
+
 
   /**
    * Methods to show tests in each section.
    */
   async getUnitTests() {
     // Get unit tests from the service
-    this.unitTestService.getUnitTests(this.orgName, this.productObjective, this.productStep).then(r => {
+    await this.unitTestService.getUnitTests(this.orgName, this.productObjective, this.productStep).then(r => {
       this.unitTests = r;
     });
+    return this.unitTests;
   }
   async getSystemTests() {
     // Get system tests from the service
@@ -277,11 +452,13 @@ export class SoftwareTestingChooserPage implements OnInit {
   /**
    * Send a status update and save to the database.
    */
-  async updateUnitState(title: string) {
+  async updateUnitState(title: string, state: boolean) {
     await this.showLoading();
-    await this.unitTestService.updateUnitTestState(this.orgName, this.productObjective, this.productStep, title).then(async r => {
+    await this.unitTestService.updateUnitTestState(this.orgName, this.productObjective, this.productStep, title, state).then(async r => {
       if (r) {
         await this.getUnitTests();
+        await this.calculatePassedUnitTests();
+        await this.graphUnitTests();
         await this.hideLoading();
       }else {
         await this.hideLoading();
@@ -300,6 +477,8 @@ export class SoftwareTestingChooserPage implements OnInit {
     if (!unitTest) return;
     await this.unitTestService.deleteUnitTest(this.orgName, this.productObjective, this.productStep,unitTest).then(async () => {
       await this.getUnitTests();
+      await this.calculatePassedUnitTests();
+      await this.graphUnitTests();
     });
     await this.hideLoading();
 
@@ -374,5 +553,12 @@ export class SoftwareTestingChooserPage implements OnInit {
   }
 
 
-
+  private copyCode(code: string) {
+    // Copy the code to the clipboard
+    navigator.clipboard.writeText(code).then(async () => {
+      await this.showAlert('Code copied to clipboard.', 'Code Copied');
+    }, async (err) => {
+      await this.showAlert('There was an error copying the code to the clipboard.', 'Error');
+    });
+  }
 }
