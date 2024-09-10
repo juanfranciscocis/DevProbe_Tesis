@@ -101,8 +101,8 @@
 
               @if (!disableAI){
                 <ion-card-content class="">
-                <div class=" rounded-full p-3 bg-purple-800 flex flex-row justify-center items-center">
-                <ion-icon name="color-wand-outline" (click)="askAIForHelp('step')" ></ion-icon>
+                <div class=" rounded-full p-3 bg-purple-800 flex flex-row justify-center items-center" (click)="askAIForHelp('step')">
+                <ion-icon name="color-wand-outline"  ></ion-icon>
                 </div>
                 </ion-card-content>
               }

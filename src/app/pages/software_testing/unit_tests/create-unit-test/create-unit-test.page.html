@@ -30,8 +30,8 @@
       <ion-col size="12" size-md="12" size-lg="12" class="">
         <ion-card class="m-2 p-5">
           <ion-card>
-          <ion-card-header>
-            <ion-card-title class="text-white text-3xl">Choose a file to create a unit test</ion-card-title>
+          <ion-card-header class="flex-row justify-center items-center">
+            <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> Choose a file to create a unit test</ion-card-title>
           </ion-card-header>
           <ion-card-content>
             <ion-card>
@@ -47,7 +47,7 @@
           </ion-card-content>
             </ion-card>
           </ion-card-content>
-          <ion-card-header>
+          <ion-card-header class="flex-row justify-center items-center">
             <ion-card-title class="text-white text-3xl">DevProbeAI Auto-Generated Unit Test</ion-card-title>
           </ion-card-header>
           <ion-card>
@@ -57,8 +57,8 @@
               }
             </ion-card-content>
           </ion-card>
-            <ion-card-header>
-              <ion-card-title class="text-white text-3xl">Add A Title or Add the Class Name</ion-card-title>
+            <ion-card-header class="flex-row justify-center items-center">
+              <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> Add a Title or Add the Class Name</ion-card-title>
             </ion-card-header>
             <ion-card-content>
               <ion-card>
@@ -67,7 +67,7 @@
             </ion-card-content>
           </ion-card>
 
-          <ion-button color="primary" expand="block" fill="outline" (click)="saveUnitTest()">Save Unit Test</ion-button>
+          <ion-button color="success" expand="block" fill="outline" (click)="saveUnitTest()">Save Unit Test</ion-button>
         </ion-card>
       </ion-col>
       }
@@ -76,19 +76,21 @@
         <ion-col size="12" size-md="12" size-lg="12" class="">
           <ion-card  class="m-2 p-5">
           <ion-card>
-            <ion-card-header class="">
-              <ion-card-title class="text-white text-3xl">Give Context To AI</ion-card-title>
-              <ion-card-subtitle>Provide the AI with context to generate a unit test. Code snippets, descriptions, or
-                examples are all helpful.</ion-card-subtitle>
+            <ion-card-header class="flex-row justify-center items-center">
+              <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> Give Context To AI</ion-card-title>
+            </ion-card-header>
+            <ion-card-header class=" flex-row justify-center items-center">
+              <p class="flex flex-row">Provide the AI with context to generate a unit test. Code snippets, descriptions, or
+              examples are all helpful.</p>
             </ion-card-header>
             <ion-card>
               <ion-card-content>
                 <ion-textarea placeholder="Paste Code" class="w-full" [(ngModel)]="context">
                 </ion-textarea>
               </ion-card-content>
-              <ion-button color="primary" expand="block" fill="outline" (click)="askForFile(context)">Ask AI For Help</ion-button>
+              <ion-button color="ai_purple" expand="block" fill="outline" (click)="askForFile(context)">Ask AI For Help</ion-button>
             </ion-card>
-            <ion-card-header>
+            <ion-card-header class="flex-row justify-center items-center">
               <ion-card-title class="text-white text-3xl">DevProbeAI Auto-Generated Unit Test</ion-card-title>
             </ion-card-header>
             <ion-card>
@@ -98,8 +100,8 @@
                 }
               </ion-card-content>
             </ion-card>
-            <ion-card-header>
-              <ion-card-title class="text-white text-3xl">Add A Title or Add the Class Name</ion-card-title>
+            <ion-card-header class="flex-row justify-center items-center">
+              <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> Add A Title or Add the Class Name</ion-card-title>
             </ion-card-header>
             <ion-card-content>
               <ion-card>
@@ -107,7 +109,7 @@
               </ion-card>
             </ion-card-content>
           </ion-card>
-          <ion-button color="primary" expand="block" fill="outline" (click)="saveUnitTest()">Save Unit Test</ion-button>
+          <ion-button color="success" expand="block" fill="outline" (click)="saveUnitTest()">Save Unit Test</ion-button>
         </ion-card>
         </ion-col>
       }
@@ -118,8 +120,8 @@
         <ion-col size="12" size-md="12" size-lg="12" class="">
           <ion-card>
           <ion-card>
-            <ion-card-header>
-              <ion-card-title class="text-white text-3xl">My Unit Test</ion-card-title>
+            <ion-card-header class="flex-row justify-center items-center">
+              <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> My Unit Test Code</ion-card-title>
             </ion-card-header>
             <ion-card>
               <ion-card-content>
@@ -127,15 +129,15 @@
                 </ion-textarea>
               </ion-card-content>
             </ion-card>
-            <ion-card-header>
-              <ion-card-title class="text-white text-3xl">Add A Title or Add the Class Name</ion-card-title>
+            <ion-card-header class="flex-row justify-center items-center">
+              <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> Add A Title or Add the Class Name</ion-card-title>
             </ion-card-header>
             <ion-card-content>
               <ion-card>
                 <ion-input placeholder="Title or Class Name" type="text" class="p-2 m-2" [(ngModel)]="title" ></ion-input>
               </ion-card>
             </ion-card-content>
-            <ion-button color="primary" expand="block" fill="outline" (click)="saveUnitTest()">Save Unit Test</ion-button>
+            <ion-button color="success" expand="block" fill="outline" (click)="saveUnitTest()">Save Unit Test</ion-button>
           </ion-card>
           </ion-card>
         </ion-col>

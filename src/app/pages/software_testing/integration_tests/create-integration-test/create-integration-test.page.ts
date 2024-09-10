@@ -12,7 +12,7 @@ import {GithubService} from "../../../../services/github.service";
 })
 export class CreateIntegrationTestPage implements OnInit {
 
-  segment: string = 'frontback'
+  segment: string = 'front'
 
   productStep: string = '';
   productObjective: string = '';
@@ -145,7 +145,7 @@ export class CreateIntegrationTestPage implements OnInit {
   }
 
 
-  async sendToAIFrontBack() {
+  async sendToAIFront() {
     try {
 
       await this.showLoading();
@@ -199,7 +199,7 @@ export class CreateIntegrationTestPage implements OnInit {
     }
   }
 
-  async sendToAIAPI() {
+  async sendToAIApiBack() {
     try {
 
       await this.showLoading();
