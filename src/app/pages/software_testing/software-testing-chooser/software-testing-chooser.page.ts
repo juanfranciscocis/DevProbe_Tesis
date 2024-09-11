@@ -7,6 +7,8 @@ import {AlertController, LoadingController} from "@ionic/angular";
 import {EChartsOption} from "echarts";
 import {UnitTestService} from "../../../services/software_testing/unit-test.service";
 import {UnitTest} from "../../../interfaces/unit-test";
+import {IntegrationTest} from "../../../interfaces/integration-test";
+import {IntegrationTestService} from "../../../services/software_testing/integration-test.service";
 
 @Component({
   selector: 'app-software-testing-chooser',
@@ -21,11 +23,17 @@ export class SoftwareTestingChooserPage implements OnInit {
   private user: User = {};
   private orgName: string = '';
 
-  systemTests: SystemTest[] = [];
+
   unitTests: UnitTest[] = [];
+  integrationTests: IntegrationTest[] = [];
+  systemTests: SystemTest[] = [];
+
+
 
   passedUnitTests:number = 0;
   failedUnitTests:number = 0;
+  passedIntegrationTests:number = 0;
+  failedIntegrationTests:number = 0;
   passedSystemTests: number = 0;
   failedSystemTests: number = 0;
 
@@ -58,6 +66,37 @@ export class SoftwareTestingChooserPage implements OnInit {
       },
     ]
   }
+  integrationTestsChart: EChartsOption = {
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['Passed', 'Failed'],
+      left: 'left'
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: [] // This will be populated with execution dates
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: 'Passed',
+        type: 'line',
+        data: [], // This will be populated with the number of passed tests
+        color: 'green'
+      },
+      {
+        name: 'Failed',
+        type: 'line',
+        data: [], // This will be populated with the number of failed tests,
+        color: 'red'
+      },
+    ]
+  };
   systemTestsChart: EChartsOption = {
     tooltip: {
       trigger: 'axis'
@@ -97,6 +136,7 @@ export class SoftwareTestingChooserPage implements OnInit {
     private systemTestService: SystemTestService,
     private loadingCtrl: LoadingController,
     private unitTestService: UnitTestService,
+    private integrationTestService: IntegrationTestService,
     private alertCtrl: AlertController
   ) { }
 
@@ -113,6 +153,17 @@ export class SoftwareTestingChooserPage implements OnInit {
       await this.getUnitTests().then(async () => {
         await this.calculatePassedUnitTests().then(async () => {
             await this.graphUnitTests();
+        });
+      });
+    }catch (e) {
+      console.log(e);
+    }
+
+    //Integration Tests
+    try {
+      await this.getIntegrationTests().then(async () => {
+        await this.calculatePassedIntegrationTests().then(async () => {
+            await this.graphIntegrationTests();
         });
       });
     }catch (e) {
@@ -196,6 +247,11 @@ export class SoftwareTestingChooserPage implements OnInit {
     if (!unitTest) return;
     this.copyCode(unitTest.code);
   }
+  copyIntegrationTestCode(title: string) {
+    let integrationTest = this.integrationTests.find((integrationTest: { title: string; }) => integrationTest.title === title);
+    if (!integrationTest) return;
+    this.copyCode(integrationTest.code);
+  }
 
 
   /**
@@ -211,6 +267,19 @@ export class SoftwareTestingChooserPage implements OnInit {
       }
       else {
         this.failedUnitTests++;
+      }
+    });
+  }
+  async calculatePassedIntegrationTests() {
+    this.passedIntegrationTests = 0;
+    this.failedIntegrationTests = 0;
+    // Get the number of passed and failed integration tests
+    this.integrationTests.forEach(test => {
+      if (test.state) {
+        this.passedIntegrationTests++;
+      }
+      else {
+        this.failedIntegrationTests++;
       }
     });
   }
@@ -246,6 +315,24 @@ export class SoftwareTestingChooserPage implements OnInit {
     for (let key of keys) {
       if (key === this.productStep) {
         filteredData.push(getUnitTests[key]);
+      }
+    }
+    console.log('filtrado',filteredData);
+    return filteredData[0];
+  }
+  async calculateGraphDataIntegrationTests() {
+    // Get the unit test history
+    let filteredData:IntegrationTest[] = [];
+    const getIntegrationTests = await this.integrationTestService.getIntegrationTestHistory(this.orgName, this.productObjective);
+    console.log('integration tests',getIntegrationTests);
+    // Filter the data to only include the unit tests for the specified product step
+    const keys = Object.keys(getIntegrationTests);
+    //Data looks like this ej:
+    //UserTable: {2021-09-29 12:00:00: {unitTest: {title: "UserTable", code: "console.log('Hello World!')", state: true}}}
+    //We need to filter the data to only include the unit tests for the specified product step
+    for (let key of keys) {
+      if (key === this.productStep) {
+        filteredData.push(getIntegrationTests[key]);
       }
     }
     console.log('filtrado',filteredData);
@@ -357,6 +444,99 @@ export class SoftwareTestingChooserPage implements OnInit {
 
 
   }
+  async graphIntegrationTests() {
+    const filteredData = await this.calculateGraphDataIntegrationTests();
+
+    let data = []
+
+    // @ts-ignore
+    for (let test of filteredData) {
+      data.push(test.last_state_change );
+    }
+
+    //combine into one array
+    let combined = [].concat.apply([], data);
+
+    // Sort the data by date
+    combined.sort((a: { date: string; }, b: { date: string; }) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      // @ts-ignore
+      return dateA - dateB; // Sort in ascending order (oldest first)
+    });
+
+    console.log('combined',combined);
+
+    // Combine data by date
+    let dataByDate = [];
+
+    for (let test of combined) {
+      // @ts-ignore
+      let date = test.date.split(' ')[0];
+      // @ts-ignore
+      let state = test.state;
+
+      dataByDate.push({date, state});
+
+    }
+
+
+    // Count the number of passed and failed tests for each date
+    data = [];
+
+    for (let test of dataByDate) {
+      let index = data.findIndex((d: { date: string; }) => d.date === test.date);
+      if (index === -1) {
+        data.push({date: test.date, passed: test.state ? 1 : 0, failed: test.state ? 0 : 1});
+      } else {
+        if (test.state) {
+          data[index].passed++;
+        } else {
+          data[index].failed++;
+        }
+      }
+    }
+
+
+    // Populate the chart data
+    this.integrationTestsChart.xAxis = {
+      type: 'category',
+      boundaryGap: false,
+      data: data.map((d: { date: string; }) => d.date)
+    };
+
+    this.integrationTestsChart.series = [
+      {
+        name: 'Passed',
+        type: 'line',
+        data: data.map((d: { passed: number; }) => d.passed),
+        color: 'green'
+      },
+      {
+        name: 'Failed',
+        type: 'line',
+        data: data.map((d: { failed: number; }) => d.failed),
+        color: 'red'
+      }
+    ];
+
+
+
+    this.integrationTestsChart = {...this.integrationTestsChart};
+
+    //get the eleement by id unitChart
+    let integrationChart = document.getElementById('integrationChart');
+    console.log(integrationChart);
+    //change width and height
+    integrationChart!.style.width = '100%';
+    integrationChart!.style.height = '25em';
+
+
+
+
+
+
+  }
   async graphSystemTests() {
     const filteredData = await this.calculateGraphDataSystemTests();
 
@@ -440,6 +620,13 @@ export class SoftwareTestingChooserPage implements OnInit {
     });
     return this.unitTests;
   }
+  async getIntegrationTests() {
+    // Get unit tests from the service
+    await this.integrationTestService.getIntegrationTests(this.orgName, this.productObjective, this.productStep).then(r => {
+      this.integrationTests = r;
+    });
+    return this.integrationTests;
+  }
   async getSystemTests() {
     // Get system tests from the service
     this.systemTestService.getSystemTest(this.orgName, this.productObjective, this.productStep).then(r => {
@@ -450,14 +637,17 @@ export class SoftwareTestingChooserPage implements OnInit {
 
 
   /**
-   * Show Alert to tell the user a way to automate the unit test result.
+   * Show Alert to tell the user a way to automate the unit test result or integration test result.
    */
   async infoAutomateUnitState(title: string) {
     await this.showAlert('You can automate the result of this unit test (' + title + ') by sending a status update to the /unit_test_state API endpoint.', 'Automate Unit Test State');
   }
+  async infoAutomateIntegrationState(title: string) {
+    await this.showAlert('You can automate the result of this integration test (' + title + ') by sending a status update to the /integration_test_state API endpoint.', 'Automate Integration Test State');
+  }
 
   /**
-   * Send a status update and save to the database.
+   * Send a status update and save to the database for unit and integration tests.
    */
   async updateUnitState(title: string, state: boolean) {
     await this.showLoading();
@@ -470,6 +660,21 @@ export class SoftwareTestingChooserPage implements OnInit {
       }else {
         await this.hideLoading();
         await this.showAlert('There was an error updating the unit test state.', 'Error');
+      }
+    });
+    await this.hideLoading();
+  }
+  async updateIntegrationState(title: string, state: boolean) {
+    await this.showLoading();
+    await this.integrationTestService.updateIntegrationTestState(this.orgName, this.productObjective, this.productStep, title, state).then(async r => {
+      if (r) {
+        await this.getIntegrationTests();
+        await this.calculatePassedIntegrationTests();
+        await this.graphIntegrationTests();
+        await this.hideLoading();
+      }else {
+        await this.hideLoading();
+        await this.showAlert('There was an error updating the integration test state.', 'Error');
       }
     });
     await this.hideLoading();
@@ -489,6 +694,17 @@ export class SoftwareTestingChooserPage implements OnInit {
     });
     await this.hideLoading();
 
+  }
+  async deleteIntegrationTest(title: string) {
+    await this.showLoading();
+    let integrationTest = this.integrationTests.find((integrationTest: { title: string; }) => integrationTest.title === title);
+    if (!integrationTest) return;
+    await this.integrationTestService.deleteIntegrationTest(this.orgName, this.productObjective, this.productStep,integrationTest).then(async () => {
+      await this.getIntegrationTests();
+      await this.calculatePassedIntegrationTests();
+      await this.graphIntegrationTests();
+    });
+    await this.hideLoading();
   }
   async deleteSystemTest(title: string) {
     await this.showLoading();
@@ -568,6 +784,9 @@ export class SoftwareTestingChooserPage implements OnInit {
       await this.showAlert('There was an error copying the code to the clipboard.', 'Error');
     });
   }
+
+
+
 
 
 }

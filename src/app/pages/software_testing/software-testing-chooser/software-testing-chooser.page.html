@@ -132,6 +132,66 @@
           <p>Created tests for product step: {{productStep}}</p>
         </ion-col>
       </ion-row>
+      <ion-row class="lg:m-10 md:m-10">
+        <ion-col size="6" size-md="6" size-lg="6" class="">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title class="flex flex-col justify-center items-center text-green-600">Passed Tests</ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="flex flex-col justify-center items-center">
+              <h1>{{passedIntegrationTests}}</h1>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6" size-md="6" size-lg="6" class="">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title class="flex flex-col justify-center items-center text-red-800">Failed Tests</ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="flex flex-col justify-center items-center">
+              <h1>{{ failedIntegrationTests }}</h1>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row class="lg:m-10 md:m-10">
+        <ion-col size="12" size-md="12" size-lg="12" class="">
+          <ion-card>
+            <ion-card-content class="h-[25em] ">
+              <div id="integrationChart"  echarts [options]="integrationTestsChart" class="demo-chart h-full w-full p-4"></div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <ion-row class="lg:m-10 md:m-10">
+        @for (integration of integrationTests; track integration){
+          <ion-col size="12" size-md="3" size-lg="3" class="">
+            <ion-card>
+              <ion-card-header class="flex-row flex justify-between items-center">
+                <ion-card-title>{{integration.title}}</ion-card-title>
+                <ion-icon name="information-circle" class="text-xl" (click)="infoAutomateIntegrationState(integration.title)"></ion-icon>
+              </ion-card-header>
+              <ion-card-content class="flex flex-col justify-center items-center">
+                <p> Change the Test State: </p>
+                <div class="flex flex-row justify-center items-center">
+                  @if (integration.state){
+                    <ion-icon name="checkmark-circle" class="text-green-600 text-3xl" (click)="updateIntegrationState(integration.title, true)"></ion-icon>
+                    <ion-icon name="close-circle" class="text-3xl" (click)="updateIntegrationState(integration.title, false)"></ion-icon>
+                  }
+                  @if (!integration.state){
+                    <ion-icon name="checkmark-circle" class="text-3xl" (click)="updateIntegrationState(integration.title, true)"></ion-icon>
+                    <ion-icon name="close-circle" class="text-red-800 text-3xl" (click)="updateIntegrationState(integration.title ,  false)"></ion-icon>
+                  }
+                </div>
+              </ion-card-content>
+              <ion-card-content>
+                <ion-button color="primary" expand="block" (click)="copyIntegrationTestCode(integration.title)">Copy Test Code</ion-button>
+                <ion-button color="danger" expand="block" (click)="deleteIntegrationTest(integration.title)">Delete Test</ion-button>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        }
+      </ion-row>
 
 
       <br>

@@ -333,20 +333,6 @@ export class CreateIntegrationTestPage implements OnInit {
 
   }
 
-
-
-  async sendToAIApiBack() {
-    try {
-
-      await this.showLoading();
-      await  this.hideLoading();
-
-    }catch (e) {
-      await this.hideLoading();
-      console.log(e);
-    }
-  }
-
   /**
    * Get the GitHub Sync data from the local storage.
    */
