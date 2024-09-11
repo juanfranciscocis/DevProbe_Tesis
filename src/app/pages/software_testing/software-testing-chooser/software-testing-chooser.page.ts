@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {SystemTestService} from "../../../services/system-test.service";
+import {SystemTestService} from "../../../services/software_testing/system-test.service";
 import {SystemTest} from "../../../interfaces/system-test";
 import {User} from "../../../interfaces/user";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {EChartsOption} from "echarts";
-import {UnitTestService} from "../../../services/unit-test.service";
+import {UnitTestService} from "../../../services/software_testing/unit-test.service";
 import {UnitTest} from "../../../interfaces/unit-test";
 
 @Component({

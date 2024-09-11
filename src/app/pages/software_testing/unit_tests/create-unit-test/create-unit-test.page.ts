@@ -4,7 +4,7 @@ import {GithubService} from "../../../../services/github.service";
 import {GitSyncData} from "../../../../interfaces/git-sync-data";
 import {AiMessage} from "../../../../interfaces/ai-message";
 import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
-import {UnitTestService} from "../../../../services/unit-test.service";
+import {UnitTestService} from "../../../../services/software_testing/unit-test.service";
 import {ActivatedRoute} from "@angular/router";
 import {LastStateChange} from "../../../../interfaces/unit-test";
 

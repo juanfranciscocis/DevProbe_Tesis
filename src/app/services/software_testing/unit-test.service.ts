@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {SystemTest} from "../interfaces/system-test";
+import {SystemTest} from "../../interfaces/system-test";
 import {doc, Firestore, getDoc, setDoc} from "@angular/fire/firestore";
-import {UnitTest} from "../interfaces/unit-test";
+import {UnitTest} from "../../interfaces/unit-test";
 
 @Injectable({
   providedIn: 'root'

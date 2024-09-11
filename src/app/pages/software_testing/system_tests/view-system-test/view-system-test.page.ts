@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {SystemTest} from "../../../../interfaces/system-test";
-import {SystemTestService} from "../../../../services/system-test.service";
+import {SystemTestService} from "../../../../services/software_testing/system-test.service";
 import {User} from "../../../../interfaces/user";
 import {ActivatedRoute} from "@angular/router";
 

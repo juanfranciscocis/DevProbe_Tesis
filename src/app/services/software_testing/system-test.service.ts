@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {doc, Firestore, getDoc, setDoc} from "@angular/fire/firestore";
-import {SystemTest} from "../interfaces/system-test";
+import {SystemTest} from "../../interfaces/system-test";
 import {get} from "@angular/fire/database";
-import {Product} from "../interfaces/product";
+import {Product} from "../../interfaces/product";
 
 @Injectable({
   providedIn: 'root'

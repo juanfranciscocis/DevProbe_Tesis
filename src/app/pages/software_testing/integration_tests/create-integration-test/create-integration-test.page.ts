@@ -4,6 +4,8 @@ import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
 import {AiMessage} from "../../../../interfaces/ai-message";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {GithubService} from "../../../../services/github.service";
+import {IntegrationTestService} from "../../../../services/software_testing/integration-test.service";
+import {GitSyncData} from "../../../../interfaces/git-sync-data";
 
 @Component({
   selector: 'app-create-integration-test',
@@ -20,6 +22,7 @@ export class CreateIntegrationTestPage implements OnInit {
   selectedFiles: File[] = [];
   moreContext: string = '';
   framework: string = '';
+  testTitle: string = '';
 
   frameworks = [
     {
@@ -60,6 +63,16 @@ export class CreateIntegrationTestPage implements OnInit {
   })
   aiMessages: AiMessage[] = [];
 
+  gitHubData:GitSyncData = {
+    key: '',
+    repo: '',
+    branch: '',
+    owner: ''
+  }
+  files:string[] = []
+
+  myIntegrationTest: string = '';
+
 
 
   constructor(
@@ -67,14 +80,22 @@ export class CreateIntegrationTestPage implements OnInit {
     private loadingCtrl: LoadingController,
     private alertCtrl:AlertController,
     private githubService: GithubService,
+    private integrationTestService: IntegrationTestService
   ) {
   }
 
   ngOnInit() {
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.getProductFromParams();
+    await this.getGitHubSync();
+
+    if (this.gitHubData.key !== '') {
+      await this.getFiles();
+    }
+
+
   }
 
   getProductFromParams() {
@@ -88,15 +109,48 @@ export class CreateIntegrationTestPage implements OnInit {
 
   }
 
+  /**
+   * Handle segment change.
+   */
+  onSegmentChanged(segment: string) {
+    this.segment = segment;
+    //reset all variables
+    this.selectedFiles = [];
+    this.moreContext = '';
+    this.framework = '';
+    this.testTitle = '';
+    this.aiMessages = [];
+
+    for (let s of this.frameworks) {
+      s.state = false;
+    }
+
+    this.chat = this.model.startChat({
+      history: [
+        {
+          role:"user",
+          parts: [{text: "Hola desde ahora en adelante seras un ingeniero SRE y de QA, te llamas DevProbeAI. Por favor ayudame a crear un INTEGRATION TEST, limitate a solo programar usando el framework que te diga yo, no me expliques nada, SOLO PROGRAMA"}]
+        },
+        {
+          role:"model",
+          parts: [{text: "Claro, soy DevProbeAI, puedo ayudarte con eso. Por favor enviame el contenido del archivo"}]
+        }
+      ],
+    })
+
+
+  }
+
+
+  /**
+   * Handle the selection of a photo, choosing the framework to use and sending the photo to the AI.
+   */
   onSelectedPhoto($event: Event) {
     const input = $event.target as HTMLInputElement;
     if (input.files) {
       this.selectedFiles = Array.from(input.files);
     }
   }
-
-
-
   async fileToGenerativePart() {
 
     const filePromises = this.selectedFiles.map(file => {
@@ -116,8 +170,6 @@ export class CreateIntegrationTestPage implements OnInit {
 
 
   }
-
-
   async chooseFramework() {
 
     //check if two frameworks are selected
@@ -143,15 +195,15 @@ export class CreateIntegrationTestPage implements OnInit {
 
 
   }
-
-
   async sendToAIFront() {
     try {
 
       await this.showLoading();
 
+      console.log(this.selectedFiles);
+      console.log(this.moreContext);
 
-      if (this.selectedFiles.length === 0) {
+      if (this.selectedFiles.length === 0 && this.moreContext === '') { //if no file is selected but there is more context then this is a valid case
         await this.hideLoading();
         await this.showAlert('Please select a file', 'No File Selected');
         return;
@@ -163,9 +215,14 @@ export class CreateIntegrationTestPage implements OnInit {
       }
 
       let prompt = "";
-      if (this.moreContext !== '') {
+      if (this.moreContext !== '' && this.selectedFiles.length > 1) {
+        console.log('more context and files');
         prompt = "Te envio más contexto:  " + this.moreContext + "   El test debe ser escrito con: " + this.framework;
+      } else if (this.moreContext !== '' && this.selectedFiles.length <= 0) {
+        console.log('more context');
+        prompt = "El contenido del archivo es:  " + this.moreContext + "   El test debe ser escrito con: " + this.framework
       }else {
+        console.log('framework');
         prompt = "El test debe ser escrito con: " + this.framework;
       }
 
@@ -174,9 +231,28 @@ export class CreateIntegrationTestPage implements OnInit {
 
       this.aiMessages = [];
       let res = '';
-      this.fileToGenerativePart().then(async (data) => {
-        // @ts-ignore
-        await this.chat.sendMessage([prompt, ...data]).then((response) => {
+
+      if (this.selectedFiles.length >= 1) {
+        console.log('file');
+        this.fileToGenerativePart().then(async (data) => {
+          // @ts-ignore
+          await this.chat.sendMessage([prompt, ...data]).then((response) => {
+            res = response.response.text();
+          }).finally(async () => {
+            this.aiMessages.push({
+              from: 'ai',
+              message: res,
+              id: this.aiMessages.length.toString()
+            });
+
+            await this.hideLoading();
+
+          });
+
+        });
+      } else {
+        console.log('github');
+        await this.chat.sendMessage(prompt).then((response) => {
           res = response.response.text();
         }).finally(async () => {
           this.aiMessages.push({
@@ -184,12 +260,11 @@ export class CreateIntegrationTestPage implements OnInit {
             message: res,
             id: this.aiMessages.length.toString()
           });
-
           await this.hideLoading();
-
         });
+      }
 
-      });
+      console.log('Messages', this.aiMessages);
 
 
 
@@ -198,6 +273,67 @@ export class CreateIntegrationTestPage implements OnInit {
       console.log(e);
     }
   }
+
+
+  /**
+   * Save the integration test to the database.
+   */
+  async saveIntegrationTest() {
+
+    await this.showLoading();
+
+    //check if the test title is empty
+    if (this.testTitle === '') {
+      await this.hideLoading()
+      this.showAlert('Please enter a test title', 'No Test Title');
+      return;
+    }
+
+    //check if there is no message from the AI
+    if (this.aiMessages.length === 0 && this.myIntegrationTest === '') {
+      await this.hideLoading();
+      this.showAlert('Please send the file to the AI or paste your code', 'Error');
+      return;
+    }
+
+    //get user froim local storage
+    const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null;
+    if (!user) {
+      return;
+    }
+    const orgName = user.orgName || '';
+
+    //get the current date
+    let date = new Date();
+    let srtDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+
+    //save the integration test
+    await this.integrationTestService.addSystemTest(orgName, this.productObjective, this.productStep, {
+      title: this.testTitle,
+      type: 'integration-test',
+      code: this.myIntegrationTest !== '' ? this.myIntegrationTest : this.aiMessages[0].message,
+      state: false,
+      last_state_change: [
+        {
+          date: srtDate,
+          state: false
+        }
+      ]
+    }).then(async () => {
+      await this.hideLoading();
+      await this.showAlert('Integration Test saved successfully', 'Test Saved');
+      window.history.back();
+    }).catch(async (e) => {
+      await this.hideLoading();
+      await this.showAlert('Error saving Integration Test', 'Error');
+    });
+
+    await this.hideLoading();
+
+
+  }
+
+
 
   async sendToAIApiBack() {
     try {
@@ -210,6 +346,71 @@ export class CreateIntegrationTestPage implements OnInit {
       console.log(e);
     }
   }
+
+  /**
+   * Get the GitHub Sync data from the local storage.
+   */
+  async getGitHubSync() {
+    await this.showLoading();
+
+    //Get User
+    const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null;
+    if (!user) {
+      return;
+    }
+    const orgName = user.orgName || '';
+
+    this.gitHubData = await this.githubService.getSyncRepo(orgName);
+    console.log('this.gitHubData', this.gitHubData)
+
+    if (!this.gitHubData || this.gitHubData.key === '') {
+      await this.hideLoading();
+      await this.showAlert('If you want to use GitHub, please sync your repository in the settings page', 'No GitHub Sync found');
+      return;
+    }
+
+    await this.hideLoading();
+  }
+
+  /**
+   *  Get the files from the GitHub repository.
+   */
+  async getFiles() {
+    await this.showLoading();
+
+    this.files = await this.githubService.getFiles(this.gitHubData);
+
+    if (this.files.length === 0) {
+      await this.hideLoading();
+      await this.showAlert('No files found in the repository, check sync settings', 'No Files Found');
+    }
+    await this.hideLoading();
+  }
+
+  /**
+   * Get the content of the selected file.
+   */
+  async askForFile(file:any){
+    await this.showLoading();
+
+    let content = '';
+
+    try {
+      if (file.detail.value) {
+        console.log('file', file.detail.value)
+        content = await this.githubService.getContentFromFilePath(this.gitHubData, file.detail.value);
+        console.log('content', content)
+
+      }
+    } catch (e) {
+      content = file;
+    }
+
+    this.moreContext = content;
+
+    await this.hideLoading();
+  }
+
 
 
   /**
@@ -243,7 +444,5 @@ export class CreateIntegrationTestPage implements OnInit {
   }
 
 
-  saveIntegrationTest() {
 
-  }
 }

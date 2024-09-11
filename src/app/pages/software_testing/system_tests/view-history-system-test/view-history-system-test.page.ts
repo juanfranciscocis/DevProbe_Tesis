@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {SystemTestService} from "../../../../services/system-test.service";
+import {SystemTestService} from "../../../../services/software_testing/system-test.service";
 import {User} from "../../../../interfaces/user";
 import {SystemTest} from "../../../../interfaces/system-test";
 import {LoadingController} from "@ionic/angular";

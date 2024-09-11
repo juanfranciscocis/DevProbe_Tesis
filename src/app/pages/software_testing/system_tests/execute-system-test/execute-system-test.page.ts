@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {SystemTest} from "../../../../interfaces/system-test";
 import {User} from "../../../../interfaces/user";
-import {SystemTestService} from "../../../../services/system-test.service";
+import {SystemTestService} from "../../../../services/software_testing/system-test.service";
 import {LoadingController} from "@ionic/angular";
 
 @Component({

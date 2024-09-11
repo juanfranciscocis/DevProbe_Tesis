@@ -12,14 +12,14 @@
   <ion-grid>
     <ion-row class="lg:m-10 md:m-10">
       <ion-col size="12" size-md="12" size-lg="12" class="">
-        <ion-segment value="frontback">
-          <ion-segment-button value="frontback" (click)="segment  = 'front' ">
+        <ion-segment value="front">
+          <ion-segment-button value="front" (click)="onSegmentChanged('front') ">
             <ion-label>Frontend + DevProbeAI</ion-label>
           </ion-segment-button>
-          <ion-segment-button value="api" (click)="segment = 'apiback'">
+          <ion-segment-button value="apiback" (click)="onSegmentChanged('apiback')">
             <ion-label>Backend & API + DevProbeAI </ion-label>
           </ion-segment-button>
-          <ion-segment-button value="mytest" (click)="segment = 'mytest'">
+          <ion-segment-button value="mytest" (click)="onSegmentChanged('mytest')">
             <ion-label>My Test</ion-label>
           </ion-segment-button>
         </ion-segment>
@@ -68,8 +68,8 @@
             <ion-textarea placeholder="Add code, html, css, or any other relevant information to help the AI understand the context of the integration test" [(ngModel)]="moreContext"></ion-textarea>
           </ion-card-content>
           </ion-card>
-          <ion-card-content class="flex flex-col justify-center items-center">
-            <ion-button color="ai_purple" (click)="sendToAIFront()"> Ask DevProbeAI</ion-button>
+          <ion-card-content class="flex flex-col justify-center items-center w-full">
+            <ion-button class="w-full" color="ai_purple"  fill="outline"  (click)="sendToAIFront()"> Ask DevProbeAI</ion-button>
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -78,6 +78,14 @@
       <ion-row class="lg:m-10 md:m-10">
         <ion-col size="12" size-md="12" size-lg="12" class="">
           <ion-card class="flex flex-col justify-center items-center p-2">
+            <ion-card-header class="flex flex-col justify-center items-center">
+              <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p>Add a Test Title</ion-card-title>
+            </ion-card-header>
+            <ion-card class="w-full">
+            <ion-card-content class="w-full">
+              <ion-input placeholder="Title" type="text" class="p-2 m-2" [(ngModel)]="testTitle"></ion-input>
+            </ion-card-content>
+            </ion-card>
             <ion-card-header class="flex flex-col justify-center items-center">
               <ion-card-title class="text-3xl">DevProbeAI Auto-Generated Integration Test</ion-card-title>
             </ion-card-header>
@@ -88,13 +96,116 @@
               }
             </ion-card-content>
             </ion-card>
-            <ion-card-content>
-              <ion-button (click)="saveIntegrationTest()" color="success">Save Integration Test</ion-button>
+            <ion-card-content class="flex flex-col justify-center items-center w-full">
+              <ion-button class="w-full" (click)="saveIntegrationTest()" fill="outline" color="success">Save Integration Test</ion-button>
             </ion-card-content>
           </ion-card>
         </ion-col>
       </ion-row>
         }
     }
+
+
+    @if (segment === 'apiback') {
+      <ion-row class="lg:m-10 md:m-10">
+        <ion-col size="12" size-md="12" size-lg="12" class="">
+          <ion-card class="flex flex-col justify-center items-center p-2">
+            <ion-card-header class="flex-row justify-center items-center">
+              <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> Choose a file to create a unit test</ion-card-title>
+            </ion-card-header>
+            <ion-card class="w-full">
+              <ion-card-content>
+                <ion-select
+                  label="Select File From GitHub Repo"
+                  (ionChange)="askForFile($event)"
+                >
+                  @for (file of files; track file){
+                    <ion-select-option value="{{file}}"  >{{ file }}</ion-select-option>
+                  }
+                </ion-select>
+              </ion-card-content>
+            </ion-card>
+            <ion-card-header class="flex flex-col justify-center items-center">
+              <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> Framework to use</ion-card-title>
+            </ion-card-header>
+            <ion-card-subtitle>
+              <p> Select the framework you want to use for the integration test</p>
+            </ion-card-subtitle>
+            <ion-card class="w-full">
+              <ion-card-content class="w-full flex flex-row justify-center items-center">
+                @for (framework of frameworks; track framework) {
+                  <ion-chip (click)="framework.state = !framework.state" class="m-2" [color]="framework.state ? 'primary' : ''">
+                    <ion-label>{{framework.name}}</ion-label>
+                  </ion-chip>
+                }
+              </ion-card-content>
+            </ion-card>
+            <ion-card-content class="flex flex-col justify-center items-center w-full">
+              <ion-button class="w-full" color="ai_purple"  fill="outline"  (click)="sendToAIFront()"> Ask DevProbeAI</ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      @if (aiMessages.length > 0) {
+        <ion-row class="lg:m-10 md:m-10">
+          <ion-col size="12" size-md="12" size-lg="12" class="">
+            <ion-card class="flex flex-col justify-center items-center p-2">
+              <ion-card-header class="flex flex-col justify-center items-center">
+                <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p>Add a Test Title</ion-card-title>
+              </ion-card-header>
+              <ion-card class="w-full">
+                <ion-card-content class="w-full">
+                  <ion-input placeholder="Title" type="text" class="p-2 m-2" [(ngModel)]="testTitle"></ion-input>
+                </ion-card-content>
+              </ion-card>
+              <ion-card-header class="flex flex-col justify-center items-center">
+                <ion-card-title class="text-3xl">DevProbeAI Auto-Generated Integration Test</ion-card-title>
+              </ion-card-header>
+              <ion-card class="w-full">
+                <ion-card-content class="w-full">
+                  @for (msg of aiMessages; track msg) {
+                    <markdown class="text-white">{{msg.message}}</markdown>
+                  }
+                </ion-card-content>
+              </ion-card>
+              <ion-card-content class="flex flex-col justify-center items-center w-full">
+                <ion-button class="w-full" (click)="saveIntegrationTest()" fill="outline" color="success">Save Integration Test</ion-button>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      }
+    }
+
+
+    @if (segment === 'mytest'){
+      <ion-row class="lg:m-10 md:m-10">
+        <ion-col size="12" size-md="12" size-lg="12" class="">
+          <ion-card class="flex flex-col justify-center items-center p-2">
+            <ion-card-header class="flex flex-col justify-center items-center">
+              <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> Add a test title</ion-card-title>
+            </ion-card-header>
+            <ion-card class="w-full">
+              <ion-card-content class="w-full">
+                <ion-input placeholder="Title" type="text" class="p-2 m-2" [(ngModel)]="testTitle"></ion-input>
+              </ion-card-content>
+            </ion-card>
+            <ion-card-header class="flex flex-col justify-center items-center">
+              <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> My Integration Test Code</ion-card-title>
+            </ion-card-header>
+            <ion-card class="w-full">
+              <ion-card-content class="w-full">
+                <ion-textarea placeholder="Paste Code" class="w-full h-96" [(ngModel)]="myIntegrationTest"></ion-textarea>
+              </ion-card-content>
+            </ion-card>
+            <ion-card-content class="flex flex-col justify-center items-center w-full">
+              <ion-button class="w-full" (click)="saveIntegrationTest()" fill="outline" color="success">Save Integration Test</ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    }
+
+
   </ion-grid>
 </ion-content>

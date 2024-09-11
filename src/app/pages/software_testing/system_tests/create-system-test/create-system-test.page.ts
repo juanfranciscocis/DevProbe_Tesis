@@ -2,7 +2,7 @@ import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {SystemTest} from "../../../../interfaces/system-test";
 import {AlertController, IonModal, LoadingController} from "@ionic/angular";
-import {SystemTestService} from "../../../../services/system-test.service";
+import {SystemTestService} from "../../../../services/software_testing/system-test.service";
 import {User} from "../../../../interfaces/user";
 import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
 import {AiMessage} from "../../../../interfaces/ai-message";
