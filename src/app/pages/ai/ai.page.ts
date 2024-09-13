@@ -23,11 +23,10 @@ export class AiPage implements OnInit {
       console.log(response.response.text());
       this.answer = response.response.text();
     });
-
-
-
-
-
+    
   }
+
+
+
 
 }

@@ -482,40 +482,58 @@ export class SoftwareTestingChooserPage implements OnInit {
 
 
     // Count the number of passed and failed tests for each date
-    data = [];
+    let data_by_date = [];
 
     for (let test of dataByDate) {
-      let index = data.findIndex((d: { date: string; }) => d.date === test.date);
+      let index = data_by_date.findIndex((d: { date: string; }) => d.date === test.date);
       if (index === -1) {
-        data.push({date: test.date, passed: test.state ? 1 : 0, failed: test.state ? 0 : 1});
+        data_by_date.push({date: test.date, passed: test.state ? 1 : 0, failed: test.state ? 0 : 1});
       } else {
         if (test.state) {
-          data[index].passed++;
+          data_by_date[index].passed++;
         } else {
-          data[index].failed++;
+          data_by_date[index].failed++;
         }
       }
     }
+
+    console.log('data_by_date',data_by_date);
+
+    //sort the data by date
+    for(let date of data_by_date){
+      let dateSplit = date.date.split('/');
+      date.date = dateSplit[2] + '/' + dateSplit[1] + '/' + dateSplit[0];
+    }
+    data_by_date.sort((a: { date: string; }, b: { date: string; }) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateA.getTime() - dateB.getTime(); // Sort in ascending order (oldest first)
+    });
+
+
+
+
+
 
 
     // Populate the chart data
     this.integrationTestsChart.xAxis = {
       type: 'category',
       boundaryGap: false,
-      data: data.map((d: { date: string; }) => d.date)
+      data: data_by_date.map((d: { date: string; }) => d.date)
     };
 
     this.integrationTestsChart.series = [
       {
         name: 'Passed',
         type: 'line',
-        data: data.map((d: { passed: number; }) => d.passed),
+        data: data_by_date.map((d: { passed: number; }) => d.passed),
         color: 'green'
       },
       {
         name: 'Failed',
         type: 'line',
-        data: data.map((d: { failed: number; }) => d.failed),
+        data: data_by_date.map((d: { failed: number; }) => d.failed),
         color: 'red'
       }
     ];
@@ -540,20 +558,26 @@ export class SoftwareTestingChooserPage implements OnInit {
   async graphSystemTests() {
     const filteredData = await this.calculateGraphDataSystemTests();
 
+
+    console.dir('filteredData',filteredData);
+
     // count the number of passed and failed tests for each date
     let data = []
 
-    // @ts-ignore
+
     for (let test of filteredData) {
 
       let reordered = test.timestamp.split(' ')[0].split('-');
-      let ordered = [reordered[2], reordered[1], reordered[0]];
+      let ordered = [reordered[0], reordered[1], reordered[2]];
       let orderTimestamp = ordered.join('/');
 
       let addTime = test.timestamp.split(' ')[1];
 
       let concat = orderTimestamp + ' ' + addTime;
+      console.log('concat',concat);
       let date = new Date(concat).toLocaleDateString();
+
+      console.log('date',date);
 
       let passed = test.systemTest.state ? 1 : 0;
       let failed = test.systemTest.state ? 0 : 1;
@@ -575,6 +599,8 @@ export class SoftwareTestingChooserPage implements OnInit {
       // @ts-ignore
       return dateA - dateB; // Sort in ascending order (oldest first)
     });
+
+    console.log('data_system',data);
 
     // Populate the chart data
     this.systemTestsChart.xAxis = {
