@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { RenderRestartPage } from './render-restart.page';
+import { LoadTestChooserPage } from './load-test-chooser.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: RenderRestartPage
+    component: LoadTestChooserPage
   }
 ];
 
@@ -14,4 +14,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class RenderRestartPageRoutingModule {}
+export class LoadTestChooserPageRoutingModule {}

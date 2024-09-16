@@ -57,6 +57,11 @@ export class AppComponent implements OnInit {
       icon: 'flask'
     },
     {
+      title:'Load Test',
+      url:'/load-test-chooser',
+      icon:'barbell'
+    },
+    {
       title: 'My Team',
       url: '/myteam',
       icon: 'people'

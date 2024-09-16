@@ -147,42 +147,40 @@ const routes: Routes = [
     loadChildren: () => import('./pages/software_testing/system_tests/execute-system-test/execute-system-test.module').then(m => m.ExecuteSystemTestPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
-
-
-
-
-
-
-
   {
     path: 'board',
     loadChildren: () => import('./pages/board/board.module').then( m => m.BoardPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
-    path: 'render-restart',
-    loadChildren: () => import('./pages/render-restart/render-restart.module').then( m => m.RenderRestartPageModule),
+    path: 'view-history-system-test',
+    loadChildren: () => import('./pages/software_testing/system_tests/view-history-system-test/view-history-system-test.module').then(m => m.ViewHistorySystemTestPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
-    path: 'view-history-system-test',
-    loadChildren: () => import('./pages/software_testing/system_tests/view-history-system-test/view-history-system-test.module').then(m => m.ViewHistorySystemTestPageModule)
-  },
-  {
     path: 'view-system-test',
-    loadChildren: () => import('./pages/software_testing/system_tests/view-system-test/view-system-test.module').then(m => m.ViewSystemTestPageModule)
+    loadChildren: () => import('./pages/software_testing/system_tests/view-system-test/view-system-test.module').then(m => m.ViewSystemTestPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'create-unit-test',
-    loadChildren: () => import('./pages/software_testing/unit_tests/create-unit-test/create-unit-test.module').then( m => m.CreateUnitTestPageModule)
+    loadChildren: () => import('./pages/software_testing/unit_tests/create-unit-test/create-unit-test.module').then( m => m.CreateUnitTestPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'settings',
-    loadChildren: () => import('./pages/settings/settings.module').then( m => m.SettingsPageModule)
+    loadChildren: () => import('./pages/settings/settings.module').then( m => m.SettingsPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
   {
     path: 'create-integration-test',
-    loadChildren: () => import('./pages/software_testing/integration_tests/create-integration-test/create-integration-test.module').then( m => m.CreateIntegrationTestPageModule)
+    loadChildren: () => import('./pages/software_testing/integration_tests/create-integration-test/create-integration-test.module').then( m => m.CreateIntegrationTestPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+  },
+  {
+    path: 'load-test-chooser',
+    loadChildren: () => import('./pages/load_test/load-test-chooser/load-test-chooser.module').then( m => m.LoadTestChooserPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
   },
 
 ];
