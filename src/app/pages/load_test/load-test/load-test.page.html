@@ -1,0 +1,11 @@
+<app-header-return [title]="'Load Test'"></app-header-return>
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <app-title [title]="'New Load Test'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <ion-input class="" label="Target" placeholder="Enter a target" type="text" labelPlacement="stacked" [(ngModel)]="target"></ion-input>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

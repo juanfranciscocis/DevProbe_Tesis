@@ -182,6 +182,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/load_test/load-test-chooser/load-test-chooser.module').then( m => m.LoadTestChooserPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
+  {
+    path: 'load-test',
+    loadChildren: () => import('./pages/load_test/load-test/load-test.module').then( m => m.LoadTestPageModule)
+  },
 
 ];
 
