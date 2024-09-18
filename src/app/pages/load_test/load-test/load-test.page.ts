@@ -69,12 +69,14 @@ responseTimeOptions: EChartsOption = {
   }
 
   async ionViewWillEnter() {
+    await this.showLoading();
     this.getParams();
     await this.getHistoryResults().then(() => {
       this.plotCodes();
       this.totalRequests();
       this.responseTime();
     });
+    await this.hideLoading();
   }
 
   getParams() {
@@ -115,13 +117,16 @@ responseTimeOptions: EChartsOption = {
   }
 
 
-
+  /**
+   * Get the history of the load test results.
+   */
   async getHistoryResults() {
-    await this.showLoading();
     this.loadTestResults  = await this.loadTestService.getLoadTestHistory(this.orgName, this.productObjective, this.productStep) as ArtilleryData;
-    await this.hideLoading();
-    console.log('finished');
   }
+
+  /**
+   * Calculate the total number of requests made in all the tests.
+   */
   totalRequests() {
     let keys = Object.keys(this.loadTestResults);
     let requests: Record<string, Record<string, number>> = {};
@@ -150,6 +155,10 @@ responseTimeOptions: EChartsOption = {
       this.totalNumberOfRequests = totalRequests;
 
   }
+
+  /**
+  * Return the status codes of the requests and plot them.
+   */
   byCodes() {
     let keys = Object.keys(this.loadTestResults);
     let codes: Record<string, Record<string, number>> = {};
@@ -176,15 +185,12 @@ responseTimeOptions: EChartsOption = {
 
     return codes;
   }
-
-// Función para normalizar la fecha al formato YYYY-MM-DD
   normalizarFecha(fecha: string): string {
     const [year, month, day] = fecha.split('-').map(num => parseInt(num, 10)); // Convertimos a números para evitar ceros iniciales incorrectos
     const mesNormalizado = month < 10 ? `0${month}` : month.toString(); // Agregar 0 si es necesario
     const diaNormalizado = day < 10 ? `0${day}` : day.toString(); // Agregar 0 si es necesario
     return `${year}-${mesNormalizado}-${diaNormalizado}`;
   }
-
   ordenarDiccionarioPorFechas(diccionario: { [key: string]: any }): { [key: string]: any } {
     // Obtener las claves del diccionario (fechas)
     const fechas = Object.keys(diccionario);
@@ -205,9 +211,6 @@ responseTimeOptions: EChartsOption = {
     return diccionarioOrdenado;
 
   }
-
-
-
   async plotCodes() {
     let codes = this.byCodes();
     console.log(codes);
@@ -296,7 +299,9 @@ for (let req in codes) {
   }
 
 
-
+  /**
+   * Calculate the average response time of the requests and plot them.
+   */
   responseTime() {
     let keys = Object.keys(this.loadTestResults);
     let responseTimes: Record<string, any> = {};
@@ -424,12 +429,6 @@ for (let metric in total) {
 
 
   }
-
-
-
-
-
-
 
 
 
