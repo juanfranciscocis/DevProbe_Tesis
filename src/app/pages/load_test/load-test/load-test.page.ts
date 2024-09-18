@@ -22,6 +22,9 @@ export class LoadTestPage implements OnInit {
   description: string = '';
 
   loadTestResults: ArtilleryData = {}
+
+
+  totalNumberOfRequests: number = 0;
   statusCodesOptions: EChartsOption = {
     tooltip: {
       trigger: 'axis'
@@ -37,7 +40,22 @@ export class LoadTestPage implements OnInit {
     series: [
     ]
   }
-  totalNumberOfRequests: number = 0;
+responseTimeOptions: EChartsOption = {
+    tooltip: {
+      trigger: 'axis'
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: [] // This will be populated with test titles
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+    ]
+  }
+
 
   constructor(
     private router: Router,
@@ -55,6 +73,7 @@ export class LoadTestPage implements OnInit {
     await this.getHistoryResults().then(() => {
       this.byCodes();
       this.totalRequests();
+      this.responseTime();
     });
   }
 
@@ -141,71 +160,44 @@ export class LoadTestPage implements OnInit {
 
     // Itera sobre las claves de los resultados del test
     for (let key of keys) {
-      // @ts-ignore: Extrae los contadores de los resultados agregados
+      // @ts-ignore
       let data = this.loadTestResults[key].aggregate.counters;
-      // @ts-ignore: Extrae la fecha del resultado
-      let date = this.loadTestResults[key].date;
-      // Filtra las claves que empiezan con "http.codes."
+      // @ts-ignore
+      let date = this.loadTestResults[key].date.split('-').slice(0, 3).join('-'); // Extrae solo la fecha (año-mes-día)
       let httpCodesKeys = Object.keys(data).filter(keyCode => keyCode.startsWith('http.codes.'));
 
+      if (!codes[date]) {
+        codes[date] = {};
+      }
+
       for (let keyCode of httpCodesKeys) {
-        if (!codes[date]) {
-          codes[date] = {};
-        }
-        // Suma los valores si ya existen en la misma fecha
         codes[date][keyCode] = (codes[date][keyCode] || 0) + data[keyCode];
       }
     }
 
-    // Diccionario modificado para agrupar por fecha
-    const modifiedDict: Record<string, Record<string, number>> = {};
+    // Ordena las fechas
+    const sortedDates = Object.keys(codes).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-    // Agrupa y suma los códigos HTTP por fecha
-    Object.entries(codes).forEach(([timestamp, codes]) => {
-      // Extrae solo la fecha (año-mes-día)
-      const date = timestamp.split('-').slice(0, 3).join('-');
-
-      if (!modifiedDict[date]) {
-        modifiedDict[date] = {};
-      }
-
-      // Suma los códigos HTTP en el nuevo diccionario
-      Object.entries(codes).forEach(([code, value]) => {
-        if (modifiedDict[date][code]) {
-          modifiedDict[date][code] += value;
-        } else {
-          if (typeof value === "number") {
-            modifiedDict[date][code] = value;
-          }
-        }
-      });
-    });
-
-
-    // Ordena las fechas en modifiedDict
-    const sortedDates = Object.keys(modifiedDict).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-
-    // Prepara las series para el gráfico
+    // Encuentra todos los códigos de estado únicos
     let statusCodes = new Set<string>();
-    for (let status in modifiedDict) {
-      for (let code in modifiedDict[status]) {
+    for (let date in codes) {
+      for (let code in codes[date]) {
         statusCodes.add(code);
       }
     }
 
-    // Inicializa las series para el gráfico
+    // Prepara las series para el gráfico
     this.statusCodesOptions.series = [];
     for (let status of statusCodes) {
       let seriesData: number[] = [];
 
       // Llena los datos por cada fecha
       sortedDates.forEach(date => {
-        seriesData.push(modifiedDict[date][status] || 0);
+        seriesData.push(codes[date][status] || 0);
       });
 
       // Asigna el color en función del rango del código HTTP
-      let statusCodeNumber = parseInt(status.split('.')[2], 10); // Extraer el número de código HTTP
-
+      let statusCodeNumber = parseInt(status.split('.')[2], 10);
       let color: string;
       if (statusCodeNumber < 300) {
         color = '#00c600'; // Verde para códigos 2xx
@@ -222,12 +214,8 @@ export class LoadTestPage implements OnInit {
         name: status,
         type: 'line',
         data: seriesData,
-        lineStyle: {
-          color: color
-        },
-        itemStyle: {
-          color: color
-        }
+        lineStyle: { color: color },
+        itemStyle: { color: color }
       });
     }
 
@@ -235,22 +223,138 @@ export class LoadTestPage implements OnInit {
     // @ts-ignore
     this.statusCodesOptions.xAxis.data = sortedDates;
 
-
     // Fuerza la actualización del gráfico
     this.statusCodesOptions = { ...this.statusCodesOptions };
 
-
-    //get the eleement by id unitChart
+    // Ajusta el tamaño del gráfico
     let httpCodesChart = document.getElementById('httpCodesChart');
-    //change width and height
-    httpCodesChart!.style.width = '100%';
-    httpCodesChart!.style.height = '25em';
+    if (httpCodesChart) {
+      httpCodesChart.style.width = '100%';
+      httpCodesChart.style.height = '25em';
+    }
+  }
+  responseTime() {
+    let keys = Object.keys(this.loadTestResults);
+    let responseTimes: Record<string, any> = {};
+
+    // Iterate over test result keys
+    for (let key of keys) {
+      // @ts-ignore
+      let data = this.loadTestResults[key].aggregate.histograms;
+      // @ts-ignore
+      let date = this.loadTestResults[key].date;
+      let httpResponseTime = Object.keys(data).filter(keyCode => keyCode.startsWith('http.response_time'));
+
+      for (let keyCode of httpResponseTime) {
+        responseTimes[date] = data[keyCode];
+      }
+    }
+
+    // Group by date
+    let responseTimesByDate = Object.entries(responseTimes).reduce((acc, [key, value]) => {
+      const date = key.split('-').slice(0, 3).join('-');
+      // @ts-ignore
+      acc[date] = acc[date] || [];
+      // @ts-ignore
+      acc[date].push(value);
+      return acc;
+    }, {});
+
+    console.log(responseTimesByDate);
+    // Sort by date
+    let sortedDates = Object.keys(responseTimesByDate).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
+    // Initialize total aggregate object
+    let total = { count: 0, max: 0, min: 0, mean: 0, median: 0, p50: 0, p90: 0, p95: 0, p99: 0, p999: 0 };
+    let averageResponseTimesDates: Record<string, any> = {};
+
+    console.log(sortedDates);
+    sortedDates.forEach(date => {
+      let aggregate = { count: 0, max: 0, min: 0, mean: 0, median: 0, p50: 0, p90: 0, p95: 0, p99: 0, p999: 0 };
+      let count = 0;
+
+      // @ts-ignore
+      responseTimesByDate[date].forEach((time: any) => {
+        aggregate.count += time.count;
+        aggregate.max += time.max;
+        aggregate.min += time.min;
+        aggregate.mean += time.mean;
+        aggregate.median += time.median;
+        aggregate.p50 += time.p50;
+        aggregate.p90 += time.p90;
+        aggregate.p95 += time.p95;
+        aggregate.p99 += time.p99;
+        aggregate.p999 += time.p999;
+        count++;
+      });
+
+      // Average out values
+      for (let key in aggregate) {
+        if (key !== 'count' && count > 0) {
+          // @ts-ignore
+          aggregate[key] = aggregate[key] / count;
+        }
+      }
+
+      averageResponseTimesDates[date] = aggregate;
+      total.count += aggregate.count;
+      total.max += aggregate.max;
+      total.min += aggregate.min;
+      total.mean += aggregate.mean;
+      total.median += aggregate.median;
+      total.p50 += aggregate.p50;
+      total.p90 += aggregate.p90;
+      total.p95 += aggregate.p95;
+      total.p99 += aggregate.p99;
+      total.p999 += aggregate.p999;
+    });
+
+    // Correct averaging for total values
+    let count = sortedDates.length;
+    if (count > 0) {
+      total.mean /= count;
+      total.median /= count;
+      total.p50 /= count;
+      total.p90 /= count;
+      total.p95 /= count;
+      total.p99 /= count;
+      total.p999 /= count;
+      total.max /= count;
+      total.min /= count;
+    }
+
+
+//Add the total to the graph as a barchart
+for (let metric in total) {
+
+  if (metric === 'count' || metric === 'p90' || metric === 'p50'  || metric === 'p999') {
+    continue;
+  }
+
+  // @ts-ignore
+  this.responseTimeOptions.series.push({
+    name: metric,
+    type: 'bar',
+    // @ts-ignore
+    data: [total[metric]],
+    label: { show: true, formatter: (params: { value: number; }) => `${params.value.toFixed(2)} ms` }
+  });
+}
+
+    console.log('this.responseTimeOptions',this.responseTimeOptions);
+
+    //Add the x axis, will be the metric name
+    this.responseTimeOptions.xAxis = {
+      type: 'category',
+      boundaryGap: false,
+      data: ['Category']
+    };
+
+
+    this.responseTimeOptions = { ...this.responseTimeOptions };
 
 
   }
-
-
-
 
 
 

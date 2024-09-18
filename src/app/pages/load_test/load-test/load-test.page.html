@@ -28,14 +28,25 @@
 
 
     <ion-row class="lg:m-10 md:m-10">
-    <ion-card class="w-full  p-6 flex flex-col justify-center items-center">
-      <ion-card-header>
-        <ion-card-title class="text-3xl">HTTP Status Codes</ion-card-title>
-      </ion-card-header>
-      <ion-card-content class="h-[25em] w-full">
-        <div id="httpCodesChart" echarts [options]="statusCodesOptions" class="demo-chart h-full w-full"></div>
-      </ion-card-content>
-    </ion-card>
+      <ion-card class="w-full  p-6 flex flex-col justify-center items-center">
+        <ion-card-header>
+          <ion-card-title class="text-3xl">HTTP Status Codes</ion-card-title>
+        </ion-card-header>
+        <ion-card-content class="h-[25em] w-full">
+          <div id="httpCodesChart" echarts [options]="statusCodesOptions" class="demo-chart h-full w-full"></div>
+        </ion-card-content>
+      </ion-card>
+    </ion-row>
+
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-card class="w-full  p-6 flex flex-col justify-center items-center">
+        <ion-card-header>
+          <ion-card-title class="text-3xl">HTTP Response Time</ion-card-title>
+        </ion-card-header>
+        <ion-card-content class="h-[25em] w-full">
+          <div id="httpResponseTimeChart" echarts [options]="responseTimeOptions" class="demo-chart h-full w-full"></div>
+        </ion-card-content>
+      </ion-card>
     </ion-row>
 
 
