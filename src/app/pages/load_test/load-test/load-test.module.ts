@@ -8,15 +8,17 @@ import { LoadTestPageRoutingModule } from './load-test-routing.module';
 
 import { LoadTestPage } from './load-test.page';
 import {ComponentsModule} from "../../../components/components.module";
+import {NgxEchartsDirective} from "ngx-echarts";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    LoadTestPageRoutingModule,
-    ComponentsModule
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        LoadTestPageRoutingModule,
+        ComponentsModule,
+        NgxEchartsDirective
+    ],
   declarations: [LoadTestPage]
 })
 export class LoadTestPageModule {}

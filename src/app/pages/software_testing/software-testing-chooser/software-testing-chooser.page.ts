@@ -549,11 +549,6 @@ export class SoftwareTestingChooserPage implements OnInit {
     integrationChart!.style.width = '100%';
     integrationChart!.style.height = '25em';
 
-
-
-
-
-
   }
   async graphSystemTests() {
     const filteredData = await this.calculateGraphDataSystemTests();
