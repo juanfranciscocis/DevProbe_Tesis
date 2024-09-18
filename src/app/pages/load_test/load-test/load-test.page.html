@@ -3,8 +3,12 @@
   <ion-grid>
     <app-title [title]="'New Load Test'"></app-title>
     <ion-row class="lg:m-10 md:m-10">
-      <ion-col size="12" size-md="8" size-lg="8" class="">
-        <ion-input class="" label="Target" placeholder="Enter a target" type="text" labelPlacement="stacked" [(ngModel)]="target"></ion-input>
+      <ion-col size="12" >
+        <ion-card>
+          <ion-card-content>
+            <ion-input class="" label="Target" placeholder="Enter a target" type="text" labelPlacement="stacked" [(ngModel)]="target"></ion-input>
+          </ion-card-content>
+        </ion-card>
       </ion-col>
     </ion-row>
     <ion-row class="lg:m-10 md:m-10">
@@ -49,6 +53,17 @@
       </ion-card>
     </ion-row>
 
+    <app-title [title]="'Results for date: '"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" class="w-full">
+        <ion-list class="w-full">
+          <ion-item *ngFor="let day of listOfDates" (click)="viewHistory(day)" class="w-full">
+            <ion-label>{{ day }}</ion-label>
+            <ion-icon name="arrow-forward" color="primary"></ion-icon>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
 
   </ion-grid>
 </ion-content>

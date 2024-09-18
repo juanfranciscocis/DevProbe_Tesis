@@ -56,6 +56,8 @@ responseTimeOptions: EChartsOption = {
     ]
   }
 
+  listOfDates: string[] = [];
+
 
   constructor(
     private router: Router,
@@ -216,6 +218,7 @@ responseTimeOptions: EChartsOption = {
     console.log(codes);
 
     let keys = Object.keys(codes);
+    this.listOfDates = keys;
     let typesOfCodes = new Set() as Set<string>;
 
 for (let key of keys) {
@@ -470,4 +473,8 @@ for (let metric in total) {
   }
 
 
+  viewHistory(day: string) {
+
+
+  }
 }
