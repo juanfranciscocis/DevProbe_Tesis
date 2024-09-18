@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {doc, Firestore, getDoc} from "@angular/fire/firestore";
 import {Convert} from "../classes/artillery-data";
 import {HttpClient} from "@angular/common/http";
@@ -31,9 +31,11 @@ export class LoadTestService {
       for (let key of keys) {
         let toParse = data[key];
         //parse to ArtilleryData
-        let artilleryData = Convert.toArtilleryData(toParse);
-        data[key] = artilleryData;
+        data[key] = Convert.toArtilleryData(toParse);
       }
+
+
+
 
       return data;
     }

@@ -71,7 +71,7 @@ responseTimeOptions: EChartsOption = {
   async ionViewWillEnter() {
     this.getParams();
     await this.getHistoryResults().then(() => {
-      this.byCodes();
+      this.plotCodes();
       this.totalRequests();
       this.responseTime();
     });
@@ -118,16 +118,13 @@ responseTimeOptions: EChartsOption = {
 
   async getHistoryResults() {
     await this.showLoading();
-    await this.loadTestService.getLoadTestHistory(this.orgName, this.productObjective, this.productStep).then((data) => {
-      this.loadTestResults = data as ArtilleryData;
-      console.log(this.loadTestResults);
-    });
+    this.loadTestResults  = await this.loadTestService.getLoadTestHistory(this.orgName, this.productObjective, this.productStep) as ArtilleryData;
     await this.hideLoading();
+    console.log('finished');
   }
   totalRequests() {
     let keys = Object.keys(this.loadTestResults);
     let requests: Record<string, Record<string, number>> = {};
-    console.log(keys);
     let totalRequests = 0;
     // Itera sobre las claves de los resultados del test
     for (let key of keys) {
@@ -151,7 +148,6 @@ responseTimeOptions: EChartsOption = {
         totalRequests += requests[date]['http.requests'];
       }
       this.totalNumberOfRequests = totalRequests;
-      console.log(this.totalNumberOfRequests);
 
   }
   byCodes() {
@@ -175,64 +171,132 @@ responseTimeOptions: EChartsOption = {
       }
     }
 
-    // Ordena las fechas
-    const sortedDates = Object.keys(codes).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+    // Ordena las fechas y los datos
+    codes = this.ordenarDiccionarioPorFechas(codes);
 
-    // Encuentra todos los códigos de estado únicos
-    let statusCodes = new Set<string>();
-    for (let date in codes) {
-      for (let code in codes[date]) {
-        statusCodes.add(code);
-      }
+    return codes;
+  }
+
+// Función para normalizar la fecha al formato YYYY-MM-DD
+  normalizarFecha(fecha: string): string {
+    const [year, month, day] = fecha.split('-').map(num => parseInt(num, 10)); // Convertimos a números para evitar ceros iniciales incorrectos
+    const mesNormalizado = month < 10 ? `0${month}` : month.toString(); // Agregar 0 si es necesario
+    const diaNormalizado = day < 10 ? `0${day}` : day.toString(); // Agregar 0 si es necesario
+    return `${year}-${mesNormalizado}-${diaNormalizado}`;
+  }
+
+  ordenarDiccionarioPorFechas(diccionario: { [key: string]: any }): { [key: string]: any } {
+    // Obtener las claves del diccionario (fechas)
+    const fechas = Object.keys(diccionario);
+
+    // Ordenar las fechas normalizadas
+    const fechasOrdenadas = fechas.sort((a, b) => {
+      const fechaA = new Date(this.normalizarFecha(a));
+      const fechaB = new Date(this.normalizarFecha(b));
+      return fechaA.getTime() - fechaB.getTime();
+    });
+
+    // Crear un nuevo diccionario con las fechas ordenadas
+    const diccionarioOrdenado: { [key: string]: any } = {};
+    fechasOrdenadas.forEach(fecha => {
+      diccionarioOrdenado[fecha] = diccionario[fecha];
+    });
+
+    return diccionarioOrdenado;
+
+  }
+
+
+
+  async plotCodes() {
+    let codes = this.byCodes();
+    console.log(codes);
+
+    let keys = Object.keys(codes);
+    let typesOfCodes = new Set() as Set<string>;
+
+for (let key of keys) {
+  let data = codes[key];
+  let codeKey = Object.keys(data)
+  for (let code of codeKey){
+    typesOfCodes.add(code);
+  }
+}
+
+let dataToPlot: Record<string, number[]> = {};
+for (let req in codes) {
+  let data = codes[req];
+  for (let code of typesOfCodes) {
+    if (!dataToPlot[code]) {
+      dataToPlot[code] = [];
     }
+    dataToPlot[code].push(data[code] || 0);
+  }
+}
 
-    // Prepara las series para el gráfico
-    this.statusCodesOptions.series = [];
-    for (let status of statusCodes) {
-      let seriesData: number[] = [];
+  let colors = [
+    '#36b311',
+    '#306fc6',
+    '#ed3b3b',
+    '#f4ba20',
+  ]
 
-      // Llena los datos por cada fecha
-      sortedDates.forEach(date => {
-        seriesData.push(codes[date][status] || 0);
-      });
 
-      // Asigna el color en función del rango del código HTTP
-      let statusCodeNumber = parseInt(status.split('.')[2], 10);
-      let color: string;
-      if (statusCodeNumber < 300) {
-        color = '#00c600'; // Verde para códigos 2xx
-      } else if (statusCodeNumber < 400) {
-        color = '#0080ff'; // Azul para códigos 3xx
-      } else if (statusCodeNumber < 500) {
-        color = '#e41313'; // Rojo para códigos 4xx
-      } else {
-        color = '#ff7300'; // Naranja para códigos 5xx
+// plot the data to the chart
+    for (let code in dataToPlot) {
+      let name = code.split('.').pop();
+      let color;
+      if (name?.startsWith('2')) {
+        color = colors[0];
+      }
+      if (name?.startsWith('3')) {
+        color = colors[1];
+      }
+      if (name?.startsWith('4')) {
+        color = colors[2];
+      }
+      if (name?.startsWith('5')) {
+        color = colors[3];
+      }
+      if (!color) {
+        color = '#000000';
       }
 
-      // Añade la serie al gráfico con el color correspondiente
+      // @ts-ignore
       this.statusCodesOptions.series.push({
-        name: status,
+        name: code,
         type: 'line',
-        data: seriesData,
+        data: dataToPlot[code],
         lineStyle: { color: color },
-        itemStyle: { color: color }
+        itemStyle: { color: color },
       });
     }
 
-    // Actualiza las etiquetas del eje X (fechas) con las fechas ordenadas
-    // @ts-ignore
-    this.statusCodesOptions.xAxis.data = sortedDates;
 
-    // Fuerza la actualización del gráfico
+    // Add the x axis, will be the date
+    this.statusCodesOptions.xAxis = {
+      type: 'category',
+      boundaryGap: false,
+      data: keys,
+    };
+
+
     this.statusCodesOptions = { ...this.statusCodesOptions };
 
-    // Ajusta el tamaño del gráfico
     let httpCodesChart = document.getElementById('httpCodesChart');
-    if (httpCodesChart) {
-      httpCodesChart.style.width = '100%';
-      httpCodesChart.style.height = '25em';
-    }
+    console.log(httpCodesChart);
+    //change width and height
+    httpCodesChart!.style.width = '100%';
+    httpCodesChart!.style.height = '25em';
+
+
+
+
+
   }
+
+
+
   responseTime() {
     let keys = Object.keys(this.loadTestResults);
     let responseTimes: Record<string, any> = {};
@@ -260,7 +324,6 @@ responseTimeOptions: EChartsOption = {
       return acc;
     }, {});
 
-    console.log(responseTimesByDate);
     // Sort by date
     let sortedDates = Object.keys(responseTimesByDate).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
@@ -268,7 +331,6 @@ responseTimeOptions: EChartsOption = {
     let total = { count: 0, max: 0, min: 0, mean: 0, median: 0, p50: 0, p90: 0, p95: 0, p99: 0, p999: 0 };
     let averageResponseTimesDates: Record<string, any> = {};
 
-    console.log(sortedDates);
     sortedDates.forEach(date => {
       let aggregate = { count: 0, max: 0, min: 0, mean: 0, median: 0, p50: 0, p90: 0, p95: 0, p99: 0, p999: 0 };
       let count = 0;
@@ -341,7 +403,6 @@ for (let metric in total) {
   });
 }
 
-    console.log('this.responseTimeOptions',this.responseTimeOptions);
 
     //Add the x axis, will be the metric name
     this.responseTimeOptions.xAxis = {
@@ -352,6 +413,14 @@ for (let metric in total) {
 
 
     this.responseTimeOptions = { ...this.responseTimeOptions };
+
+    let responseTimeChart = document.getElementById('httpResponseTimeChart');
+    console.log(responseTimeChart);
+    //change width and height
+    responseTimeChart!.style.width = '100%';
+    responseTimeChart!.style.height = '25em';
+
+
 
 
   }
