@@ -58,6 +58,41 @@ export class LoadTestService {
 
   }
 
+  async getLoadTestHistoryByDate(orgName: string, productObjective: string, productStep: string, date: string) {
+    const docRef = doc(this.firestore,'teams', orgName, 'products', productObjective, 'load_test', productStep);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      let data = docSnap.data();
+      console.log(data);
+
+      //get all keys
+      let keys = Object.keys(data);
+      console.log(keys);
+
+
+      for (let key of keys) {
+        let toParse = data[key];
+        //parse to ArtilleryData
+        data[key] = Convert.toArtilleryData(toParse);
+        let year = data[key].date.split('-')[0];
+        let month = data[key].date.split('-')[1];
+        let day = data[key].date.split('-')[2];
+
+        let fbDate = year + '-' + month + '-' + day;
+
+        if (fbDate !== date) {
+          delete data[key];
+        }
+
+      }
+      //Data is now filtered by date
+      console.log('Filtered by Date: ',data);
+
+      return data;
+    }
+    return {};
+  }
+
 
 
 }
