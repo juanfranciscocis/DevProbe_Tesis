@@ -474,7 +474,7 @@ for (let metric in total) {
 
 
   viewHistory(day: string) {
-
-
+    this.router.navigate(['/load-test-history',
+          {productObjective: this.productObjective, productStep: this.productStep, day: day}]);
   }
 }

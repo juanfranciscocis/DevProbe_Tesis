@@ -185,7 +185,11 @@ const routes: Routes = [
   {
     path: 'load-test',
     loadChildren: () => import('./pages/load_test/load-test/load-test.module').then( m => m.LoadTestPageModule)
+  },  {
+    path: 'load-test-history',
+    loadChildren: () => import('./pages/load_test/load-test-history/load-test-history.module').then( m => m.LoadTestHistoryPageModule)
   },
+
 
 ];
 
