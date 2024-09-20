@@ -20,6 +20,7 @@
     <app-title [title]="'Analytics For '+ productStep"></app-title>
 
     <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" >
       <ion-card class="w-full  p-6 flex flex-col justify-center items-center">
         <ion-card-header>
           <ion-card-title class="text-3xl">Total Number of Requests</ion-card-title>
@@ -28,10 +29,17 @@
           <h1 class="text-2xl text-white">{{ totalNumberOfRequests | number:'1.0-0' }}</h1>
         </ion-card-content>
       </ion-card>
+      </ion-col>
     </ion-row>
 
 
     <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" class="relative">
+        <div class="absolute z-10 flex justify-center items-center -right-5 -top-5" (click)="toggleAiModal('httpCodesOptions')">
+          <ion-avatar class="bg-purple-600 justify-center items-center flex">
+            <ion-icon size="large" name="color-wand-outline"></ion-icon>
+          </ion-avatar>
+        </div>
       <ion-card class="w-full  p-6 flex flex-col justify-center items-center">
         <ion-card-header>
           <ion-card-title class="text-3xl">HTTP Status Codes</ion-card-title>
@@ -40,9 +48,16 @@
           <div id="httpCodesChart" echarts [options]="statusCodesOptions" class="demo-chart h-full w-full"></div>
         </ion-card-content>
       </ion-card>
+      </ion-col>
     </ion-row>
 
     <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" class="relative">
+        <div class="absolute z-10 flex justify-center items-center -right-5 -top-5" (click)="toggleAiModal('httpResponseTimeOptions')">
+          <ion-avatar class="bg-purple-600 justify-center items-center flex">
+            <ion-icon size="large" name="color-wand-outline"></ion-icon>
+          </ion-avatar>
+        </div>
       <ion-card class="w-full  p-6 flex flex-col justify-center items-center">
         <ion-card-header>
           <ion-card-title class="text-3xl">HTTP Response Time</ion-card-title>
@@ -51,6 +66,7 @@
           <div id="httpResponseTimeChart" echarts [options]="responseTimeOptions" class="demo-chart h-full w-full"></div>
         </ion-card-content>
       </ion-card>
+        </ion-col>
     </ion-row>
 
     <app-title [title]="'Results for date: '"></app-title>
@@ -66,4 +82,55 @@
     </ion-row>
 
   </ion-grid>
+
+
+
+  <ion-fab class="m-2 z-10" vertical="bottom" horizontal="end" slot="fixed"  (click)="toggleAiModal()">
+    <ion-avatar class="bg-purple-300 p-4">
+      <ion-icon class="w-full h-full" name="chatbubble-outline"></ion-icon>
+    </ion-avatar>
+  </ion-fab>
+
+
 </ion-content>
+
+
+
+<div class="fixed bottom-0 right-0 h-full w-full bg-black bg-opacity-60 z-10 r" id="ai-modal" [class.hidden]="!aiModal">
+  <div class="h-full md:h-3/4 lg:h-3/4 w-full  bg-gray-900 p-4 absolute right-0 bottom-0 z-50 flex flex-col rounded-tl-2xl rounded-tr-2xl">
+
+    <div  class="w-full bg-gray-500 flex flex-row justify-center items-center p-2 mb-2 rounded-3xl" >
+      <div class="flex flex-row p-2 items-center bg-gray-800 w-full  rounded-3xl h-full">
+        <h1 class="text-white">DevProbe AI</h1>
+      </div>
+      <div class="m-2"></div>
+      <div class="flex flex-row justify-center items-center bg-gray-800 hover:bg-gray-600 w-1/6 h-full  rounded-3xl" (click)="toggleAiModal()">
+        <ion-icon name="close-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- El contenedor de mensajes con scroll -->
+    <div class="flex-grow overflow-y-auto bg-gray-400 p-2 rounded-3xl" #messagesContainer>
+      <div *ngFor="let msg of messages" class="flex flex-col">
+        <!-- Mensajes de usuario -->
+        <div *ngIf="msg.from === 'User'" class="rounded-3xl bg-gray-800 w-2/3 m-1 ml-auto p-2">
+          <markdown class="text-white p-4 m-2">{{ msg.message }}</markdown>
+        </div>
+
+        <!-- Mensajes de AI -->
+        <div *ngIf="msg.from === 'AI'" class="rounded-3xl bg-gray-500 w-2/3 m-1 p-2 pr-2">
+          <markdown id="mk-{{msg.id}}"  class="text-white p-4 m-2">{{ msg.message }}</markdown>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input y botón en la parte inferior -->
+    <div class="flex flex-row mt-2 p-2">
+      <ion-textarea  placeholder="Ask..." class="flex-grow bg-gray-700 rounded-2xl"  [(ngModel)]="message"></ion-textarea>
+      <div class="m-1"></div>
+      <div class="w-1/3 bg-gray-500 rounded-3xl flex flex-row justify-center items-center hover:bg-gray-300" (click)="sendMessage()">
+        <span class="text-white">Send</span>
+      </div>
+    </div>
+  </div>
+</div>

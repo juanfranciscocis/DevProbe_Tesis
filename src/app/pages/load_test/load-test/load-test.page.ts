@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {LoadTestService} from "../../../services/load-test.service";
 import {AlertController, LoadingController} from "@ionic/angular";
 import {ArtilleryData} from "../../../classes/artillery-data";
 import {EChartsOption} from "echarts";
+import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
+import {AiMessage} from "../../../interfaces/ai-message";
 
 @Component({
   selector: 'app-load-test',
@@ -57,6 +59,39 @@ responseTimeOptions: EChartsOption = {
   }
 
   listOfDates: string[] = [];
+
+
+
+
+  @ViewChild('messagesContainer') private messagesContainer: ElementRef | undefined;
+  aiModal: boolean = false
+  message: string = '';
+  vertexAI: VertexAI = inject(VertexAI);
+  model = getGenerativeModel(this.vertexAI, { model: "gemini-1.5-flash" });
+  chat = this.model.startChat({
+    history: [
+      {
+        role: "user",
+        parts: [{text:"Hola, desde ahora en adelante quiero que seas un modelo experto en Software Quality Assurance y analista de datos, tu nombre es DevProbeAI, nunca lo puedes olvidar"}],
+      },
+      {
+        role: "model",
+        parts: [{text:"Soy un modelo experto en Software Quality Assurance, de igual forma tengo un masterado en anlaítica de datos ¿En qué puedo ayudarte?"}],
+      },
+      {
+        role: "user",
+        parts: [{text:"Gracias, te voy a entregar un json con datos en unos minutos, necesito que lo analices y me des un resumen de los datos, este json contiene datos de un load test" +
+            ",tu analisis tiene que ser detallado, si encuentras inconsistencias en los datos, por favor mencionalas, en " +
+            "caso de que creas que puede haber un problema o que se encuentre el recurso no disponible por favor mencionalo, si encuentras algo interesante, por favor mencionalo, en resumen, necesito un analisis detallado de los datos"}],
+      },
+      {
+        role: "model",
+        parts: [{text:"Claro, envíame el json y yo me encargo de analizarlo"}]
+      },
+    ],
+  });
+  messages:AiMessage[] = []
+
 
 
   constructor(
@@ -185,6 +220,8 @@ responseTimeOptions: EChartsOption = {
     // Ordena las fechas y los datos
     codes = this.ordenarDiccionarioPorFechas(codes);
 
+    console.log('codessss',codes);
+
     return codes;
   }
   normalizarFecha(fecha: string): string {
@@ -299,6 +336,7 @@ for (let req in codes) {
 
 
 
+
   }
 
 
@@ -393,6 +431,8 @@ for (let req in codes) {
       total.min /= count;
     }
 
+    let httpResponseTime = {};
+
 
 //Add the total to the graph as a barchart
 for (let metric in total) {
@@ -400,6 +440,9 @@ for (let metric in total) {
   if (metric === 'count' || metric === 'p90' || metric === 'p50'  || metric === 'p999') {
     continue;
   }
+
+    // @ts-ignore
+  httpResponseTime[metric] = total[metric];
 
   // @ts-ignore
   this.responseTimeOptions.series.push({
@@ -428,6 +471,8 @@ for (let metric in total) {
     responseTimeChart!.style.width = '100%';
     responseTimeChart!.style.height = '25em';
 
+
+    return httpResponseTime;
   }
 
 
@@ -473,5 +518,45 @@ for (let metric in total) {
   viewHistory(day: string) {
     this.router.navigate(['/load-test-history',
           {productObjective: this.productObjective, productStep: this.productStep, day: day}]);
+  }
+
+
+  async toggleAiModal(context?: string) {
+    this.aiModal = !this.aiModal;
+
+    if (context === 'httpCodesOptions') {
+      this.message = 'En este caso el json tiene codigos de respuesta HTTP, por ejemplo, 404, 500, etc y cuantos requests devolvieron esos codigos:' + JSON.stringify(this.byCodes())
+    }
+    if (context === 'httpResponseTimeOptions') {
+      this.message = 'En este caso el json tiene tiempos de respuesta de los requests, por ejemplo, 500ms, 1000ms, etc: ' + JSON.stringify(this.responseTime())
+    }
+
+    if (this.message === '') {
+      console.log('Message is empty');
+      return;
+    }
+
+    let length = this.messages.length;
+    if (length > 0) {
+    this.messages.push({message: this.message, from: 'User', id: length.toString()});
+    }
+    const result = await this.chat.sendMessage(this.message);
+    length = this.messages.length;
+    this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
+    this.message = '';
+    return;
+
+
+  }
+
+  sendMessage() {
+    let length = this.messages.length;
+    this.messages.push({message: this.message, from: 'User', id: length.toString()});
+    this.chat.sendMessage(this.message).then((result) => {
+      length = this.messages.length;
+      this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
+    });
+    this.message = '';
+    return;
   }
 }
