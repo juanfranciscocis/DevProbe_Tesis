@@ -428,9 +428,6 @@ for (let metric in total) {
     responseTimeChart!.style.width = '100%';
     responseTimeChart!.style.height = '25em';
 
-
-
-
   }
 
 
