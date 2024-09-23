@@ -21,6 +21,13 @@
     Notification.requestPermission().then(function(permission) {
       if (permission === 'granted') {
         console.log('Permission granted for notifications');
+        function _webpushrScriptReady() {
+          webpushr('fetch_id', function (sid) {
+            //save id to database
+            console.log('webpushr subscriber id: ' + sid)
+          });
+        }
+        _webpushrScriptReady()
       } else {
         console.log('Permission denied for notifications');
       }
@@ -31,13 +38,6 @@
 <body>
   <app-root></app-root>
   <!-- start webpushr code --> <script>(function(w,d, s, id) {if(typeof(w.webpushr)!=='undefined') return;w.webpushr=w.webpushr||function(){(w.webpushr.q=w.webpushr.q||[]).push(arguments)};var js, fjs = d.getElementsByTagName(s)[0];js = d.createElement(s); js.id = id;js.async=1;js.src = "https://cdn.webpushr.com/app.min.js";fjs.parentNode.appendChild(js);}(window,document, 'script', 'webpushr-jssdk'));webpushr('setup',{'key':'BG8ictDYnu_tn7x1Sc73BglZbE3A5R8eK4YHXqhQUpu1s4lMJWCKcvtm8sCOAIBHGPxR_a5nGlgE0FSOhHHO7NI' });</script><!-- end webpushr code -->
-  <script>
-    <!-- Our JS snippet goes here  -->
-    webpushr('fetch_id',function (sid) {
-      //save id to database
-      console.log('webpushr subscriber id: ' + sid)
-    });
-  </script>
 </body>
 
 </html>
