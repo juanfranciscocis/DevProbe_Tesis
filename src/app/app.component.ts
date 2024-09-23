@@ -62,6 +62,11 @@ export class AppComponent implements OnInit {
       icon:'barbell'
     },
     {
+      title:'Incident Manager',
+      url:'/incident-manager-chooser',
+      icon:'alert-circle'
+    },
+    {
       title: 'My Team',
       url: '/myteam',
       icon: 'people'
