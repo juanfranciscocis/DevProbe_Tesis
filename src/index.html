@@ -17,6 +17,15 @@
   <!-- add to homescreen for ios -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <script>
+    Notification.requestPermission().then(function(permission) {
+      if (permission === 'granted') {
+        console.log('Permission granted for notifications');
+      } else {
+        console.log('Permission denied for notifications');
+      }
+    });
+  </script>
 </head>
 
 <body>
