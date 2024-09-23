@@ -91,6 +91,7 @@ responseTimeOptions: EChartsOption = {
     ],
   });
   messages:AiMessage[] = []
+  hasBeenOpened = false;
 
 
 
@@ -175,7 +176,7 @@ responseTimeOptions: EChartsOption = {
       // @ts-ignore: Extrae la fecha del resultado
       let date = this.loadTestResults[key].date;
       // Filtra las claves que empiezan con "http.requests."
-      let httpCodesKeys = Object.keys(data).filter(keyCode => keyCode.startsWith('http.requests'));
+      let httpCodesKeys = Object.keys(data).filter(keyCode => keyCode.startsWith('http.responses'));
 
       for (let keyCode of httpCodesKeys) {
         if (!requests[date]) {
@@ -187,7 +188,7 @@ responseTimeOptions: EChartsOption = {
     }
 
       for (let date of Object.keys(requests)) {
-        totalRequests += requests[date]['http.requests'];
+        totalRequests += requests[date]['http.responses'];
       }
       this.totalNumberOfRequests = totalRequests;
 
@@ -522,7 +523,10 @@ for (let metric in total) {
 
 
   async toggleAiModal(context?: string) {
+    await this.showLoading()
+
     this.aiModal = !this.aiModal;
+    this.hasBeenOpened = true;
 
     if (context === 'httpCodesOptions') {
       this.message = 'En este caso el json tiene codigos de respuesta HTTP, por ejemplo, 404, 500, etc y cuantos requests devolvieron esos codigos:' + JSON.stringify(this.byCodes())
@@ -533,6 +537,7 @@ for (let metric in total) {
 
     if (this.message === '') {
       console.log('Message is empty');
+      await this.hideLoading();
       return;
     }
 
@@ -544,6 +549,7 @@ for (let metric in total) {
     length = this.messages.length;
     this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
     this.message = '';
+    await this.hideLoading();
     return;
 
 
@@ -552,9 +558,11 @@ for (let metric in total) {
   sendMessage() {
     let length = this.messages.length;
     this.messages.push({message: this.message, from: 'User', id: length.toString()});
-    this.chat.sendMessage(this.message).then((result) => {
+    this.chat.sendMessage(this.message).then(async (result) => {
+      await this.showLoading()
       length = this.messages.length;
       this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
+      await this.hideLoading();
     });
     this.message = '';
     return;

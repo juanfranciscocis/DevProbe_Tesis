@@ -9,6 +9,7 @@ import { LoadTestHistoryPageRoutingModule } from './load-test-history-routing.mo
 import { LoadTestHistoryPage } from './load-test-history.page';
 import {ComponentsModule} from "../../../components/components.module";
 import {NgxEchartsDirective} from "ngx-echarts";
+import {MarkdownComponent} from "ngx-markdown";
 
 @NgModule({
     imports: [
@@ -17,7 +18,8 @@ import {NgxEchartsDirective} from "ngx-echarts";
         IonicModule,
         LoadTestHistoryPageRoutingModule,
         ComponentsModule,
-        NgxEchartsDirective
+        NgxEchartsDirective,
+        MarkdownComponent
     ],
   declarations: [LoadTestHistoryPage]
 })

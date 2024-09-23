@@ -34,10 +34,10 @@
 
 
     <ion-row class="lg:m-10 md:m-10">
-      <ion-col size="12" class="relative">
-        <div class="absolute z-10 flex justify-center items-center -right-5 -top-5" (click)="toggleAiModal('httpCodesOptions')">
-          <ion-avatar class="bg-purple-600 justify-center items-center flex">
-            <ion-icon size="large" name="color-wand-outline"></ion-icon>
+      <ion-col size="12" class="relative flex flex-row justify-center">
+        <div class="absolute z-10 w-full flex flex-row justify-end " >
+          <ion-avatar class="h-12 w-12 bg-purple-400 p-2" (click)="toggleAiModal('httpCodesOptions')">
+            <ion-icon class="w-full h-full" name="color-wand-outline"></ion-icon>
           </ion-avatar>
         </div>
       <ion-card class="w-full  p-6 flex flex-col justify-center items-center">
@@ -52,10 +52,10 @@
     </ion-row>
 
     <ion-row class="lg:m-10 md:m-10">
-      <ion-col size="12" class="relative">
-        <div class="absolute z-10 flex justify-center items-center -right-5 -top-5" (click)="toggleAiModal('httpResponseTimeOptions')">
-          <ion-avatar class="bg-purple-600 justify-center items-center flex">
-            <ion-icon size="large" name="color-wand-outline"></ion-icon>
+      <ion-col size="12" class="relative flex flex-row justify-center">
+        <div class="absolute z-10 w-full flex flex-row justify-end ">
+          <ion-avatar class="h-12 w-12 bg-purple-400 p-2" (click)="toggleAiModal('httpResponseTimeOptions')">
+            <ion-icon class="w-full h-full" name="color-wand-outline"></ion-icon>
           </ion-avatar>
         </div>
       <ion-card class="w-full  p-6 flex flex-col justify-center items-center">
@@ -84,12 +84,13 @@
   </ion-grid>
 
 
-
+  @if(hasBeenOpened){
   <ion-fab class="m-2 z-10" vertical="bottom" horizontal="end" slot="fixed"  (click)="toggleAiModal()">
-    <ion-avatar class="bg-purple-300 p-4">
+    <ion-avatar class="bg-purple-300 p-1 lg:p-4 md:p-4">
       <ion-icon class="w-full h-full" name="chatbubble-outline"></ion-icon>
     </ion-avatar>
   </ion-fab>
+  }
 
 
 </ion-content>
