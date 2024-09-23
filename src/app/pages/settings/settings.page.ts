@@ -110,4 +110,16 @@ export class SettingsPage implements OnInit {
   }
 
   version:string = '1.10.200'  // MAIN VERSION, NUMBER OF FEATURES, COMMIT TO MAIN
+  notify() {
+    //Notification.requestPermission()
+    Notification.requestPermission().then(function(permission) {
+      if (permission === 'granted') {
+        console.log('Permission granted for notifications');
+
+      } else {
+        console.log('Permission denied for notifications');
+      }
+
+    });
+  }
 }
