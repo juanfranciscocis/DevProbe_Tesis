@@ -5,6 +5,7 @@ import {canActivate, redirectLoggedInTo, redirectUnauthorizedTo} from "@angular/
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['']);
 const redirectLoggedInToHome = () => redirectLoggedInTo(['home']);
 
+// @ts-ignore
 const routes: Routes = [
   {
     path: '',
