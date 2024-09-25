@@ -5,6 +5,7 @@ import {canActivate, redirectLoggedInTo, redirectUnauthorizedTo} from "@angular/
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['']);
 const redirectLoggedInToHome = () => redirectLoggedInTo(['home']);
 
+// @ts-ignore
 const routes: Routes = [
   {
     path: '',
@@ -184,10 +185,19 @@ const routes: Routes = [
   },
   {
     path: 'load-test',
-    loadChildren: () => import('./pages/load_test/load-test/load-test.module').then( m => m.LoadTestPageModule)
-  },  {
+    loadChildren: () => import('./pages/load_test/load-test/load-test.module').then( m => m.LoadTestPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+  },
+  {
     path: 'load-test-history',
-    loadChildren: () => import('./pages/load_test/load-test-history/load-test-history.module').then( m => m.LoadTestHistoryPageModule)
+    loadChildren: () => import('./pages/load_test/load-test-history/load-test-history.module').then( m => m.LoadTestHistoryPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+  },
+  {
+    path: 'incident-manager-chooser',
+    loadChildren: () => import('./pages/incident_manager/incident-manager-chooser/incident-manager-chooser.module').then( m => m.IncidentManagerChooserPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+
   },
 
 

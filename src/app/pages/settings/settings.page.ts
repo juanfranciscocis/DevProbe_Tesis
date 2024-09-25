@@ -6,6 +6,7 @@ import {GithubService} from "../../services/github.service";
 import {User} from "../../interfaces/user";
 import {GitSyncData} from "../../interfaces/git-sync-data";
 
+
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',
@@ -108,4 +109,17 @@ export class SettingsPage implements OnInit {
     await this.loadingCtrl.dismiss();
   }
 
+  version:string = '1.10.200'  // MAIN VERSION, NUMBER OF FEATURES, COMMIT TO MAIN
+  notify() {
+    //Notification.requestPermission()
+    Notification.requestPermission().then(function(permission) {
+      if (permission === 'granted') {
+        console.log('Permission granted for notifications');
+
+      } else {
+        console.log('Permission denied for notifications');
+      }
+
+    });
+  }
 }

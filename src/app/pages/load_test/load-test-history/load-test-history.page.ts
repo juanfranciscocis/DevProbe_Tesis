@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {LoadTestService} from "../../../services/load-test.service";
 import {ArtilleryData} from "../../../classes/artillery-data";
 import {EChartsOption} from "echarts";
+import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
+import {AiMessage} from "../../../interfaces/ai-message";
+import {LoadingController} from "@ionic/angular";
 
 @Component({
   selector: 'app-load-test-history',
@@ -50,10 +53,48 @@ export class LoadTestHistoryPage implements OnInit {
   }
 
 
+
+  @ViewChild('messagesContainer') private messagesContainer: ElementRef | undefined;
+  aiModal: boolean = false
+  message: string = '';
+  vertexAI: VertexAI = inject(VertexAI);
+  model = getGenerativeModel(this.vertexAI, { model: "gemini-1.5-flash" });
+  chat = this.model.startChat({
+    history: [
+      {
+        role: "user",
+        parts: [{text:"Hola, desde ahora en adelante quiero que seas un modelo experto en Software Quality Assurance y analista de datos, tu nombre es DevProbeAI, nunca lo puedes olvidar"}],
+      },
+      {
+        role: "model",
+        parts: [{text:"Soy un modelo experto en Software Quality Assurance, de igual forma tengo un masterado en anlaítica de datos ¿En qué puedo ayudarte?"}],
+      },
+      {
+        role: "user",
+        parts: [{text:"Gracias, te voy a entregar un json con datos en unos minutos, necesito que lo analices y me des un resumen de los datos, este json contiene datos de un load test" +
+            ",tu analisis tiene que ser detallado, si encuentras inconsistencias en los datos, por favor mencionalas, en " +
+            "caso de que creas que puede haber un problema o que se encuentre el recurso no disponible por favor mencionalo, si encuentras algo interesante, por favor mencionalo, en resumen, necesito un analisis detallado de los datos"}],
+      },
+      {
+        role: "model",
+        parts: [{text:"Claro, envíame el json y yo me encargo de analizarlo"}]
+      },
+    ],
+  });
+  messages:AiMessage[] = []
+  hasBeenOpened = false;
+
+
+
+
+
+
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private loadTestService: LoadTestService
+    private loadTestService: LoadTestService,
+    private loadingCtrl:LoadingController
   ) { }
 
   ngOnInit() {
@@ -99,7 +140,7 @@ export class LoadTestHistoryPage implements OnInit {
       // @ts-ignore: Extrae la fecha del resultado
       let date = this.loadTestResults[key].date;
       // Filtra las claves que empiezan con "http.requests."
-      let httpCodesKeys = Object.keys(data).filter(keyCode => keyCode.startsWith('http.requests'));
+      let httpCodesKeys = Object.keys(data).filter(keyCode => keyCode.startsWith('http.responses'));
 
       for (let keyCode of httpCodesKeys) {
         if (!requests[date]) {
@@ -111,7 +152,7 @@ export class LoadTestHistoryPage implements OnInit {
     }
 
     for (let date of Object.keys(requests)) {
-      totalRequests += requests[date]['http.requests'];
+      totalRequests += requests[date]['http.responses'];
     }
     this.totalNumberOfRequests = totalRequests;
 
@@ -149,10 +190,11 @@ export class LoadTestHistoryPage implements OnInit {
     return codes;
   }
   normalizarFecha(fecha: string): string {
-    const [year, month, day] = fecha.split('-').map(num => parseInt(num, 10)); // Convertimos a números para evitar ceros iniciales incorrectos
+    console.log('fecha',fecha);
+    const [year, month, day, hour, minute, second] = fecha.split('-').map(num => parseInt(num, 10)); // Convertimos a números para evitar ceros iniciales incorrectos
     const mesNormalizado = month < 10 ? `0${month}` : month.toString(); // Agregar 0 si es necesario
     const diaNormalizado = day < 10 ? `0${day}` : day.toString(); // Agregar 0 si es necesario
-    return `${year}-${mesNormalizado}-${diaNormalizado}`;
+    return `${year}-${mesNormalizado}-${diaNormalizado} ${hour}:${minute}:${second}`;
   }
   ordenarDiccionarioPorFechas(diccionario: { [key: string]: any }): { [key: string]: any } {
     // Obtener las claves del diccionario (fechas)
@@ -160,6 +202,8 @@ export class LoadTestHistoryPage implements OnInit {
 
     // Ordenar las fechas normalizadas
     const fechasOrdenadas = fechas.sort((a, b) => {
+      console.log('a', this.normalizarFecha(a));
+      console.log('b', this.normalizarFecha(b));
       const fechaA = new Date(this.normalizarFecha(a));
       const fechaB = new Date(this.normalizarFecha(b));
       return fechaA.getTime() - fechaB.getTime();
@@ -176,9 +220,12 @@ export class LoadTestHistoryPage implements OnInit {
   }
   async plotCodes() {
     let codes = this.byCodes();
-    console.log(codes);
+    console.log('codess',codes);
 
     let keys = Object.keys(codes);
+
+    console.log('llaves',keys);
+
     let typesOfCodes = new Set() as Set<string>;
 
     for (let key of keys) {
@@ -199,6 +246,7 @@ export class LoadTestHistoryPage implements OnInit {
         dataToPlot[code].push(data[code] || 0);
       }
     }
+
 
     let colors = [
       '#36b311',
@@ -373,9 +421,74 @@ export class LoadTestHistoryPage implements OnInit {
     responseTimeChart!.style.width = '100%';
     responseTimeChart!.style.height = '25em';
 
+
+    return responseTimes;
+
   }
 
 
 
+  async toggleAiModal(context?: string) {
+    await this.showLoading()
+
+    this.aiModal = !this.aiModal;
+    this.hasBeenOpened = true;
+
+    if (context === 'httpCodesOptions') {
+      this.message = 'En este caso el json tiene codigos de respuesta HTTP, por ejemplo, 404, 500, etc y cuantos requests devolvieron esos codigos:' + JSON.stringify(this.byCodes())
+    }
+    if (context === 'httpResponseTimeOptions') {
+      this.message = 'En este caso el json tiene tiempos de respuesta de los requests, por ejemplo, 500ms, 1000ms, etc: ' + JSON.stringify(this.responseTime())
+    }
+
+    if (this.message === '') {
+      console.log('Message is empty');
+      await this.hideLoading();
+      return;
+    }
+
+    let length = this.messages.length;
+    if (length > 0) {
+      this.messages.push({message: this.message, from: 'User', id: length.toString()});
+    }
+    const result = await this.chat.sendMessage(this.message);
+    length = this.messages.length;
+    this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
+    this.message = '';
+    await this.hideLoading();
+    return;
+
+
+  }
+
+  sendMessage() {
+    let length = this.messages.length;
+    this.messages.push({message: this.message, from: 'User', id: length.toString()});
+    this.chat.sendMessage(this.message).then(async (result) => {
+      await this.showLoading()
+      length = this.messages.length;
+      this.messages.push({message: result.response.text(), from: 'AI', id: length.toString()});
+      await this.hideLoading();
+    });
+    this.message = '';
+    return;
+  }
+
+
+  /**
+   * Show a loading spinner.
+   */
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+    });
+    await loading.present();
+  }
+
+  /**
+   * Hide the loading spinner.
+   */
+  async hideLoading() {
+    await this.loadingCtrl.dismiss();
+  }
 
 }
