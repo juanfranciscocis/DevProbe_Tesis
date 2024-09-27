@@ -28,6 +28,10 @@
           });
         }
         _webpushrScriptReady()
+        webpushr('fetch_id',function (sid) {
+          //save id to database
+          console.log('webpushr subscriber id: ' + sid)
+        });
       } else {
         console.log('Permission denied for notifications');
       }

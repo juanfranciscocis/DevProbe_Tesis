@@ -7,6 +7,8 @@ import {Product} from "../../../interfaces/product";
 import {ProductService} from "../../../services/product.service";
 import {LoadingController} from "@ionic/angular";
 
+declare var webpushr: any;
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -81,4 +83,11 @@ export class HomePage {
   goToProduct(productObjective: string | undefined) {
     this.router.navigate(['/graph-data-for'], {queryParams: {product: productObjective}});
   }
+
+    subscribe() {
+      webpushr('fetch_id',function (sid: string) {
+        //save id to database
+        console.log('webpushr subscriber id: ' + sid)
+      });
+    }
 }
