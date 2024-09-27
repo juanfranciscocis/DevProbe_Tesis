@@ -22,10 +22,6 @@ export class BoardPage implements OnInit {
       name: 'In Progress',
       items: ['Task 4', 'Task 5']
     },
-    {
-      name: 'Done',
-      items: ['Task 6']
-    }
   ];
 
   drop(event: CdkDragDrop<string[]>) {

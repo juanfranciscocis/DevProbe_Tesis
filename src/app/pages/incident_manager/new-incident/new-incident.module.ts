@@ -8,6 +8,7 @@ import { NewIncidentPageRoutingModule } from './new-incident-routing.module';
 
 import { NewIncidentPage } from './new-incident.page';
 import {ComponentsModule} from "../../../components/components.module";
+import {CdkDrag, CdkDropList, CdkDropListGroup} from "@angular/cdk/drag-drop";
 
 @NgModule({
     imports: [
@@ -15,7 +16,10 @@ import {ComponentsModule} from "../../../components/components.module";
         FormsModule,
         IonicModule,
         NewIncidentPageRoutingModule,
-        ComponentsModule
+        ComponentsModule,
+        CdkDrag,
+        CdkDropList,
+        CdkDropListGroup
     ],
   declarations: [NewIncidentPage]
 })

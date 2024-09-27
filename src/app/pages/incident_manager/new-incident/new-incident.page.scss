@@ -1,0 +1,31 @@
+.kanban-board {
+  display: flex;
+  justify-content: space-between;
+}
+
+.kanban-column {
+  width: 50%;
+  background-color: #3e3e3e;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.kanban-list {
+  min-height: 100px;
+  padding: 10px;
+  background-color: #555555;
+  border-radius: 5px;
+  flex-grow: 1;
+}
+
+.kanban-item {
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #000000;
+  border-radius: 5px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: move;
+}
