@@ -4,5 +4,27 @@
 <ion-content [fullscreen]="true">
   <ion-grid>
     <app-title [title]="'Incident Manager Chooser'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <p>Choose a product and a product step to create an incident.</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="" *ngFor="let product of products">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>{{ product.productObjective }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let step of product.productSteps" (click)="navigateToLoadTest(product, step)">
+                <ion-label>{{ step }}</ion-label>
+                <ion-icon name="arrow-forward"  color="primary"></ion-icon>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
   </ion-grid>
 </ion-content>
