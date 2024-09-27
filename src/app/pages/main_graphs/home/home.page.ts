@@ -84,10 +84,5 @@ export class HomePage {
     this.router.navigate(['/graph-data-for'], {queryParams: {product: productObjective}});
   }
 
-    subscribe() {
-      webpushr('fetch_id',function (sid: string) {
-        //save id to database
-        console.log('webpushr subscriber id: ' + sid)
-      });
-    }
+
 }
