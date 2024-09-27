@@ -4,6 +4,7 @@ import {AlertController, LoadingController} from "@ionic/angular";
 import {TeamsService} from "../../../services/teams.service";
 import {User} from "../../../interfaces/user";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {IncidentService} from "../../../services/incident.service";
 
 @Component({
   selector: 'app-new-incident',
@@ -46,6 +47,7 @@ export class NewIncidentPage implements OnInit {
     private loadingCtrl: LoadingController,
     private teamService: TeamsService,
     private alertCtrl: AlertController,
+    private incidentService: IncidentService,
   ) { }
 
   ngOnInit() {
@@ -154,7 +156,9 @@ export class NewIncidentPage implements OnInit {
 
 
   async saveIncident() {
-    if (this.incidentCommander === '' || this.operationsLead === '' || this.communicationsLead === '') {
+
+
+   if (this.incidentCommander === '' || this.operationsLead === '' || this.communicationsLead === '') {
       await this.showAlert('Please assign a Incident Commander and an Operations Lead and a Communications Lead before saving the incident', 'Error');
       return;
     }
@@ -169,10 +173,37 @@ export class NewIncidentPage implements OnInit {
       return;
     }
 
+    await this.showLoading();
+
+    //get current date
+    let date = new Date();
+    let srtDate = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    console.log(srtDate);
+
+    await this.incidentService.saveIncident(this.orgName, this.productObjective, this.productStep, {
+      title: this.incidentTitle,
+      description: this.incidentDescription,
+      urgency: this.incidentUrgency,
+      org_impact: this.orgImpact,
 
 
+      operations_lead: this.operationsLead,
+      communications_lead: this.communicationsLead,
+      operation_team: this.operationTeam[1].items,
+
+      date: srtDate
 
 
+    }).then(async (data) => {
+      if (data) {
+        await this.hideLoading();
+        await this.showAlert('Incident saved successfully', 'Success');
+        window.history.back();
+      } else {
+        await this.hideLoading();
+        await this.showAlert('Error saving Incident', 'Error');
+      }
+    });
 
   }
 
