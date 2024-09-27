@@ -5,7 +5,9 @@ import {AlertController, LoadingController} from "@ionic/angular";
 import {GithubService} from "../../services/github.service";
 import {User} from "../../interfaces/user";
 import {GitSyncData} from "../../interfaces/git-sync-data";
+import { NotificationService } from 'src/app/services/notification.service';
 
+declare var webpushr: any;
 
 @Component({
   selector: 'app-settings',
@@ -26,7 +28,8 @@ export class SettingsPage implements OnInit {
     private router:Router,
     private alertCtrl:AlertController,
     private githubService: GithubService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -122,4 +125,18 @@ export class SettingsPage implements OnInit {
 
     });
   }
+
+  async subscribe() {
+    webpushr('fetch_id',async (sid: string) => {
+      //save id to database
+      console.log('webpushr subscriber id: ' + sid)
+      // @ts-ignore
+      await this.notificationService.saveNotificationID(this.user,sid);
+    })
+
+  }
+
+
+
+
 }
