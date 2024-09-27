@@ -6,6 +6,7 @@ import {ArtilleryData} from "../../../classes/artillery-data";
 import {EChartsOption} from "echarts";
 import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
 import {AiMessage} from "../../../interfaces/ai-message";
+import {User} from "../../../interfaces/user";
 
 @Component({
   selector: 'app-load-test',
@@ -17,6 +18,7 @@ export class LoadTestPage implements OnInit {
   productStep: string = '';
   productObjective: string = '';
   orgName: string = '';
+  user: User = {};
 
 
 
@@ -122,8 +124,8 @@ responseTimeOptions: EChartsOption = {
       this.productObjective = params['productObjective']; //this is the product objective
       this.productStep = params['step']; //this is the step of the product
     });
-    const user = JSON.parse(localStorage.getItem('user')!);
-    this.orgName = user.orgName!;
+    this.user = JSON.parse(localStorage.getItem('user')!);
+    this.orgName = this.user.orgName!;
 
     console.log(this.orgName);
     console.log(this.productObjective);
@@ -144,7 +146,7 @@ responseTimeOptions: EChartsOption = {
       return;
     }
 
-    await this.loadTestService.sendLoadTest(this.orgName, this.productObjective, this.productStep, this.target).then(async (data) => {
+    await this.loadTestService.sendLoadTest(this.orgName, this.productObjective, this.productStep, this.target, this.user).then(async (data) => {
       await this.hideLoading();
       console.log("data",data);
       if (data) {

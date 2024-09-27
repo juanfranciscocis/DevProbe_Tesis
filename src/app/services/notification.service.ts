@@ -27,6 +27,26 @@ export class NotificationService {
     }
   }
 
+  async getNotificationUser(user: User) {
+    // @ts-ignore
+    const docRef = doc(this.firestore, 'users', user.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      //@ts-ignore
+      if (data.notificationID) {
+        //@ts-ignore
+        return data.notificationID;
+      } else {
+        return '';
+      }
+      //@ts-ignore
+    } else {
+      console.log('No such document!');
+      return null;
+    }
+  }
+
 
 
 }
