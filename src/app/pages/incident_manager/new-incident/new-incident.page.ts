@@ -186,12 +186,14 @@ export class NewIncidentPage implements OnInit {
       urgency: this.incidentUrgency,
       org_impact: this.orgImpact,
 
-
+      incidentCommander: this.incidentCommander,
       operations_lead: this.operationsLead,
       communications_lead: this.communicationsLead,
       operation_team: this.operationTeam[1].items,
 
-      date: srtDate
+      date: srtDate,
+
+      state:"open"
 
 
     }).then(async (data) => {

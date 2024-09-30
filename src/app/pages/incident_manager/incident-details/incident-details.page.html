@@ -1,0 +1,198 @@
+<app-header-return title="Incident Details"></app-header-return>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <app-title [title]="'Incident Details'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card class="p-5 flex flex-col justify-center items-center">
+          <ion-card-title class="text-2xl">{{incident.title}}</ion-card-title>
+          <ion-card-content>
+            <p class="">{{incident.description}}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="6" size-md="4" size-lg="4" class="">
+        <ion-card class="p-5 flex flex-col justify-center items-center">
+          <ion-card-title class="text-2xl">Current Status</ion-card-title>
+          @if (incident.state === 'open') {
+          <ion-card-content>
+            <ion-label class="text-green-800">{{incident.state.toUpperCase()}}</ion-label>
+          </ion-card-content>
+          }
+          @if (incident.state === 'closed') {
+            <ion-card-content>
+              <ion-label class="text-red-800">{{incident.state.toLocaleUpperCase()}}</ion-label>
+            </ion-card-content>
+          }
+        </ion-card>
+      </ion-col>
+      <ion-col size="6" size-md="4" size-lg="4" class="">
+        <ion-card class="p-5 flex flex-col justify-center items-center">
+          <ion-card-title class="text-2xl">Urgency</ion-card-title>
+          @if (incident.urgency === 'Critical') {
+            <ion-card-content>
+              <ion-label class="text-red-800">{{incident.urgency.toUpperCase()}}</ion-label>
+            </ion-card-content>
+          }
+          @if (incident.urgency === 'High') {
+            <ion-card-content>
+              <ion-label class="text-yellow-800">{{incident.urgency.toUpperCase()}}</ion-label>
+                </ion-card-content>
+          }
+          @if (incident.urgency === 'Medium') {
+            <ion-card-content>
+              <ion-label class="text-yellow-600">{{incident.urgency.toUpperCase()}}</ion-label>
+            </ion-card-content>
+          }
+          @if (incident.urgency === 'Low') {
+            <ion-card-content>
+              <ion-label class="text-green-800">{{incident.urgency.toUpperCase()}}</ion-label>
+                </ion-card-content>
+            }
+        </ion-card>
+      </ion-col>
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <ion-card class="p-5 flex flex-col justify-center items-center">
+          <ion-card-title class="text-2xl"> Organization Impact</ion-card-title>
+          @if (incident.org_impact === 'Extensive/Widespread') {
+            <ion-card-content>
+              <ion-label class="text-red-800">{{incident.org_impact.toUpperCase()}}</ion-label>
+            </ion-card-content>
+          }
+          @if (incident.org_impact === 'Significant/Large') {
+            <ion-card-content>
+              <ion-label class="text-yellow-800">{{incident.org_impact.toUpperCase()}}</ion-label>
+            </ion-card-content>
+          }
+          @if (incident.org_impact === 'Moderate/Limited') {
+            <ion-card-content>
+              <ion-label class="text-yellow-600">{{incident.org_impact.toUpperCase()}}</ion-label>
+            </ion-card-content>
+          }
+          @if (incident.org_impact === 'Minor/Localized') {
+            <ion-card-content>
+              <ion-label class="text-green-800">{{incident.org_impact.toUpperCase()}}</ion-label>
+            </ion-card-content>
+          }
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <app-title [title]="'Incident Team'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="6" size-md="6" size-lg="6" class="">
+        <ion-card class="p-5 flex flex-col justify-center items-center">
+          <ion-card-title class="text-2xl">Incident Commander</ion-card-title>
+          <ion-card-content>
+            <div class="flex flex-row justify-center items-center">
+              <ion-icon name="person-circle" class="text-2xl"></ion-icon>
+            <ion-label class="">{{incident.incidentCommander}}</ion-label>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6" size-md="6" size-lg="6" class="">
+        <ion-card class="p-5 flex flex-col justify-center items-center">
+          <ion-card-title class="text-2xl">Communications Leader</ion-card-title>
+          <ion-card-content>
+            <div class="flex flex-row justify-center items-center">
+              <ion-icon name="person-circle" class="text-2xl"></ion-icon>
+            <ion-label class="">{{incident.communications_lead}}</ion-label>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card class="p-5 flex flex-col justify-center items-center">
+          <ion-card-title class="text-2xl">Operations Lead</ion-card-title>
+          <ion-card-content>
+            <div class="flex flex-row justify-center items-center">
+              <ion-icon name="person-circle" class="text-2xl"></ion-icon>
+            <ion-label class="">{{incident.operations_lead}}</ion-label>
+            </div>
+          </ion-card-content>
+          <br>
+          <ion-card-title class="text-2xl">Operations Team</ion-card-title>
+          <ion-card-content>
+            @for (member of incident.operation_team; track member) {
+              <div class="flex flex-row justify-center items-center">
+                <ion-icon name="person-circle" class="text-2xl"></ion-icon>
+              <ion-label class="">{{member}}</ion-label>
+              </div>
+              }
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <app-title [title]="'Incident Progress'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+<ion-col size="12" size-md="12" size-lg="12" class="">
+  <ion-card class="p-5 flex flex-col justify-center items-start">
+    <ng-container *ngFor="let comment of incident.report">
+      <ion-card class="text-white"  [class.self-end]="comment.from === currentUser" [class.bg-gray-600]="comment.from === currentUser" [class.self-start]="comment.from !== currentUser"  [class.bg-gray-800]="comment.from !== currentUser">
+      <ion-card-content>
+          <ion-label class="">{{comment.comment}}</ion-label>
+        </ion-card-content>
+        <ion-card-content class="text-right">
+          <div class="flex flex-row justify-end items-center">
+            <ion-icon name="person-circle" class="text-2xl"></ion-icon>
+            <ion-label class="">{{comment.from}}</ion-label>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+  </ion-card>
+</ion-col>
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card class="p-5 flex flex-col justify-center items-center">
+        <div class="flex flex-row justify-center w-full">
+        <ion-textarea [autoGrow]="true" placeholder="Add a comment" type="text" class=" w-2/3" [(ngModel)]="newComment"></ion-textarea>
+        <ion-button color="success" class="w-1/3 m-5 " (click)="addComment()">Add Comment</ion-button>
+      </div>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card class="p-5 flex flex-col justify-center items-center">
+          <ion-card-title class="text-2xl">Change Incident State</ion-card-title>
+          <ion-card-content>
+            <p>Change the state of the incident to closed or open.Only the incident commander can change the state of the incident.</p>
+          </ion-card-content>
+          <ion-card-content class="flex flex-row justify-center items-center w-full">
+
+
+            @if (currentUser === incident.incidentCommander && incident.state === 'open') {
+              <ion-button color="danger" class="w-full" (click)="closeIncident()">Close Incident</ion-button>
+            }
+            @if (currentUser !== incident.incidentCommander || incident.state === 'closed') {
+              <ion-button color="danger" class="w-full" [disabled]="true" (click)="closeIncident()">Close Incident</ion-button>
+            }
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      @if (incident.state === 'closed') {
+      <ion-col size="12" size-md="12" size-lg="12" class="" >
+        <ion-card class="p-5 flex flex-col justify-center items-center">
+          <ion-card-title class="text-2xl">Go to Incident Postmortem</ion-card-title>
+          <ion-card-content>
+            <p>Postmortem Culture: Learning from Failure. The postmortem is a retrospective of the incident, focusing on what went wrong, what can be learned, and how to prevent similar incidents in the future.</p>
+          </ion-card-content>
+          <ion-card-content class="flex flex-row justify-center items-center w-full">
+            <ion-button color="primary" class="w-full"  (click)="closeIncident()">Incident Postmortem</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+        }
+
+
+
+    </ion-row>
+  </ion-grid>
+</ion-content>

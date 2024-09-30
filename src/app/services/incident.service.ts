@@ -44,4 +44,16 @@ export class IncidentService {
 
   }
 
+  async getIncidents(orgName: string, productObjective: string, productStep: string) {
+    const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'incident', productStep);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      let data = docSnap.data();
+      console.log(data);
+      // @ts-ignore
+      return data.incidents;
+    }
+    return [];
+  }
+
 }

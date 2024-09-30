@@ -206,6 +206,10 @@ const routes: Routes = [
     path: 'new-incident',
     loadChildren: () => import('./pages/incident_manager/new-incident/new-incident.module').then( m => m.NewIncidentPageModule)
   },
+  {
+    path: 'incident-details',
+    loadChildren: () => import('./pages/incident_manager/incident-details/incident-details.module').then( m => m.IncidentDetailsPageModule)
+  },
 
 
 
