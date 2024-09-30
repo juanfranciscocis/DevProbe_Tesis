@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {LoadingController} from "@ionic/angular";
+import {Incident} from "../../../interfaces/incident";
+import {IncidentService} from "../../../services/incident.service";
 
 @Component({
   selector: 'app-incident-manager',
@@ -13,10 +15,16 @@ export class IncidentManagerPage implements OnInit {
   productObjective: string = '';
   orgName: string = '';
 
+
+
+  openIncidents:Incident[] = [];
+  closeIncidents:Incident[] = [];
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private incidentService: IncidentService,
   ) { }
 
   ngOnInit() {
@@ -26,6 +34,8 @@ export class IncidentManagerPage implements OnInit {
   async ionViewWillEnter() {
     await this.showLoading();
     this.getParams();
+    await this.getOpenIncidents();
+    await this.closeIncident();
     await this.hideLoading();
   }
 
@@ -43,10 +53,31 @@ export class IncidentManagerPage implements OnInit {
   }
 
 
+  async getOpenIncidents() {
+    //get only status=open
+    this.openIncidents = await this.incidentService.getIncidents(this.orgName, this.productObjective, this.productStep );
+    this.openIncidents = this.openIncidents.filter(incident => incident.state === 'open');
+  }
+
+  async closeIncident() {
+    this.closeIncidents = await this.incidentService.getIncidents(this.orgName, this.productObjective, this.productStep );
+    this.closeIncidents = this.closeIncidents.filter(incident => incident.state === 'closed');
+  }
+
+
   async navigateToNewIncident() {
     await this.router.navigate(['/new-incident', {
       productObjective: this.productObjective,
       step: this.productStep
+    }]);
+  }
+
+
+  async goToIncident(incident: Incident) {
+    await this.router.navigate(['incident-details', {
+      productObjective: this.productObjective,
+      step: this.productStep,
+      incident: JSON.stringify(incident)
     }]);
   }
 
@@ -66,4 +97,5 @@ export class IncidentManagerPage implements OnInit {
   async hideLoading() {
     await this.loadingCtrl.dismiss();
   }
+
 }

@@ -9,9 +9,37 @@
       </ion-col>
     </ion-row>
 
-    <app-title [title]="'Incidents'"></app-title>
+    <app-title [title]="'Open Incidents'"></app-title>
     <ion-row class="lg:m-10 md:m-10">
       <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card class="p-5">
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let incident of openIncidents"  (click)='goToIncident(incident)'>
+                <ion-label>
+                  <h2>{{incident.title}}</h2>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <app-title [title]="'Closed Incidents'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card class="p-5">
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let incident of closeIncidents" (click)='goToIncident(incident)'>
+                <ion-label>
+                  <h2>{{incident.title}}</h2>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
       </ion-col>
     </ion-row>
 
