@@ -1,0 +1,184 @@
+<app-header-return [title]="'New Incident'"></app-header-return>
+
+<ion-content [fullscreen]="true">
+
+
+  <ion-grid class="bg-gray-900 mt-10 ml-10 mr-10 rounded-l-lg rounded-r-lg rounded-t-lg rounded-b-none">
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <div class="flex flex-row justify-center w-full">
+          <h1 class="text-4xl lg:text-6xl font-bold">Incident Assignees</h1>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid class="bg-gray-800 mb-10 ml-10 mr-10 rounded-l-lg rounded-r-lg rounded-t-none rounded-b-lg">
+    <app-title [title]="'Assign An Incident Commander'"></app-title>
+    <ion-row class="lg:m-10 md:m-10 ">
+      <ion-col size="12" size-md="12" size-lg="12" class="flex flex-row justify-center">
+        <p>The incident commander holds the high-level state about the incident. They structure the incident response task force, assigning responsibilities according to need and priority. The commander holds all positions that they have not delegated. If appropriate, they can remove roadblocks that prevent Ops from working most effectively.</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card>
+          <ion-card-content>
+            <ion-select label="Incident Commander" placeholder="Select an Incident Commander" interface="popover"
+                        (ionChange)="onIncidentCommanderChange($event)"
+                        [disabled]="disableAssignee"
+            >
+              @for (member of teamMembers; track member) {
+                @if (member.name !== operationsLead && member.name !== communicationsLead) {
+                <ion-select-option value="{{member.name}}">{{member.name}}</ion-select-option>
+                  }
+              }
+            </ion-select>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <app-title [title]="'Assign An Communication Leader'"></app-title>
+    <ion-row class="lg:m-10 md:m-10 ">
+      <ion-col size="12" size-md="12" size-lg="12" class="flex flex-row justify-center">
+        <p>This person is the public face of the incident response task force. Their duties most definitely include issuing periodic updates to the incident response team and stakeholders (usually via email), and may extend to tasks such as keeping the incident document accurate and up to date.</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card>
+          <ion-card-content>
+            <ion-select label="Communications Leader" placeholder="Select an Communications Leader" interface="popover"
+                        (ionChange)="onCommunicationsLeadChange($event)"
+                        [disabled]="disableAssignee"
+            >
+              @for (member of teamMembers; track member) {
+                @if (member.name !== operationsLead && member.name !== incidentCommander) {
+                  <ion-select-option value="{{member.name}}">{{member.name}}</ion-select-option>
+                }
+              }
+            </ion-select>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <app-title [title]="'Assign An Operations Lead and Team'"></app-title>
+    <ion-row class="lg:m-10 md:m-10 ">
+      <ion-col size="12" size-md="12" size-lg="12" class="flex flex-row justify-center">
+        <p>The Ops lead works with the incident commander to respond to the incident by applying operational tools to the task at hand. The operations team should be the only group modifying the system during an incident.</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card>
+          <ion-card-content>
+            <ion-select label="Incident Operations Lead" placeholder="Select an Operations Lead" interface="popover"
+                        (ionChange)="onOperationsLeadChange($event)"
+                        [disabled]="disableAssignee"
+            >
+              @for (member of teamMembers; track member) {
+                @if (member.name !== incidentCommander && member.name !== communicationsLead) {
+                <ion-select-option value="{{member.name}}">{{member.name}}</ion-select-option>
+                  }
+              }
+            </ion-select>
+            </ion-card-content>
+          </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="flex flex-row justify-center">
+        <div cdkDropListGroup class="kanban-board min-w-full min-h-full">
+          <div *ngFor="let list of operationTeam" class="kanban-column flex flex-col justify-center items-center">
+            <h3 class="m-2">{{ list.name }}</h3>
+            <div cdkDropList [cdkDropListData]="list.items" (cdkDropListDropped)="dropOperationMember($event)" class="kanban-list min-w-full">
+              <div *ngFor="let item of list.items" cdkDrag class="kanban-item">
+                {{ item }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+  <ion-grid class="bg-gray-900 mt-10 ml-10 mr-10 rounded-l-lg rounded-r-lg rounded-t-lg rounded-b-none">
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <div class="flex flex-row justify-center w-full">
+          <h1 class="text-4xl lg:text-6xl font-bold">Incident Report</h1>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid class="bg-gray-800 mb-10 ml-10 mr-10 rounded-l-lg rounded-r-lg rounded-t-none rounded-b-lg">
+    <app-title [title]="'Incident Title'"></app-title>
+    <ion-row class="lg:m-10 md:m-10 ">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <p>Summarize the incident in a title that is clear and concise. The title should be the first thing the incident commander reads.</p>
+      </ion-col>
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card>
+          <ion-card-content>
+            <ion-input placeholder="Title" type="text" class="p-2 m-2" [(ngModel)]="incidentTitle"></ion-input>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <app-title [title]="'Incident Description'"></app-title>
+    <ion-row class="lg:m-10 md:m-10 ">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <p>Describe the incident in detail and how it occurred.</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card>
+          <ion-card-content>
+            <ion-textarea placeholder="Description" class="w-full" [autoGrow]="true" [(ngModel)]="incidentDescription"></ion-textarea>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <app-title [title]="'Incident Urgency'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card>
+          <ion-card-content>
+            <ion-select [(ngModel)]="incidentUrgency" label="Incident Urgency" placeholder="Select an Incident Urgency" interface="popover">
+              <ion-select-option value="Critical">Critical</ion-select-option>
+              <ion-select-option value="High">High</ion-select-option>
+              <ion-select-option value="Medium">Medium</ion-select-option>
+              <ion-select-option value="Low">Low</ion-select-option>
+            </ion-select>
+          </ion-card-content>
+        </ion-card>
+        <ion-card>
+            <ion-card-content>
+              <ion-select [(ngModel)]="orgImpact" label="Organization Impact" placeholder="Select an Organization Impact" interface="popover">
+                <ion-select-option value="Extensive/Widespread">Extensive/Widespread</ion-select-option>
+                <ion-select-option value="Significant/Large">Significant/Large</ion-select-option>
+                <ion-select-option value="Moderate/Limited">Moderate/Limited</ion-select-option>
+                <ion-select-option value="Minor/Localized">Minor/Localized</ion-select-option>
+              </ion-select>
+            </ion-card-content>
+          </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+  <ion-grid>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-button color="success" class="w-full" (click)="saveIncident()">Save Incident</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>
