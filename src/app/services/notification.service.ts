@@ -3,7 +3,10 @@ import {User} from "../interfaces/user";
 import {Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
 import {HttpClient} from "@angular/common/http";
 import {TeamsService} from "./teams.service";
-
+interface Role {
+  role: string;
+  member: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -51,15 +54,15 @@ export class NotificationService {
     }
   }
 
-  async notifyIncidentToUser(users: String[], orgName: string) {
+  async notifyIncidentToUser(roles: Role[],orgName: string) {
 
     try {
-
-
       //get team by orgName
       const team = await this.teamService.getTeamByOrganization(orgName);
+      const users = roles.map(role => role.member);
       // from the team arr delete the users that are not in the users array
-      const filteredTeam = team.filter(user => users.includes(<String>user.name));
+      // @ts-ignore
+      const filteredTeam = team.filter(user => users.includes(user.name));
       console.log('team',filteredTeam);
 
       const url = `https://devprobeapi.onrender.com/sendNotification`;
@@ -72,7 +75,8 @@ export class NotificationService {
             sid: sid,
             title: 'New Incident',
             type: 'new_incident',
-            message: `Hey ${user.name}, you have been assigned a new incident`,
+            // @ts-ignore
+            message: `Hey ${user.name}, you have been assigned a new incident your incident role is ${roles.find(role => role.member === user.name).role}`,
             target: target_url
           };
           await this.http.post(url, body).toPromise();

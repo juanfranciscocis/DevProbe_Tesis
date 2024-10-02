@@ -200,18 +200,21 @@ export class NewIncidentPage implements OnInit {
 
     }).then(async (data) => {
       if (data) {
-        await this.hideLoading();
-
-        let consolidateMember: String[] = [];
-        consolidateMember.push(this.incidentCommander);
-        consolidateMember.push(this.communicationsLead);
-        consolidateMember.push(this.operationsLead);
-        for (let i = 0; i < this.operationTeam[1].items.length; i++) {
-          consolidateMember.push(this.operationTeam[1].items[i]);
-          console.log('consolidateMember',consolidateMember);
+        interface Role {
+          role: string;
+          member: string;
         }
-        console.log('consolidateMember',consolidateMember);
+
+        let consolidateMember: Role[] = [];
+        consolidateMember.push({role: 'Incident Commander', member: this.incidentCommander});
+        consolidateMember.push({role: 'Communications Lead', member: this.communicationsLead});
+        consolidateMember.push({role: 'Operations Lead', member: this.operationsLead});
+        for (let i = 0; i < this.operationTeam[1].items.length; i++) {
+          consolidateMember.push({role: 'Operations Team Member', member: this.operationTeam[1].items[i]});
+        }
         await this.notificationService.notifyIncidentToUser(consolidateMember, this.orgName);
+
+        await this.hideLoading();
         await this.showAlert('Incident saved successfully', 'Success');
         window.history.back();
       } else {
