@@ -5,6 +5,7 @@ import {TeamsService} from "../../../services/teams.service";
 import {User} from "../../../interfaces/user";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {IncidentService} from "../../../services/incident.service";
+import {NotificationService} from "../../../services/notification.service";
 
 @Component({
   selector: 'app-new-incident',
@@ -48,6 +49,7 @@ export class NewIncidentPage implements OnInit {
     private teamService: TeamsService,
     private alertCtrl: AlertController,
     private incidentService: IncidentService,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit() {
@@ -199,6 +201,17 @@ export class NewIncidentPage implements OnInit {
     }).then(async (data) => {
       if (data) {
         await this.hideLoading();
+
+        let consolidateMember: String[] = [];
+        consolidateMember.push(this.incidentCommander);
+        consolidateMember.push(this.communicationsLead);
+        consolidateMember.push(this.operationsLead);
+        for (let i = 0; i < this.operationTeam[1].items.length; i++) {
+          consolidateMember.push(this.operationTeam[1].items[i]);
+          console.log('consolidateMember',consolidateMember);
+        }
+        console.log('consolidateMember',consolidateMember);
+        await this.notificationService.notifyIncidentToUser(consolidateMember, this.orgName);
         await this.showAlert('Incident saved successfully', 'Success');
         window.history.back();
       } else {
