@@ -16,8 +16,13 @@
           <ion-card-content>
             <ion-list>
               <ion-item *ngFor="let incident of openIncidents"  (click)='goToIncident(incident)'>
-                <ion-label>
+                <ion-label  class="text-white">
+                  <div class=" flex flex-row justify-between items-center">
                   <h2>{{incident.title}}</h2>
+                  @if (incident.iAmIn) {
+                    <ion-chip> Assigned to you</ion-chip>
+                  }
+                  </div>
                 </ion-label>
               </ion-item>
             </ion-list>
@@ -33,8 +38,13 @@
           <ion-card-content>
             <ion-list>
               <ion-item *ngFor="let incident of closeIncidents" (click)='goToIncident(incident)'>
-                <ion-label>
-                  <h2>{{incident.title}}</h2>
+                <ion-label  class="text-white">
+                  <div class=" flex flex-row justify-between items-center">
+                    <h2>{{incident.title}}</h2>
+                    @if (incident.iAmIn) {
+                      <ion-chip> Assigned to you</ion-chip>
+                    }
+                  </div>
                 </ion-label>
               </ion-item>
             </ion-list>

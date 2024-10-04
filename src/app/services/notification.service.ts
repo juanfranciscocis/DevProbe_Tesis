@@ -87,5 +87,41 @@ export class NotificationService {
       console.log(error);
     }
     }
+
+
+    async notifyIncidentUpdateToTeam(roles: Role[],orgName: string) {
+      try {
+        //get team by orgName
+        const team = await this.teamService.getTeamByOrganization(orgName);
+        const users = roles.map(role => role.member);
+        // from the team arr delete the users that are not in the users array
+        // @ts-ignore
+        const filteredTeam = team.filter(user => users.includes(user.name));
+        console.log('team',filteredTeam);
+
+        const url = `https://devprobeapi.onrender.com/sendNotification`;
+        for (let user of filteredTeam) {
+          let sid = await this.getNotificationUser(user);
+          console.log('sid',sid);
+          if (sid !== '') {
+            let target_url = `https://devprobe-89481.web.app/incident-manager-chooser`;
+            const body = {
+              sid: sid,
+              title: 'Incident Update',
+              type: 'update_incident',
+              // @ts-ignore
+              message: `Hey ${user.name}, there are updates to your incident`,
+              target: target_url
+            };
+            await this.http.post(url, body).toPromise();
+            console.log('Notification sent successfully');
+          }else{
+            console.log('no sid');}}
+      }catch (error) {
+        console.log(error);
+      }
+
+    }
+
 }
 
