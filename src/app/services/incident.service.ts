@@ -56,4 +56,28 @@ export class IncidentService {
     return [];
   }
 
+
+  async updateIncident(orgName: string, productObjective: string, productStep: string, incident: Incident) {
+    const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'incident', productStep);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      //get the incidents array
+      // @ts-ignore
+      let dataIncident = data.incidents;
+      console.log(dataIncident);
+      for (let i = 0; i <= dataIncident.length; i++) {
+        console.log(dataIncident[i].title);
+        console.log(incident.title);
+        if (dataIncident[i].title === incident.title) {
+          console.log('found');
+          dataIncident[i] = incident;
+          await setDoc(docRef, data);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
 }

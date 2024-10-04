@@ -49,10 +49,26 @@ The '*ngFor' directive is used to loop over the 'menuItems' array and create a m
                 <ion-label color="primary">{{item.title}}</ion-label>
               </ion-item>
             }@else{
-            <ion-item  [routerLink]="item.url">
-              <ion-icon [name]="item.icon" slot="start"></ion-icon>
-              <ion-label color="primary">{{item.title}}</ion-label>
-            </ion-item>
+              @if (item.title === 'Settings') {
+                <ion-item  [routerLink]="item.url">
+                  <ion-icon [name]="item.icon" slot="start"></ion-icon>
+                  <ion-label color="primary">{{item.title}}</ion-label>
+                  <ion-chip>{{ user.name }}</ion-chip>
+                </ion-item>
+              }
+              @else if (item.title === 'My Team') {
+                <ion-item  [routerLink]="item.url">
+                  <ion-icon [name]="item.icon" slot="start"></ion-icon>
+                  <ion-label color="primary">{{item.title}}</ion-label>
+                  <ion-chip>{{ user.orgName }}</ion-chip>
+                </ion-item>
+              }
+              @else {
+                <ion-item  [routerLink]="item.url">
+                  <ion-icon [name]="item.icon" slot="start"></ion-icon>
+                  <ion-label color="primary">{{item.title}}</ion-label>
+                </ion-item>
+                }
             }
           </ion-menu-toggle>
         </ion-list>
