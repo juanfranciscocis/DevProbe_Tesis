@@ -135,7 +135,7 @@
     <ng-container *ngFor="let comment of incident.report">
       <ion-card class="text-white"  [class.self-end]="comment.from === currentUser" [class.bg-gray-600]="comment.from === currentUser" [class.self-start]="comment.from !== currentUser"  [class.bg-gray-800]="comment.from !== currentUser">
       <ion-card-content>
-          <ion-label class="">{{comment.comment}}</ion-label>
+        <p class="" [innerHTML]="comment.comment"></p>
         </ion-card-content>
         <ion-card-content class="text-right">
           <div class="flex flex-row justify-end items-center">

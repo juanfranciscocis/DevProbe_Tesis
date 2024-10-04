@@ -36,6 +36,8 @@ export class IncidentManagerPage implements OnInit {
     this.getParams();
     await this.getOpenIncidents();
     await this.closeIncident();
+    await this.getMyOpenIncidents();
+    await this.getMyClosedIncidents();
     await this.hideLoading();
   }
 
@@ -62,6 +64,41 @@ export class IncidentManagerPage implements OnInit {
   async closeIncident() {
     this.closeIncidents = await this.incidentService.getIncidents(this.orgName, this.productObjective, this.productStep );
     this.closeIncidents = this.closeIncidents.filter(incident => incident.state === 'closed');
+  }
+
+
+  async getMyOpenIncidents() {
+    const user = JSON.parse(localStorage.getItem('user')!);
+    for (let i = 0; i < this.openIncidents.length; i++) {
+      if (user.name === this.openIncidents[i].incidentCommander || user.name === this.openIncidents[i].operations_lead || user.name === this.openIncidents[i].communications_lead) {
+        this.openIncidents[i].iAmIn = true;
+      }
+        for (let j =0 ; j < this.openIncidents[i].operation_team.length; j++) {
+          console.log(this.openIncidents[i].operation_team[j]);
+          if (user.name === this.openIncidents[i].operation_team[j]) {
+            this.openIncidents[i].iAmIn = true;
+          }
+          console.log("Team ", j, this.openIncidents[i].operation_team[j]);
+        }
+    }
+    console.log('My Open Incidents')
+  }
+
+  async getMyClosedIncidents() {
+    const user = JSON.parse(localStorage.getItem('user')!);
+    for (let i = 0; i < this.closeIncidents.length; i++) {
+      if (user.name === this.closeIncidents[i].incidentCommander || user.name === this.closeIncidents[i].operations_lead || user.name === this.closeIncidents[i].communications_lead) {
+        this.closeIncidents[i].iAmIn = true;
+      }
+        for (let j =0 ; j < this.closeIncidents[i].operation_team.length; j++) {
+          console.log(this.closeIncidents[i].operation_team[j]);
+          if (user.name === this.closeIncidents[i].operation_team[j]) {
+            this.closeIncidents[i].iAmIn = true;
+          }
+          console.log("Team ", j, this.closeIncidents[i].operation_team[j]);
+        }
+    }
+    console.log('My Closed Incidents')
   }
 
 

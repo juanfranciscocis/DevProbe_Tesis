@@ -15,11 +15,11 @@ export class IncidentDetailsPage implements OnInit {
   productStep: string = '';
   productObjective: string = '';
   orgName: string = '';
-  currentUser: String = '';
+  currentUser: string = '';
   incident: Incident = {} as Incident;
 
 
-  newComment: String = '';
+  newComment: string = '';
 
   constructor(
     private router: Router,
@@ -43,7 +43,7 @@ export class IncidentDetailsPage implements OnInit {
     });
     const user = JSON.parse(localStorage.getItem('user')!);
     this.orgName = user.orgName!;
-    this.currentUser = user.name!;
+    this.currentUser = user.name!  as string;
 
     console.log(this.orgName);
     console.log(this.productObjective);
@@ -52,6 +52,34 @@ export class IncidentDetailsPage implements OnInit {
   }
 
   addComment() {
+    console.log('add comment');
+    console.log(this.currentUser);
+    console.log(this.newComment);
+
+    if (this.newComment === '') {
+      return;
+    }
+
+    //check if the incident has a report
+    if (this.incident.report) {
+      //add the comment to the report
+      this.incident.report.push({
+        comment: this.newComment.replace(/\n/g, '<br>'),
+        from: this.currentUser,
+      });
+    } else {
+      //create a new report
+      this.incident.report = [{
+        comment: this.newComment.replace(/\n/g, '<br>'),
+        from: this.currentUser,
+      }];
+    }
+
+    //save the incident to the db
+
+
+    this.newComment = '';
+
 
   }
 
