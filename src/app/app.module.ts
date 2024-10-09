@@ -15,6 +15,7 @@ import {NgxEchartsDirective, NgxEchartsModule, provideEcharts} from "ngx-echarts
 import {getVertexAI, provideVertexAI} from "@angular/fire/vertexai-preview";
 import {NgxFlamegraphModule} from "ngx-flamegraph";
 import {MarkdownModule} from "ngx-markdown";
+import {getStorage, provideStorage} from "@angular/fire/storage";
 
 @NgModule({
   declarations: [AppComponent],
@@ -37,8 +38,10 @@ import {MarkdownModule} from "ngx-markdown";
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
     provideVertexAI(() => getVertexAI()),
+    provideStorage(()=>getStorage()),
     HttpClientModule,
-    provideEcharts()
+    provideEcharts(),
+
   ],
   bootstrap: [AppComponent],
 })
