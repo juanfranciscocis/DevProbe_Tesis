@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {LoadingController} from "@ionic/angular";
 import {IncidentService} from "../../../services/incident.service";
 import {Incident} from "../../../interfaces/incident";
-import {User} from "../../../interfaces/user";
 import {NotificationService} from "../../../services/notification.service";
+import {getDownloadURL, ref, Storage, uploadBytesResumable} from "@angular/fire/storage";
 
 @Component({
   selector: 'app-incident-details',
@@ -21,6 +21,8 @@ export class IncidentDetailsPage implements OnInit {
 
 
   newComment: string = '';
+  storage: Storage = inject(Storage)
+  isImageLoaded: boolean = false;
 
   constructor(
     private router: Router,
@@ -108,9 +110,57 @@ export class IncidentDetailsPage implements OnInit {
 
   }
 
+
+
+
+  onImageLoad() {
+    this.isImageLoaded = true;
+  }
+
+
+
+  async uploadFile(input: HTMLInputElement) {
+    if (!input.files) return
+    const files: FileList = input.files;
+    for (let i = 0; i < files.length; i++) {
+      const file = files.item(i);
+      if (file) {
+        const path = `incident/${this.orgName}/${this.productObjective}/${this.productStep}/${file.name}`
+        // @ts-ignore
+        const storageRef = ref(this.storage, path)
+        await uploadBytesResumable(storageRef, file).then((snapshot)=>{
+          //get the url
+          console.log('Uploaded a blob or file!', snapshot.ref.fullPath);
+          this.downloadFile(snapshot.ref.fullPath).then(async (data) => {
+            this.newComment = data;
+            await this.addComment()
+            this.isImageLoaded = false;
+          });
+        });
+      }
+    }
+  }
+
+  async downloadFile(file: string):Promise<string> {
+    let finalUrl = '';
+    // @ts-ignore
+    await getDownloadURL(ref(this.storage, file)).then((url) => {
+      console.log('File available at', url);
+      finalUrl = url;
+    });
+    return finalUrl;
+  }
+
+
+
   closeIncident() {
 
   }
+
+  saveChanges() {
+
+  }
+
 
 
   /**

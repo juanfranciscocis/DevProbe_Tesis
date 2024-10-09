@@ -135,7 +135,11 @@
     <ng-container *ngFor="let comment of incident.report">
       <ion-card class="text-white"  [class.self-end]="comment.from === currentUser" [class.bg-gray-600]="comment.from === currentUser" [class.self-start]="comment.from !== currentUser"  [class.bg-gray-800]="comment.from !== currentUser">
       <ion-card-content>
+        @if (comment.comment.split('/')[0] === 'https:' || comment.comment.split('/')[0] === 'http:') {
+          <a href="{{comment.comment}}" target="_blank"><img src="{{comment.comment}}" alt="image" class="w-1/2"></a>
+        }@else{
         <p class="" [innerHTML]="comment.comment"></p>
+        }
         </ion-card-content>
         <ion-card-content class="text-right">
           <div class="flex flex-row justify-end items-center">
@@ -151,6 +155,11 @@
         <ion-card class="p-5 flex flex-col justify-center items-center">
         <div class="flex flex-row justify-center w-full">
         <ion-textarea [autoGrow]="true" placeholder="Add a comment" type="text" class=" w-2/3" [(ngModel)]="newComment"></ion-textarea>
+          <ion-button [disabled]="isImageLoaded" (click)="upload.click()">
+            Add Data
+            <input type="file" #upload (change)="onImageLoad()" style="display: none;">
+          </ion-button>
+          <ion-button (click)="uploadFile(upload)"  class="ion-margin" color=success  expand="block" *ngIf="isImageLoaded">Save Image</ion-button>
         <ion-button color="success" class="w-1/3 m-5 " (click)="addComment()">Add Comment</ion-button>
       </div>
         </ion-card>
