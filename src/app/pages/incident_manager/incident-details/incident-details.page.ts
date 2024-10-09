@@ -65,6 +65,7 @@ export class IncidentDetailsPage implements OnInit {
     console.log(this.newComment);
 
     if (this.newComment === '') {
+      await this.hideLoading();
       return;
     }
 
@@ -120,12 +121,13 @@ export class IncidentDetailsPage implements OnInit {
 
 
   async uploadFile(input: HTMLInputElement) {
+    await this.showLoading();
     if (!input.files) return
     const files: FileList = input.files;
     for (let i = 0; i < files.length; i++) {
       const file = files.item(i);
       if (file) {
-        const path = `incident/${this.orgName}/${this.productObjective}/${this.productStep}/${file.name}`
+        const path = `incident/${this.orgName}/${this.productObjective}/${this.productStep}/°/${file.name}`
         // @ts-ignore
         const storageRef = ref(this.storage, path)
         await uploadBytesResumable(storageRef, file).then((snapshot)=>{
@@ -133,6 +135,7 @@ export class IncidentDetailsPage implements OnInit {
           console.log('Uploaded a blob or file!', snapshot.ref.fullPath);
           this.downloadFile(snapshot.ref.fullPath).then(async (data) => {
             this.newComment = data;
+            await this.hideLoading();
             await this.addComment()
             this.isImageLoaded = false;
           });
@@ -150,6 +153,24 @@ export class IncidentDetailsPage implements OnInit {
     });
     return finalUrl;
   }
+
+  isImage(url: string): boolean {
+    return /(\.jpg|\.jpeg|\.png|\.gif|\.bmp|\.webp)(\?|$)/i.test(url);
+  }
+
+  isFile(url: string): boolean {
+    return /(\.csv|\.pdf|\.doc|\.docx|\.ppt|\.pptx|\.xls|\.xlsx|\.txt|\.mp3|\.wav|\.ogg|\.mp4|\.avi|\.mkv|\.mov|\.zip|\.rar|\.7z|\.tar|\.gz)(\?|$)/i.test(url);
+  }
+
+
+  fileName(url:string):string{
+    // @ts-ignore
+    const nameWithPath = decodeURIComponent(url.split('/').pop().split('?')[0]);
+    return nameWithPath.split('°').pop()?.substring(1) as string;
+  }
+
+
+
 
 
 
@@ -177,5 +198,13 @@ export class IncidentDetailsPage implements OnInit {
    */
   async hideLoading() {
     await this.loadingCtrl.dismiss();
+  }
+
+  protected readonly decodeURIComponent = decodeURIComponent;
+
+  deleteUploadfile(upload: HTMLInputElement) {
+    // reset the input
+    upload.value = '';
+    this.isImageLoaded = false;
   }
 }
