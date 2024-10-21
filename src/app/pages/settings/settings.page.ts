@@ -112,7 +112,7 @@ export class SettingsPage implements OnInit {
     await this.loadingCtrl.dismiss();
   }
 
-  version:string = '1.11.232'  // MAIN VERSION, NUMBER OF FEATURES, COMMIT TO MAIN
+  version:string = '1.11.240'  // MAIN VERSION, NUMBER OF FEATURES, COMMIT TO MAIN
   notify() {
     //Notification.requestPermission()
     Notification.requestPermission().then(function(permission) {
