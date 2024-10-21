@@ -5,6 +5,7 @@ import {TeamsService} from "../../../services/teams.service";
 import {User} from "../../../interfaces/user";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {IncidentService} from "../../../services/incident.service";
+import {NotificationService} from "../../../services/notification.service";
 
 @Component({
   selector: 'app-new-incident',
@@ -48,6 +49,7 @@ export class NewIncidentPage implements OnInit {
     private teamService: TeamsService,
     private alertCtrl: AlertController,
     private incidentService: IncidentService,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit() {
@@ -198,6 +200,20 @@ export class NewIncidentPage implements OnInit {
 
     }).then(async (data) => {
       if (data) {
+        interface Role {
+          role: string;
+          member: string;
+        }
+
+        let consolidateMember: Role[] = [];
+        consolidateMember.push({role: 'Incident Commander', member: this.incidentCommander});
+        consolidateMember.push({role: 'Communications Lead', member: this.communicationsLead});
+        consolidateMember.push({role: 'Operations Lead', member: this.operationsLead});
+        for (let i = 0; i < this.operationTeam[1].items.length; i++) {
+          consolidateMember.push({role: 'Operations Team Member', member: this.operationTeam[1].items[i]});
+        }
+        await this.notificationService.notifyIncidentToUser(consolidateMember, this.orgName);
+
         await this.hideLoading();
         await this.showAlert('Incident saved successfully', 'Success');
         window.history.back();

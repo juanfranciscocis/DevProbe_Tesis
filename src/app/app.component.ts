@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { MenuController } from '@ionic/angular';
+import {User} from "./interfaces/user";
 
 /**
  * AppComponent is the root component of the application.
@@ -14,6 +15,11 @@ import { MenuController } from '@ionic/angular';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit {
+
+  /**
+   * The user object.
+   */
+  user: User = {} as User;
 
   /**
    * An array of menu items. Each item is an object with 'title', 'url', and 'icon' properties.
@@ -101,6 +107,7 @@ export class AppComponent implements OnInit {
         }
       }
     });
+    this.getUser();
   }
 
   navigate(item: any) {
@@ -109,4 +116,8 @@ export class AppComponent implements OnInit {
       });
   }
 
+  getUser() {
+    const user = JSON.parse(localStorage.getItem('user')!);
+    this.user = user;
+  }
 }

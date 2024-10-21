@@ -15,6 +15,8 @@ export interface Incident {
 
   report?:Report[];
 
+  iAmIn?: boolean;
+
 
 
 }

@@ -112,7 +112,7 @@ export class SettingsPage implements OnInit {
     await this.loadingCtrl.dismiss();
   }
 
-  version:string = '1.10.200'  // MAIN VERSION, NUMBER OF FEATURES, COMMIT TO MAIN
+  version:string = '1.11.240'  // MAIN VERSION, NUMBER OF FEATURES, COMMIT TO MAIN
   notify() {
     //Notification.requestPermission()
     Notification.requestPermission().then(function(permission) {
@@ -130,8 +130,19 @@ export class SettingsPage implements OnInit {
     webpushr('fetch_id',async (sid: string) => {
       //save id to database
       console.log('webpushr subscriber id: ' + sid)
+
+      if (!sid) {
+        await this.showAlert('No subscription id found, please check browser permissions', 'Error');
+        return;
+      }
+
+
       // @ts-ignore
-      await this.notificationService.saveNotificationID(this.user,sid);
+      await this.notificationService.saveNotificationID(this.user,sid).then(async (data) => {
+        if (data) {
+          await this.showAlert('Subscription saved successfully', 'Success');
+        }
+      });
     })
 
   }

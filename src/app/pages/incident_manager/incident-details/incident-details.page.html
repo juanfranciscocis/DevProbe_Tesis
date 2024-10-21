@@ -133,9 +133,30 @@
 <ion-col size="12" size-md="12" size-lg="12" class="">
   <ion-card class="p-5 flex flex-col justify-center items-start">
     <ng-container *ngFor="let comment of incident.report">
-      <ion-card class="text-white"  [class.self-end]="comment.from === currentUser" [class.bg-gray-600]="comment.from === currentUser" [class.self-start]="comment.from !== currentUser"  [class.bg-gray-800]="comment.from !== currentUser">
-      <ion-card-content>
-          <ion-label class="">{{comment.comment}}</ion-label>
+      <ion-card class="text-white" [class.self-end]="comment.from === currentUser" [class.bg-gray-600]="comment.from === currentUser" [class.self-start]="comment.from !== currentUser" [class.bg-gray-800]="comment.from !== currentUser">
+        <ion-card-content>
+          @if (isImage(comment.comment)) {
+            <div class=" flex flex-row w-full items-end">
+            <a class="" href="{{comment.comment}}" target="_blank"><img src="{{comment.comment}}" alt="image" class="w-1/2"></a>
+              </div>
+          } @else if (isFile(comment.comment)) {
+            <a href="{{comment.comment}}" target="_blank">
+              <ion-chip >
+                  <ion-icon name="document"></ion-icon>
+                <ion-label>{{fileName(comment.comment)}}</ion-label>
+              </ion-chip>
+            </a>
+          }@else if (comment.comment.split("/")[0] === 'https:' || comment.comment.split("/")[0] === 'http:') {
+            <a href="{{comment.comment}}" target="_blank">
+              <ion-chip color="warning">
+                <ion-icon name="document"></ion-icon>
+                <ion-label>{{fileName(comment.comment)}}</ion-label>
+              </ion-chip>
+            </a>
+            <p> This is an unknown file type. </p>
+          } @else {
+            <p [innerHTML]="comment.comment"></p>
+          }
         </ion-card-content>
         <ion-card-content class="text-right">
           <div class="flex flex-row justify-end items-center">
@@ -147,11 +168,20 @@
     </ng-container>
   </ion-card>
 </ion-col>
+
       <ion-col size="12" size-md="12" size-lg="12" class="">
         <ion-card class="p-5 flex flex-col justify-center items-center">
-        <div class="flex flex-row justify-center w-full">
-        <ion-textarea [autoGrow]="true" placeholder="Add a comment" type="text" class=" w-2/3" [(ngModel)]="newComment"></ion-textarea>
-        <ion-button color="success" class="w-1/3 m-5 " (click)="addComment()">Add Comment</ion-button>
+        <div class="flex flex-row justify-center items-center w-full">
+        <ion-textarea [hidden]="isImageLoaded" [autoGrow]="true" placeholder="Add a comment" type="text" class=" w-2/3" [(ngModel)]="newComment"></ion-textarea>
+          <div class="pl-1 pr-1">
+          <ion-icon size="large" [hidden]="isImageLoaded"  name="cloud-upload" (click)="upload.click()">
+            Add Data
+            <input type="file" #upload (change)="onImageLoad()" style="display: none;">
+          </ion-icon>
+          <ion-icon size="large" (click)="uploadFile(upload)"  class="ion-margin"  expand="block" *ngIf="isImageLoaded" name="save"></ion-icon>
+            <ion-icon size="large" (click)="deleteUploadfile(upload)"  class="ion-margin"  expand="block" *ngIf="isImageLoaded" name="trash"></ion-icon>
+          </div>
+        <ion-button [hidden]="isImageLoaded" class="w-1/3 m-5 " (click)="addComment()">Add Comment</ion-button>
       </div>
         </ion-card>
       </ion-col>
