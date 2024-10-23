@@ -28,6 +28,8 @@ export class ProductService {
   }
 
   async getProducts(orgName:string){
+
+
     try {
       const collectionRef = collection(this.firestore, 'teams', orgName, 'products');
       const products = await getDocs(collectionRef);
