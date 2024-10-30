@@ -9,6 +9,7 @@ import {ActivatedRoute} from "@angular/router";
 import {LastStateChange} from "../../../../interfaces/unit-test";
 import {User} from "../../../../interfaces/user";
 import {TeamsService} from "../../../../services/teams.service";
+import {NotificationService} from "../../../../services/notification.service";
 
 @Component({
   selector: 'app-create-unit-test',
@@ -63,6 +64,7 @@ export class CreateUnitTestPage implements OnInit {
     private unitTestService: UnitTestService,
     private activatedRoute: ActivatedRoute,
     private teamService: TeamsService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -198,6 +200,14 @@ export class CreateUnitTestPage implements OnInit {
         last_state_change: [lastState],
         assigned_to: this.assignedTester
       });
+
+      const role = {
+        member: this.assignedTester,
+        role: 'QA'
+      }
+
+
+      await this.notificationService.notifyTestToUser(role, orgName, 'https://devprobe-89481.web.app/software-testing');
       await this.hideLoading();
       await this.showAlert('Your Unit Test saved', 'Unit Test Saved');
 

@@ -123,5 +123,45 @@ export class NotificationService {
 
     }
 
+
+
+
+ async notifyTestToUser(role: Role, orgName: string, target: string) {
+
+  try {
+    console.log('Notify test to user');
+    // get team by orgName
+    const team = await this.teamService.getTeamByOrganization(orgName);
+    const user = role.member;
+    // filter the team to include only the user
+    // @ts-ignore
+    const filteredTeam = team.filter(member => member.name === user);
+    console.log('team', filteredTeam);
+
+    const url = `https://devprobeapi.onrender.com/sendNotification`;
+    for (let member of filteredTeam) {
+      let sid = await this.getNotificationUser(member);
+      console.log('sid', sid);
+      if (sid !== '') {
+        let target_url = target;
+        const body = {
+          sid: sid,
+          title: 'New Unit Test',
+          type: 'test',
+          // @ts-ignore
+          message: `Hey ${member.name}, you have been assigned a new test`,
+          target: target_url
+        };
+        await this.http.post(url, body).toPromise();
+        console.log('Notification sent successfully');
+      } else {
+        console.log('no sid');
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 }
 
