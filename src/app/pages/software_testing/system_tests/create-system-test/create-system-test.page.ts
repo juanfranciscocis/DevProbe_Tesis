@@ -6,6 +6,7 @@ import {SystemTestService} from "../../../../services/software_testing/system-te
 import {User} from "../../../../interfaces/user";
 import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
 import {AiMessage} from "../../../../interfaces/ai-message";
+import {TeamsService} from "../../../../services/teams.service";
 
 @Component({
   selector: 'app-create-system-test',
@@ -20,11 +21,15 @@ export class CreateSystemTestPage implements OnInit {
     description: '',
     steps: [],
     type: 'system-test',
-    state: false
+    state: false,
+    assigned_to: ''
   }
 
   testStepTitle: string = '';
   testExpectedResults: string = '';
+  assignedTester: string = '';
+
+  teamMembers: User[] = [];
 
   @ViewChild(IonModal) modal: IonModal | undefined;
 
@@ -47,11 +52,18 @@ export class CreateSystemTestPage implements OnInit {
     private alertCtrl: AlertController,
     private systemTestService: SystemTestService,
     private loadingCtrl: LoadingController,
+    private teamService: TeamsService
 
   ) { }
 
   ngOnInit() {
     this.getProductFromParams()
+    this.getTeamMembers();
+  }
+
+  async ionViewWillEnter() {
+    this.getProductFromParams()
+    await this.getTeamMembers();
   }
 
   /**
@@ -63,8 +75,16 @@ export class CreateSystemTestPage implements OnInit {
       this.productObjective = params['productObjective'];
       this.productStep = params['step'];
     });
+
+    const user = JSON.parse(localStorage.getItem('user')!);
+    this.orgName = user.orgName!;
+
     console.log(this.productObjective);
     console.log(this.productStep);
+  }
+
+  async getTeamMembers() {
+    this.teamMembers = await this.teamService.getTeamByOrganization(this.orgName);
   }
 
   onWillDismiss($event: any) {
@@ -117,9 +137,9 @@ export class CreateSystemTestPage implements OnInit {
     await this.showLoading();
     console.log(this.systemTest);
 
-    if (!this.systemTest.title || !this.systemTest.description || this.systemTest.steps.length === 0) {
+    if (!this.systemTest.title || !this.systemTest.description || this.systemTest.steps.length === 0 || !this.systemTest.assigned_to) {
       await this.hideLoading()
-      this.showAlert('Please fill out the title, description, and at least one step.', 'Error').then(r =>
+      this.showAlert('Please fill out the title, description, tester and at least one step.', 'Error').then(r =>
         console.log('Alert shown'));
       return;
     }
@@ -132,14 +152,15 @@ export class CreateSystemTestPage implements OnInit {
     this.orgName = this.user.orgName!;
 
     console.log(this.orgName);
-    this.systemTestService.addSystemTest(this.orgName, this.productObjective, this.productStep, this.systemTest);
+    await this.systemTestService.addSystemTest(this.orgName, this.productObjective, this.productStep, this.systemTest);
 
     this.systemTest = {
       title: '',
       description: '',
       steps: [],
       type: 'system-test',
-      state: false
+      state: false,
+      assigned_to: ''
     }
 
     await this.hideLoading();
@@ -350,4 +371,9 @@ export class CreateSystemTestPage implements OnInit {
   }
 
 
+  onAssignedTester($event: any) {
+    this.assignedTester = $event.target.value;
+    this.systemTest.assigned_to = this.assignedTester;
+
+  }
 }

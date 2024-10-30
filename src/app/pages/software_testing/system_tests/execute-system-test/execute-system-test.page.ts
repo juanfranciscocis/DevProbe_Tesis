@@ -21,7 +21,8 @@ export class ExecuteSystemTestPage implements OnInit {
     description: '',
     steps: [],
     type: 'system-test',
-    state: false
+    state: false,
+    assigned_to: ''
   }
 
   orgName: string = '';

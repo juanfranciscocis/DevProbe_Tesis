@@ -4,6 +4,7 @@ export interface SystemTest {
   steps: Step[];
   type: string;
   state: boolean;
+  assigned_to: string;
 }
 
 interface Step{

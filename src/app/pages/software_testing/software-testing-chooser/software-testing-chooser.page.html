@@ -188,6 +188,10 @@
                   }
                 </div>
               </ion-card-content>
+              <ion-card-content class=" flex flex-col justify-center items-center">
+                <p> Assigned to </p>
+                <ion-chip>{{integration.assigned_to}}</ion-chip>
+              </ion-card-content>
               <ion-card-content>
                 <ion-button color="primary" expand="block" (click)="copyIntegrationTestCode(integration.title)">Copy Test Code</ion-button>
                 <ion-button color="danger" expand="block" (click)="deleteIntegrationTest(integration.title)">Delete Test</ion-button>
@@ -247,6 +251,10 @@
           <ion-card-header>
             <ion-card-title>{{ test.title }}</ion-card-title>
           </ion-card-header>
+          <ion-card-content class=" flex flex-col justify-center items-center">
+            <p> Assigned to </p>
+            <ion-chip>{{test.assigned_to}}</ion-chip>
+          </ion-card-content>
           <ion-card-content>
             <ion-button color="primary" expand="block" (click)="navigateToViewHistorySystemTest(test.title)">View Test Results</ion-button>
             <ion-button color="success" expand="block" (click)="navigateToExecuteSystemTest(test.title)">Execute Test</ion-button>
