@@ -13,6 +13,7 @@ import {User} from "../../../interfaces/user";
 export class IncidentManagerChooserPage implements OnInit {
 
   products: Product[] = [];
+  orgName: string = '';
 
   /**
    * @constructor
@@ -49,8 +50,8 @@ export class IncidentManagerChooserPage implements OnInit {
       return;
     }
     const user: User = JSON.parse(userString);
-    const orgName = user.orgName!;
-    this.products = await this.productService.getProducts(orgName);
+    this.orgName = user.orgName!;
+    this.products = await this.productService.getProducts(this.orgName);
   }
 
   /**
@@ -65,7 +66,7 @@ export class IncidentManagerChooserPage implements OnInit {
   }
 
   async navigateToLoadTest(product: Product, step: string) {
-    await this.router.navigate(['/incident-manager', {productObjective: product.productObjective, step: step}]);
+    await this.router.navigate(['/incident-manager', {orgName:this.orgName,productObjective: product.productObjective, step: step}]);
   }
 
 

@@ -112,9 +112,10 @@ export class IncidentManagerPage implements OnInit {
 
   async goToIncident(incident: Incident) {
     await this.router.navigate(['incident-details', {
+      orgName: this.orgName,
       productObjective: this.productObjective,
       step: this.productStep,
-      incident: JSON.stringify(incident)
+      incidentTitle: incident.title
     }]);
   }
 

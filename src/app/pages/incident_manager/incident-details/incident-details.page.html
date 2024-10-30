@@ -207,7 +207,7 @@
         </ion-card>
       </ion-col>
 
-      @if (incident.state === 'closed') {
+      @if (incident.state === 'closed' || incident.state === 'postmortem') {
       <ion-col size="12" size-md="12" size-lg="12" class="" >
         <ion-card class="p-5 flex flex-col justify-center items-center">
           <ion-card-title class="text-2xl">Go to Incident Postmortem</ion-card-title>
