@@ -7,6 +7,7 @@ import {User} from "../../../../interfaces/user";
 import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
 import {AiMessage} from "../../../../interfaces/ai-message";
 import {TeamsService} from "../../../../services/teams.service";
+import {NotificationService} from "../../../../services/notification.service";
 
 @Component({
   selector: 'app-create-system-test',
@@ -52,7 +53,8 @@ export class CreateSystemTestPage implements OnInit {
     private alertCtrl: AlertController,
     private systemTestService: SystemTestService,
     private loadingCtrl: LoadingController,
-    private teamService: TeamsService
+    private teamService: TeamsService,
+    private notificationService: NotificationService
 
   ) { }
 
@@ -153,6 +155,13 @@ export class CreateSystemTestPage implements OnInit {
 
     console.log(this.orgName);
     await this.systemTestService.addSystemTest(this.orgName, this.productObjective, this.productStep, this.systemTest);
+
+
+
+    let role = {member: this.systemTest.assigned_to, role: 'tester'};
+    await this.notificationService.notifyTestToUser(role, this.orgName, 'https://devprobe-89481.web.app/software-testing');
+
+
 
     this.systemTest = {
       title: '',

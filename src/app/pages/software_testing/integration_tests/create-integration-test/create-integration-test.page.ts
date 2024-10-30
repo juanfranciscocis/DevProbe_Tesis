@@ -8,6 +8,7 @@ import {IntegrationTestService} from "../../../../services/software_testing/inte
 import {GitSyncData} from "../../../../interfaces/git-sync-data";
 import {TeamsService} from "../../../../services/teams.service";
 import {User} from "../../../../interfaces/user";
+import {NotificationService} from "../../../../services/notification.service";
 
 @Component({
   selector: 'app-create-integration-test',
@@ -88,6 +89,7 @@ export class CreateIntegrationTestPage implements OnInit {
     private githubService: GithubService,
     private integrationTestService: IntegrationTestService,
     private teamService: TeamsService,
+    private notificationService: NotificationService
   ) {
   }
 
@@ -345,6 +347,17 @@ export class CreateIntegrationTestPage implements OnInit {
         }
       ]
     }).then(async () => {
+
+      const role = {
+        member: this.assignedTester,
+        role: 'Tester'
+      }
+
+
+      await this.notificationService.notifyTestToUser(role, orgName, 'https://devprobe-89481.web.app/software-testing');
+
+
+
       await this.hideLoading();
       await this.showAlert('Integration Test saved successfully', 'Test Saved');
       window.history.back();
