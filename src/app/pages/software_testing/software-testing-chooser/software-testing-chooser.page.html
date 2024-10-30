@@ -113,6 +113,10 @@
                 }
               </div>
             </ion-card-content>
+            <ion-card-content class=" flex flex-col justify-center items-center">
+              <p> Assigned to </p>
+              <ion-chip>{{unit.assigned_to}}</ion-chip>
+            </ion-card-content>
             <ion-card-content>
               <ion-button color="primary" expand="block" (click)="copyUnitTestCode(unit.title)">Copy Test Code</ion-button>
               <ion-button color="danger" expand="block" (click)="deleteUnitTest(unit.title)">Delete Test</ion-button>
