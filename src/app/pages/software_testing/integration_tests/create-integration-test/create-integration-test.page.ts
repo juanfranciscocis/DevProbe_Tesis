@@ -6,6 +6,8 @@ import {AlertController, LoadingController} from "@ionic/angular";
 import {GithubService} from "../../../../services/github.service";
 import {IntegrationTestService} from "../../../../services/software_testing/integration-test.service";
 import {GitSyncData} from "../../../../interfaces/git-sync-data";
+import {TeamsService} from "../../../../services/teams.service";
+import {User} from "../../../../interfaces/user";
 
 @Component({
   selector: 'app-create-integration-test',
@@ -18,6 +20,9 @@ export class CreateIntegrationTestPage implements OnInit {
 
   productStep: string = '';
   productObjective: string = '';
+  orgName: string = '';
+
+  teamMembers: User[] = [];
 
   selectedFiles: File[] = [];
   moreContext: string = '';
@@ -72,6 +77,7 @@ export class CreateIntegrationTestPage implements OnInit {
   files:string[] = []
 
   myIntegrationTest: string = '';
+  assignedTester: string = '';
 
 
 
@@ -80,7 +86,8 @@ export class CreateIntegrationTestPage implements OnInit {
     private loadingCtrl: LoadingController,
     private alertCtrl:AlertController,
     private githubService: GithubService,
-    private integrationTestService: IntegrationTestService
+    private integrationTestService: IntegrationTestService,
+    private teamService: TeamsService,
   ) {
   }
 
@@ -89,6 +96,7 @@ export class CreateIntegrationTestPage implements OnInit {
 
   async ionViewWillEnter() {
     this.getProductFromParams();
+    await this.getTeamMembers();
     await this.getGitHubSync();
 
     if (this.gitHubData.key !== '') {
@@ -107,6 +115,14 @@ export class CreateIntegrationTestPage implements OnInit {
     console.log(this.productObjective);
     console.log(this.productStep);
 
+    const user = JSON.parse(localStorage.getItem('user')!);
+    this.orgName = user.orgName!;
+
+  }
+
+
+  async getTeamMembers() {
+    this.teamMembers = await this.teamService.getTeamByOrganization(this.orgName);
   }
 
   /**
@@ -289,6 +305,14 @@ export class CreateIntegrationTestPage implements OnInit {
       return;
     }
 
+    //check if the test title is empty
+    if (this.assignedTester === '') {
+      await this.hideLoading()
+      this.showAlert('Please select a tester', 'No Test Title');
+      return;
+    }
+
+
     //check if there is no message from the AI
     if (this.aiMessages.length === 0 && this.myIntegrationTest === '') {
       await this.hideLoading();
@@ -310,6 +334,7 @@ export class CreateIntegrationTestPage implements OnInit {
     //save the integration test
     await this.integrationTestService.addSystemTest(orgName, this.productObjective, this.productStep, {
       title: this.testTitle,
+      assigned_to: this.assignedTester,
       type: 'integration-test',
       code: this.myIntegrationTest !== '' ? this.myIntegrationTest : this.aiMessages[0].message,
       state: false,
@@ -430,5 +455,7 @@ export class CreateIntegrationTestPage implements OnInit {
   }
 
 
-
+  onAssignedTester($event: any) {
+    this. assignedTester = $event.detail.value;
+  }
 }

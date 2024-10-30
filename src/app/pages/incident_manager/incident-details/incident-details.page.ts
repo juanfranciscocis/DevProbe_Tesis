@@ -17,6 +17,7 @@ export class IncidentDetailsPage implements OnInit {
   productObjective: string = '';
   orgName: string = '';
   currentUser: string = '';
+
   incident: Incident = {} as Incident;
 
 
@@ -35,8 +36,9 @@ export class IncidentDetailsPage implements OnInit {
   ngOnInit() {
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.getParams();
+    await this.getIncident()
   }
 
   getParams() {
@@ -45,7 +47,7 @@ export class IncidentDetailsPage implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       this.productObjective = params['productObjective']; //this is the product objective
       this.productStep = params['step']; //this is the step of the product
-      this.incident = JSON.parse(params['incident']);
+      this.incident.title = params['incidentTitle'];
     });
     const user = JSON.parse(localStorage.getItem('user')!);
     this.orgName = user.orgName!;
@@ -55,6 +57,12 @@ export class IncidentDetailsPage implements OnInit {
     console.log(this.productObjective);
     console.log(this.productStep);
     console.log(this.incident.title);
+  }
+
+  async getIncident() {
+    await this.showLoading();
+    this.incident = await this.incidentService.getIncident(this.orgName, this.productObjective, this.productStep, this.incident.title);
+    await this.hideLoading();
   }
 
   async addComment() {
@@ -101,7 +109,12 @@ export class IncidentDetailsPage implements OnInit {
       consolidateMember.push({role: 'Operations Team Member', member: this.incident.operation_team[i]});
     }
     console.log(consolidateMember);
-    await this.notificationService.notifyIncidentUpdateToTeam(consolidateMember, this.orgName);
+
+    //get current url
+    const target = window.location.href;
+
+
+    await this.notificationService.notifyIncidentUpdateToTeam(consolidateMember, this.orgName, target);
 
 
     this.newComment = '';

@@ -95,6 +95,21 @@
               <markdown class="text-white">{{msg.message}}</markdown>
               }
             </ion-card-content>
+              <ion-card-header class="flex-row justify-center items-center">
+                <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> Assign the test</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-card>
+
+                  <ion-select label="Assign Tester" placeholder="Select an Tester" interface="popover"
+                              (ionChange)="onAssignedTester($event)"
+                  >
+                    @for (member of teamMembers; track member) {
+                      <ion-select-option value="{{member.name}}">{{member.name}}</ion-select-option>
+                    }
+                  </ion-select>
+                </ion-card>
+              </ion-card-content>
             </ion-card>
             <ion-card-content class="flex flex-col justify-center items-center w-full">
               <ion-button class="w-full" (click)="saveIntegrationTest()" fill="outline" color="success">Save Integration Test</ion-button>
@@ -167,6 +182,21 @@
                     <markdown class="text-white">{{msg.message}}</markdown>
                   }
                 </ion-card-content>
+                <ion-card-header class="flex-row justify-center items-center">
+                  <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> Assign the test</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-card>
+
+                    <ion-select label="Assign Tester" placeholder="Select an Tester" interface="popover"
+                                (ionChange)="onAssignedTester($event)"
+                    >
+                      @for (member of teamMembers; track member) {
+                        <ion-select-option value="{{member.name}}">{{member.name}}</ion-select-option>
+                      }
+                    </ion-select>
+                  </ion-card>
+                </ion-card-content>
               </ion-card>
               <ion-card-content class="flex flex-col justify-center items-center w-full">
                 <ion-button class="w-full" (click)="saveIntegrationTest()" fill="outline" color="success">Save Integration Test</ion-button>
@@ -196,6 +226,21 @@
             <ion-card class="w-full">
               <ion-card-content class="w-full">
                 <ion-textarea placeholder="Paste Code" class="w-full h-96" [(ngModel)]="myIntegrationTest"></ion-textarea>
+              </ion-card-content>
+              <ion-card-header class="flex-row justify-center items-center">
+                <ion-card-title class="text-3xl flex flex-row"><p class="text-red-800">*</p> Assign the test</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-card>
+
+                  <ion-select label="Assign Tester" placeholder="Select an Tester" interface="popover"
+                              (ionChange)="onAssignedTester($event)"
+                  >
+                    @for (member of teamMembers; track member) {
+                      <ion-select-option value="{{member.name}}">{{member.name}}</ion-select-option>
+                    }
+                  </ion-select>
+                </ion-card>
               </ion-card-content>
             </ion-card>
             <ion-card-content class="flex flex-col justify-center items-center w-full">

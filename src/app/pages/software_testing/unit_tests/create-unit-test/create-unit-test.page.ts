@@ -7,6 +7,8 @@ import {getGenerativeModel, VertexAI} from "@angular/fire/vertexai-preview";
 import {UnitTestService} from "../../../../services/software_testing/unit-test.service";
 import {ActivatedRoute} from "@angular/router";
 import {LastStateChange} from "../../../../interfaces/unit-test";
+import {User} from "../../../../interfaces/user";
+import {TeamsService} from "../../../../services/teams.service";
 
 @Component({
   selector: 'app-create-unit-test',
@@ -43,9 +45,14 @@ export class CreateUnitTestPage implements OnInit {
   myUnitTest: string = '';
   title: string = '';
   context: any;
+  assignedTester: string = '';
 
   productObjective: string = '';
   productStep: string = '';
+  orgName: string = '';
+
+
+  teamMembers: User[] = [];
 
 
 
@@ -55,6 +62,7 @@ export class CreateUnitTestPage implements OnInit {
     private alertCtrl: AlertController,
     private unitTestService: UnitTestService,
     private activatedRoute: ActivatedRoute,
+    private teamService: TeamsService,
   ) { }
 
   ngOnInit() {
@@ -62,11 +70,15 @@ export class CreateUnitTestPage implements OnInit {
 
   async ionViewWillEnter() {
     this.getProductFromParams();
+    await this.getTeamMembers();
+
     await this.getGitHubSync();
 
     if (this.gitHubData.key !== '') {
       this.getFiles();
     }
+
+
 
 
   }
@@ -77,10 +89,20 @@ export class CreateUnitTestPage implements OnInit {
       this.productStep = params['step'];
     });
 
+    const user = JSON.parse(localStorage.getItem('user')!);
+    this.orgName = user.orgName!;
+
+
     console.log(this.productObjective);
     console.log(this.productStep);
+    console.log(this.orgName);
 
 
+  }
+
+  async getTeamMembers() {
+    this.teamMembers = await this.teamService.getTeamByOrganization(this.orgName);
+    console.log('Members',this.teamMembers);
   }
 
 
@@ -167,13 +189,14 @@ export class CreateUnitTestPage implements OnInit {
     }
     const orgName = user.orgName || '';
 
-    if (this.myUnitTest && this.myUnitTest !== '' && this.title && this.title !== '') {
+    if (this.myUnitTest && this.myUnitTest !== '' && this.title && this.title !== '' && this.assignedTester && this.assignedTester !== '') {
       await this.unitTestService.addUnitTest(orgName, this.productObjective, this.productStep, {
         code: this.myUnitTest,
         state: false,
         type: 'unit-test',
         title: this.title,
-        last_state_change: [lastState]
+        last_state_change: [lastState],
+        assigned_to: this.assignedTester
       });
       await this.hideLoading();
       await this.showAlert('Your Unit Test saved', 'Unit Test Saved');
@@ -184,13 +207,14 @@ export class CreateUnitTestPage implements OnInit {
       return;
     }
 
-    if (this.aiMessages.length > 0 && this.title && this.title !== '') {
+    if (this.aiMessages.length > 0 && this.title && this.title !== '' && this.assignedTester && this.assignedTester !== '') {
       await this.unitTestService.addUnitTest(orgName, this.productObjective, this.productStep, {
         code: this.aiMessages[0].message,
         state: false,
         type: 'unit-test',
         title: this.title,
-        last_state_change: [lastState]
+        last_state_change: [lastState],
+        assigned_to: this.assignedTester
       });
 
 
@@ -203,7 +227,7 @@ export class CreateUnitTestPage implements OnInit {
 
 
     await this.hideLoading();
-    await this.showAlert('Please ask AI or add your Unit Test before saving', 'No Unit Test Found');
+    await this.showAlert('Please ask AI or add your Unit Test before saving, verify all fields are completed', 'No Unit Test Found');
 
   }
 
@@ -238,4 +262,7 @@ export class CreateUnitTestPage implements OnInit {
   }
 
 
+  onAssignedTester($event: any) {
+    this.assignedTester = $event.detail.value;
+  }
 }

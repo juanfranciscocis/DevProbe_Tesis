@@ -6,4 +6,5 @@ export interface IntegrationTest {
   code:string;
   title:string;
   last_state_change:LastStateChange[];
+  assigned_to:string;
 }

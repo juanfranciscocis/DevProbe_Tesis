@@ -89,7 +89,7 @@ export class NotificationService {
     }
 
 
-    async notifyIncidentUpdateToTeam(roles: Role[],orgName: string) {
+    async notifyIncidentUpdateToTeam(roles: Role[],orgName: string, target: string) {
       try {
         //get team by orgName
         const team = await this.teamService.getTeamByOrganization(orgName);
@@ -104,7 +104,7 @@ export class NotificationService {
           let sid = await this.getNotificationUser(user);
           console.log('sid',sid);
           if (sid !== '') {
-            let target_url = `https://devprobe-89481.web.app/incident-manager-chooser`;
+            let target_url = target;
             const body = {
               sid: sid,
               title: 'Incident Update',

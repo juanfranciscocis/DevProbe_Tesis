@@ -25,7 +25,8 @@ export class ViewSystemTestPage implements OnInit {
     description: '',
     steps: [],
     type: '',
-    state: false
+    state: false,
+    assigned_to: ''
   };
 
 

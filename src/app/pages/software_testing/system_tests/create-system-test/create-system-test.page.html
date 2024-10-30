@@ -53,6 +53,22 @@
             </ion-list>
           </ion-card-content>
           <br>
+          <ion-card-content class="flex-row ">
+            <ion-card-title class="text-3xl flex flex-row"> Assign the test</ion-card-title>
+          </ion-card-content>
+          <ion-card-content>
+            <ion-card>
+
+              <ion-select label="Assign Tester" placeholder="Select an Tester" interface="popover"
+                          (ionChange)="onAssignedTester($event)"
+              >
+                @for (member of teamMembers; track member) {
+                  <ion-select-option value="{{member.name}}">{{member.name}}</ion-select-option>
+                }
+              </ion-select>
+            </ion-card>
+          </ion-card-content>
+          <br>
           <ion-button color="primary" expand="block" fill="outline" (click)="createSystemTest()">Create System Test</ion-button>
         </ion-card>
       </ion-col>
