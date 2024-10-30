@@ -103,6 +103,22 @@ export class AppComponent implements OnInit {
         if (event.urlAfterRedirects.includes('/login') || event.urlAfterRedirects.includes('/register')) {
           this.menuController.enable(false);
         } else {
+          this.getUser();
+          this.menuController.enable(true);
+        }
+      }
+    });
+    this.getUser();
+  }
+
+  ionViewWillEnter() {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        // Disable the menu on Login and Register pages
+        if (event.urlAfterRedirects.includes('/login') || event.urlAfterRedirects.includes('/register')) {
+          this.menuController.enable(false);
+        } else {
+          this.getUser();
           this.menuController.enable(true);
         }
       }

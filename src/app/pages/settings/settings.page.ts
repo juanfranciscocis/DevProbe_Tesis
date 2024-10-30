@@ -50,7 +50,10 @@ export class SettingsPage implements OnInit {
   }
 
   async logout() {
+    this.user = {};
+
     await this.authService.logoutUser();
+
     await this.router.navigate(['/login']);
   }
 
