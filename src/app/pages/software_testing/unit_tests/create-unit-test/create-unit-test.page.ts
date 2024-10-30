@@ -189,7 +189,7 @@ export class CreateUnitTestPage implements OnInit {
     }
     const orgName = user.orgName || '';
 
-    if (this.myUnitTest && this.myUnitTest !== '' && this.title && this.title !== '') {
+    if (this.myUnitTest && this.myUnitTest !== '' && this.title && this.title !== '' && this.assignedTester && this.assignedTester !== '') {
       await this.unitTestService.addUnitTest(orgName, this.productObjective, this.productStep, {
         code: this.myUnitTest,
         state: false,
@@ -207,7 +207,7 @@ export class CreateUnitTestPage implements OnInit {
       return;
     }
 
-    if (this.aiMessages.length > 0 && this.title && this.title !== '') {
+    if (this.aiMessages.length > 0 && this.title && this.title !== '' && this.assignedTester && this.assignedTester !== '') {
       await this.unitTestService.addUnitTest(orgName, this.productObjective, this.productStep, {
         code: this.aiMessages[0].message,
         state: false,
@@ -227,7 +227,7 @@ export class CreateUnitTestPage implements OnInit {
 
 
     await this.hideLoading();
-    await this.showAlert('Please ask AI or add your Unit Test before saving', 'No Unit Test Found');
+    await this.showAlert('Please ask AI or add your Unit Test before saving, verify all fields are completed', 'No Unit Test Found');
 
   }
 
