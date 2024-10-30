@@ -175,12 +175,30 @@ export class IncidentDetailsPage implements OnInit {
 
 
   closeIncident() {
+    this.incidentService.closeIncident(this.orgName, this.productObjective, this.productStep, this.incident).then(async res => {
+      if (res) {
+        // navigate one step back
+        await this.router.navigate(['/incident-manager', {
+          productObjective: this.productObjective,
+          step: this.productStep
+        }]);
+      }
+    });
 
   }
 
-  saveChanges() {
 
+
+  async postmortemIncident() {
+    await this.router.navigate(['/incident-postmortem', {
+      orgName: this.orgName,
+      productObjective: this.productObjective,
+      step: this.productStep,
+      currentUser: this.currentUser,
+      incidentTitle: this.incident.title
+    }]);
   }
+
 
 
 
@@ -207,4 +225,5 @@ export class IncidentDetailsPage implements OnInit {
     upload.value = '';
     this.isImageLoaded = false;
   }
+
 }

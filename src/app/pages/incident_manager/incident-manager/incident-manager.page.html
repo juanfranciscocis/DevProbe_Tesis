@@ -19,9 +19,12 @@
                 <ion-label  class="text-white">
                   <div class=" flex flex-row justify-between items-center">
                   <h2>{{incident.title}}</h2>
+                    <div>
                   @if (incident.iAmIn) {
                     <ion-chip> Assigned to you</ion-chip>
                   }
+                    <ion-chip  color="success"  >Open</ion-chip>
+                    </div>
                   </div>
                 </ion-label>
               </ion-item>
@@ -37,13 +40,20 @@
         <ion-card class="p-5">
           <ion-card-content>
             <ion-list>
-              <ion-item *ngFor="let incident of closeIncidents" (click)='goToIncident(incident)'>
+              <ion-item *ngFor="let incident of closeIncidents">
                 <ion-label  class="text-white">
                   <div class=" flex flex-row justify-between items-center">
-                    <h2>{{incident.title}}</h2>
-                    @if (incident.iAmIn) {
-                      <ion-chip> Assigned to you</ion-chip>
-                    }
+                    <h2 (click)='goToIncident(incident)' >{{incident.title}}</h2>
+                    <div>
+                      @if (incident.iAmIn) {
+                        <ion-chip  (click)='goToIncident(incident)' > Assigned to you</ion-chip>
+                      }
+                      @if (incident.state === 'postmortem') {
+                        <ion-chip  color="primary" (click)="goToPostmortem(incident)" > Postmortem</ion-chip>
+                      } @else {
+                        <ion-chip  color="danger" (click)='goToIncident(incident)' > Closed</ion-chip>
+                      }
+                    </div>
                   </div>
                 </ion-label>
               </ion-item>

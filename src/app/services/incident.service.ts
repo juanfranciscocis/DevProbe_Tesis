@@ -56,6 +56,19 @@ export class IncidentService {
     return [];
   }
 
+  async getIncident(orgName: string, productObjective: string, productStep: string, incidentTitle:string) {
+    let incidents = await this.getIncidents(orgName, productObjective, productStep) as Incident[]
+    //search for the incident using the title
+    for (let i = 0; i <= incidents.length; i++) {
+      if (incidents[i].title === incidentTitle) {
+        return incidents[i];
+      }
+    }
+
+    return {} as Incident;
+
+  }
+
 
   async updateIncident(orgName: string, productObjective: string, productStep: string, incident: Incident) {
     const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'incident', productStep);
@@ -79,5 +92,32 @@ export class IncidentService {
     }
     return false;
   }
+
+  async closeIncident(orgName: string, productObjective: string, productStep: string, incident: Incident) {
+    const docRef = doc(this.firestore, 'teams', orgName, 'products', productObjective, 'incident', productStep);
+    incident.state = 'closed'
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      //get the incidents array
+      // @ts-ignore
+      let dataIncident = data.incidents;
+      console.log(dataIncident);
+      for (let i = 0; i <= dataIncident.length; i++) {
+        console.log(dataIncident[i].title);
+        console.log(incident.title);
+        if (dataIncident[i].title === incident.title) {
+          console.log('found');
+          dataIncident[i] = incident;
+          await setDoc(docRef, data);
+          return true;
+        }
+      }
+    }
+    return false;
+}
+
+
+
 
 }
