@@ -1,0 +1,62 @@
+<app-header-return [title]="'Incident Postmortem'" ></app-header-return>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <app-title [title]="'Incident Postmortem'"></app-title>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="4" size-lg="4" class="">
+        <p>Postmortem for {{ incident.title }}</p>
+      </ion-col>
+    </ion-row>
+    <ion-row class="lg:m-10 md:m-10">
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card>
+          <ion-card-content>
+
+            <ion-row class="lg:m-10 md:m-10">
+              <ion-col size="12" size-md="12" size-lg="12" class="">
+                <div class="flex flex-row items-center justify-between w-full">
+                    <h1 class="text-white text-3xl pb-5">What went wrong?</h1>
+                    <ion-avatar class="h-12 w-12 bg-purple-600 p-2" (click)="sendToAI('wentWrong')">
+                    <ion-icon class="w-full h-full text-white" name="color-wand"></ion-icon>
+                  </ion-avatar>
+                </div>
+                <ion-textarea fill="outline" autoGrow="true" [(ngModel)]="wentWrong" [value]="incident.postmortem?.wentWrong"></ion-textarea>
+              </ion-col>
+            </ion-row>
+            <ion-row class="lg:m-10 md:m-10">
+              <ion-col size="12" size-md="12" size-lg="12" class="">
+                <div class="flex flex-row items-center justify-between w-full">
+                <h1 class="text-white text-3xl pb-5">What can be learned?</h1>
+                <ion-avatar class="h-12 w-12 bg-purple-600 p-2" (click)="sendToAI('canBeLearned')">
+                  <ion-icon class="w-full h-full text-white" name="color-wand"></ion-icon>
+                </ion-avatar>
+                </div>
+                <ion-textarea fill="outline" autoGrow="true" [(ngModel)]="canBeLearned" [value]="incident.postmortem?.canBeLearned"></ion-textarea>
+              </ion-col>
+            </ion-row>
+            <ion-row class="lg:m-10 md:m-10">
+              <ion-col size="12" size-md="12" size-lg="12" class="">
+                <div class="flex flex-row items-center justify-between w-full">
+                <h1 class="text-white text-3xl pb-5">How to prevent similar incidents in the future?</h1>
+                <ion-avatar class="h-12 w-12 bg-purple-600 p-2" (click)="sendToAI('howToPrevent')">
+                  <ion-icon class="w-full h-full text-white" name="color-wand"></ion-icon>
+                </ion-avatar>
+                </div>
+                <ion-textarea fill="outline" autoGrow="true" [(ngModel)]="howToPrevent" [value]="incident.postmortem?.howToPrevent"></ion-textarea>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-md="12" size-lg="12" class="">
+        <ion-card>
+          <ion-card-content>
+            <ion-button expand="block" color="danger" (click)="savePostmortem()">Save and Close</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

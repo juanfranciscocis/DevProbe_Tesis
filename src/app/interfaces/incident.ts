@@ -17,6 +17,12 @@ export interface Incident {
 
   iAmIn?: boolean;
 
+  postmortem?: {
+    wentWrong: string;
+    canBeLearned: string;
+    howToPrevent: string;
+  }
+
 
 
 }

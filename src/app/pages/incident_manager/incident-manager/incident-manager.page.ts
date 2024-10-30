@@ -63,7 +63,7 @@ export class IncidentManagerPage implements OnInit {
 
   async closeIncident() {
     this.closeIncidents = await this.incidentService.getIncidents(this.orgName, this.productObjective, this.productStep );
-    this.closeIncidents = this.closeIncidents.filter(incident => incident.state === 'closed');
+    this.closeIncidents = this.closeIncidents.filter(incident => incident.state === 'closed' || incident.state === 'postmortem');
   }
 
 
@@ -135,4 +135,11 @@ export class IncidentManagerPage implements OnInit {
     await this.loadingCtrl.dismiss();
   }
 
+  goToPostmortem(incident: Incident) {
+    this.router.navigate(['incident-postmortem', {
+      productObjective: this.productObjective,
+      step: this.productStep,
+      incidentTitle: incident.title
+    }]);
+  }
 }
