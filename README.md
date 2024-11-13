@@ -10,12 +10,18 @@
 - - [Software Testing Module](#software-testing-module)
 - - [Load Test](#load-test)
 - - [Incident Manager Module](#incident-manager-module)
+- [Manual de Usuario de la API](#manual-de-usuario-de-la-api)
 
 
 ## Introducción
 
+## Instalación
+
 
 ## Características por módulo
+
+En este manual de usuario se describen las características de cada módulo de la app, para cada módulo se detallan las funcionalidades que ofrece,.
+
 #### **My Team**
 
 Puesto que uno de los requerimientos principales de la PWA era la habilidad de colaboración entre varios ingenieros de fiabilidad del sitio. Se decidió agregar una pantalla o página desde la que se manejan a los miembros de un “Team” (equipo). Desde esta pantalla un ingeniero perteneciente a un equipo puede agregar a nuevos miembros y también revocar el acceso de miembros ya pertenecientes al equipo.
@@ -212,3 +218,13 @@ La imagen 22 muestra el progreso de un incidente ficticio, en el mismo muestra l
 
 
 Para concluir la imagen 23 muestra la pantalla de postmortem del incidente, donde los miembros del equipo deben responder a tres preguntas clave para analizar el incidente: What went wrong? (¿Qué salió mal?), What can be learned? (¿Qué se puede aprender?) y How to prevent similar incidents in the future? (¿Cómo prevenir incidentes similares en el futuro?). Adicionalmente, es posible hacer que el modelo Gemini sea quien responda a estas preguntas, esto es debido a que toda la información del incidente es enviada al modelo, la inteligencia artificial es capaz de asistir al ingeniero de fiabilidad del sitio en la etapa de postmortem del incidente.
+
+
+## Manual de Usuario de la API
+
+<a href="https://github.com/juanfranciscocis/DevProbeApi">
+    <button >Ir a la documentación de laAPI</button>
+</a>
+
+
+
