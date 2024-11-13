@@ -18,9 +18,9 @@
 
 Este readme describe el funcionamiento detallado del aplicativo DevProbe encontrado 
 en la sección [características por módulo](#características-por-módulo-manual-de-usuario).
-para instalar el aplicativo se debe seguir los pasos descritos en la sección [instalación](#instalación). 
+Para instalar el aplicativo se debe seguir los pasos descritos en la sección [instalación](#instalación). 
 Adicionalmente, para acceder a la API y sus funcionalidades se debe seguir los pasos descritos en la
-sección [Manual de Usuario de la API](#manual-de-usuario-de-la-api).
+sección [manual de usuario de la API](#manual-de-usuario-de-la-api).
 
 ## Requisitos
 
@@ -37,7 +37,7 @@ El aplicativo es un proyecto de Angular, que hace uso de la librería IONIC.
 
 El proceso de instalación es el siguiente:
 
-Es necesario tener instaladas las siguientes [dependencias](#requisitos).
+Son necesarios los siguientes [requisitos](#requisitos).
 
 1. Clonar el repositorio o descargar el zip.
 2. Instalar las dependencias con `npm install`
