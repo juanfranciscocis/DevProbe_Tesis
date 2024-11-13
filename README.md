@@ -170,12 +170,13 @@ EL monitoreo de productos es esencial para el ingeniero de fiabilidad del sitio.
 
 Estos son los únicos módulos que requieren que los datos sean enviados a través del API Express, obligatoriamente. Los módulos permiten visualizar y comparar mediciones actuales con mediciones pasadas. Además, es posible que la inteligencia artificial sea la que realice el análisis y comparación. Cabe aclarar que al igual que el módulo de latencia y traceroute, estos módulos son similares y se ha decidido mencionar a estos dos en una sola sección de este documento.
 
-**Imagen 13: Página CPU Usage**
+**Página CPU Usage**
 
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fcpu1.png?alt=media&token=cb623112-6f1b-4d6f-89a8-bcd5869f0291)
 
+**Página Memory Usage**
 
-**Imagen 14: Página Memory Usage**
-
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fmemory1.png?alt=media&token=3dda357b-85bb-4f11-b1bc-c6a884ab1715)
 
 Tal como se muestran en las imágenes 13 y 14, los módulos de monitoreo de CPU y memoria son similares. El nombre de los gráficos que modelan la información es Flame Graph, en los últimos años se han convertido en un estándar a la hora de representar información de utilización de CPU y memoria, los mismos son utilizados por una de las competencias mencionadas anteriormente de la app, Grafana.
 
@@ -195,24 +196,27 @@ Las pruebas unitarias, son la unidad básica de testeo, normalmente se realizan 
 
 El manual SRE de Google menciona otros tipos de pruebas como las de estrés, pruebas tipo canary, de configuración, entre otras. Más adelante se ha implementado un módulo específico para realizar pruebas de tipo estrés. Se espera que en próximas versiones de la app se puedan realizar otros tipos de testeo.
 
-**Imagen 15: Página Software Testing**
+**Página Software Testing**
 
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fsoftwarechooser.png?alt=media&token=d7a9550a-c78e-40e8-a0cd-685ccc8c96da)
 
 Como se observa en la imagen 15, el aplicativo es capaz de realizar los 3 tipos de pruebas previamente mencionados.
 
-**Imagen 16: Página Software Testing. Unit Test**
+**Página Software Testing. Unit Test**
 
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Funit.png?alt=media&token=ad6b628a-7258-4f8f-a354-abde60085853)
 
 La imagen 16 muestra el configurador de una prueba unitaria, en este caso debido a que las pruebas unitarias se realizan directamente sobre código, es posible configurar el aplicativo para poder realizar testeo de código como clases y funciones automáticamente a partir de un archivo almacenado en un repositorio de GitHub. El archivo es enviado al modelo Gemini, y el modelo regresa un test unitario que el ingeniero de fiabilidad del sitio puede copiar, modificar y utilizar. Adicional, es posible no conectar un repositorio GitHub al app, y realizar un test unitario dando contexto a la IA o no utilizar ningún tipo de ayuda y solo pegar un código manualmente.
 
-**Imagen 17: Página Software Testing. Integration Test**
+**Página Software Testing. Integration Test**
 
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fintegration.png?alt=media&token=b8d13317-0d6c-4368-aa89-2c1999ae4b79)
 
 La imagen 17 muestra el configurador de una prueba tipo integración, en este caso debido a que las pruebas se realizan directamente sobre componentes ya completados, es posible enviar imágenes, videos, código y texto plano a la inteligencia artificial. Se selecciona el framework de testeo en el cual se realizará la prueba y Gemini devuelve un test de integración listo para ser usado. Así mismo como para las pruebas unitarias, es posible elegir código de un repositorio de GitHub o pegar una prueba realizada manualmente.
 
-**Imagen 18: Página Software Testing. System Test**
+**Página Software Testing. System Test**
 
-
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fsystem.png?alt=media&token=0a02752e-6d3b-4663-851e-31404b512e51)
 
 La imagen 18 muestra el configurador de una prueba tipo sistema, estas pruebas se basan en pasos, pasos que debe seguir una persona o tester para culminar exitosamente la prueba en cuestión. En este caso el aplicativo también es capaz de asistir al ingeniero utilizando inteligencia artificial, el SRE es capaz de dar contexto sobre la prueba y Gemini regresará una descripción, los pasos a seguir y lo esperado por cada paso.
 
@@ -228,14 +232,16 @@ En este caso el papel de la API toma un rol muy importante pues es la capaz de r
 
 Adicionalmente, este módulo tiene una correlación directa con el módulo de Software Testing, y para esta primera versión este ha sido la segunda tipo de macro prueba que se implementa basada en la metodología SRE de Google.
 
-**Imagen 19: Página Load Test**
+**Página Load Test**
 
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fload1.png?alt=media&token=f794cc63-0754-4116-88cf-75bfaa79725e)
 
 
 Tal como se observa en la imagen 19, el módulo de Load Test, permite al ingeniero agregar un target u objetivo. Este objetivo debe ser un recurso que se pueda acceder desde internet. Artillery entonces crea una cantidad aleatoria de usuarios virtuales mismos que comienzan a realizar peticiones y descargas sobre el recurso.
 
-**Imagen 20: Página Load Test. Resultados**
+**Página Load Test. Resultados**
 
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fload2.png?alt=media&token=60c9d8b7-d21d-4534-9db0-c28ec0880ef8)
 
 
 Entre los resultados obtenidos, tal como se muestra en la imagen 20, se grafica en la PWA la cantidad de HTTP Status Codes devueltos por petición. Entre los estados más comunes se pueden observar 1xx,2xx,3xx,4xx y 5xx, que pertenecen a códigos informativos, de éxito, redirecciones, errores a nivel de cliente y errores a nivel de servidor respectivamente. Por otro lado, se grafican también los tiempos tomados en realizar cada petición, en este caso se muestra el tiempo máximo, mínimo, la media, la mediana, el p95 y p99.
@@ -250,21 +256,21 @@ La cultura postmortem o postmortem culture en inglés, propone a los equipos SRE
 
 En este caso el PWA se basa en la interfaz que proporciona el software Jira para crear un incidente y manejarlo mientras se encuentra abierto. Esto debido a que Jira se ha convertido en un estándar a la hora de manejo de incidentes. La propuesta de valor del PWA en este módulo es la habilidad de poder asignar a un Incident Commander, quien lidera la estrategia, mantiene una visión general del incidente y asigna responsabilidades según las prioridades; un Operations Leader, que realiza las acciones operativas necesarias para resolver el incidente, siendo el único equipo autorizado para modificar el sistema con su equipo; y un Communication Leader, que es el enlace con el público y los interesados, emitiendo actualizaciones periódicas y manteniendo la documentación precisa. Este equipo coordinado permite una respuesta eficiente y efectiva, minimizando el impacto y restaurando la normalidad.
 
-**Imagen 21: Página Incident Manager**
+**Página Incident Manager**
 
-
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fincident1.png?alt=media&token=ecef7fe9-b9e3-4023-80ad-ce913ecef90c)
 
 Como se muestra en la imagen 21, es posible asignar miembros a un incidente. De igual forma, se muestra en la parte superior los estados, urgencia e impacto organizacional que el incidente tiene en cuestión. Entre los estados se encuentra el abierto, cerrado y postmortem. Las urgencias van desde un rango bajo, medio, alto y crítico. Finalmente, el impacto organizacional puede ser localizado, limitado, significativo y extenso.
 
-**Imagen 22: Página Incident Manager. Progreso de un incidente**
+**Página Incident Manager. Progreso de un incidente**
 
-
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fincident2.png?alt=media&token=6d330c00-ce01-477f-9ed2-4221a22cb944)
 
 La imagen 22 muestra el progreso de un incidente ficticio, en el mismo muestra la interacción de dos miembros del incidente resolviendo la problemática. Adicionalmente, cuando existe un cambio en el progreso los miembros del incidente reciben una notificación push, con información de la actualización. Cabe recalcar que aun que la imagen 22 no lo muestra, es posible adjuntar archivos al progreso del incidente.
 
-**Imagen 23: Página Incident Manager. Postmortem**
+**Página Incident Manager. Postmortem**
 
-
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fincident3.png?alt=media&token=d7ed151a-a07d-438a-809a-9e74d8a6e6d8)
 
 Para concluir la imagen 23 muestra la pantalla de postmortem del incidente, donde los miembros del equipo deben responder a tres preguntas clave para analizar el incidente: What went wrong? (¿Qué salió mal?), What can be learned? (¿Qué se puede aprender?) y How to prevent similar incidents in the future? (¿Cómo prevenir incidentes similares en el futuro?). Adicionalmente, es posible hacer que el modelo Gemini sea quien responda a estas preguntas, esto es debido a que toda la información del incidente es enviada al modelo, la inteligencia artificial es capaz de asistir al ingeniero de fiabilidad del sitio en la etapa de postmortem del incidente.
 
