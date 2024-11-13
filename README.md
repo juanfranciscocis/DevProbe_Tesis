@@ -72,12 +72,9 @@ Con respecto a esta primera versión, no existe la posibilidad de restringir acc
 
 En futuras versiones de la PWA, se planea introducir controles más granulares sobre los permisos de acceso y la gestión de roles dentro de los equipos. Esto permitirá designar a un administrador que podrá asignar diferentes niveles de acceso a los miembros, como la capacidad de realizar cambios, eliminar datos o acceder a ciertos módulos de manera restringida. Asimismo, se implementarán funcionalidades de auditoría que registrarán las acciones realizadas por cada miembro, lo que brindará mayor transparencia y control sobre las modificaciones hechas en el sistema.
 
-**Imagen 2: Página Team Members**
-
-![](./README_IMAGES/myteam1.png)
+**Página Team Members**
 
 ![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fmyteam1.png?alt=media&token=20485de7-a2ea-4d10-a616-d865c15e7813)
-
 
 La ruta /myteam es la que almacena la lógica de la pantalla Team Members que se muestra en la imagen 2. Esta ruta implementa una instancia del servicio TeamsService, este servicio es capaz de actualizar, obtener y eliminar a miembros de un equipo.
 
@@ -89,8 +86,9 @@ En cuanto a las funcionalidades del aplicativo, todas comienzan a partir de mode
 
 Un producto nace de la idea de poder modelar objetivos de la vida real, estos productos se forman a partir de un user objetive (objetivo a nivel de usuario) mismos que encapsulan, product steps (pasos para cumplir un objetivo), product services (servicios para cumplir ese objetivo) y product SLOs o también llamados Service Level Objectives (definen la importancia del producto).
 
-**Diagrama 16: Ejemplo de un producto basado en la metodología SRE**
+**Ejemplo de un producto basado en la metodología SRE**
 
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fproduct1.jpg?alt=media&token=8f525294-6856-4851-9423-b6cf46b8fb5c)
 
 
 En el diagrama 16 se observa un ejemplo práctico de como un ingeniero de fiabilidad del sitio debe modelar un producto, en este caso el objetivo principal es el de componer un correo electrónico en un aplicativo, en el ejemplo se muestran los pasos, servicios y los SLOs dados para mantener y monitorear al producto.
@@ -101,7 +99,7 @@ A partir de estos productos es de donde nace toda la metodología SRE, estos son
 
 **Imagen 3: Página Model The Product**
 
-
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fproduct2.png?alt=media&token=d20edf4d-00b7-4ca5-978d-3ed19b67652c)
 
 La ruta /new-product la que almacena la lógica de creación de productos, misma que se muestra en la imagen 3. Esta ruta implementa una instancia del servicio Product Service, servicio capaz de crear, actualizar, obtener y eliminar productos de un equipo. Esta no es la única ruta del módulo Model The Product, el mismo cuenta con dos rutas más /model-product y /view-product.
 
@@ -117,47 +115,50 @@ Por el lado de la prueba tipo traceroute, se sabe que internet puede ser frágil
 
 RIPE Atlas es un servicio de probes o probetas que se encuentran alojadas por personas corrientes, equipos IT y entusiastas de la tecnología. Estas probetas nos permiten realizar mediciones en internet, específicamente mediciones tipo de latencias y traceroutes. Atlas es un servicio de paga, tal como se menciona en la sección anterior de este documento, pero es posible no incurrir en gastos. Gracias a la gran comunidad que tiene RIPE Atlas he decidido implementar en el aplicativo este tipo de prueba, prueba que permite a los SRE mantener los SLOs de sus productos.
 
-**Imagen 4: Página Latency Test**
+**Página Latency Test**
+
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Flatency1.png?alt=media&token=bade2b9b-1bba-41a6-af65-1ab1909bd5ab)
 
 
+**Página Traceroute Test**
 
-**Imagen 5: Página Latency Test**
-
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Ftrace1.png?alt=media&token=2783d571-3660-4584-a281-bbd3501b79e9)
 
 
 Las rutas /latency-test y /trace-test son las que almacenan la lógica de envió de una nueva medición hacia el servicio de RIPE Atlas, así como se observa en la imagen 4 y 5. Estas páginas son las encargadas de enviar el url, host name o dominio al cual se le realiza el test, además de los países desde donde se va a ejecutar la prueba y una breve descripción del porqué de la prueba. Debido a la similitud de las páginas se ha decidido mencionar a estos dos módulos en una sola sección de este documento.
 
-**Imagen 6: Tabla de resultados de una prueba de latencia**
+**Tabla de resultados de una prueba de latencia**
 
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Flatency2.png?alt=media&token=3cd35871-8f8b-4fd6-bf8f-9ed1a958a149)
 
+**Resultado de una prueba de latencia en el mapamundi**
 
-**Imagen 7: Resultado de una prueba de latencia en el mapamundi**
-
-
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Flatency3.png?alt=media&token=468b4c9f-df7b-471d-9b54-2976c06613b5)
 
 **Imagen 8: Promedio de los resultados de pruebas de latencia por día y país.**
 
-
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Flatency4.png?alt=media&token=96fe10df-e9f5-45ec-9d47-ef13d4324778)
 
 El PWA permite la visualización de la medición de diferentes maneras, en el caso de la medición de latencia podemos visualizar en formato tabla la ciudad y país desde donde se realiza la medición, la latencia calculada en ms, y la ciudad y país hacia donde llegó la medición, tal como se muestra en la imagen 6. Otra forma de visualizar la latencia es mediante el mapa, mismo que indica con precisión el lugar desde donde y hacia donde se realiza la medición, así como se indica en la imagen 7. Finalmente, la latencia puede ser visualizada como un promedio de mediciones por país, donde el eje X muestra la fecha de realización de la prueba y el eje Y muestra el promedio diario de latencia calculada, mostrada en la imagen 8.
 
-**Imagen 9: Hops (saltos) de una prueba traceroute**
+**Hops (saltos) de una prueba traceroute**
 
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Ftrace2.png?alt=media&token=8f4d29bd-a560-423b-8214-5aa61b363722)
 
+**Resultado de una prueba tipo traceroute en el mapamundi**
 
-**Imagen 10: Resultado de una prueba tipo traceroute en el mapamundi**
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Ftrace3.png?alt=media&token=d41c4eb3-6ce4-4ccb-a1f1-02263f51c051)
 
+**Promedio de los resultados de pruebas traceroute por día y país.**
 
-
-**Imagen 11: Promedio de los resultados de pruebas traceroute por día y país.**
-
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Ftrace4.png?alt=media&token=95a8e7fc-2aa0-4374-8366-ff2fae263f0b)
 
 
 En cambio, en el caso de la medición de traceroutes podemos visualizar en formato “hops” (salto) la ciudad y país desde donde se realiza el salto en la red y el RTT (tiempo de ida y vuelta) calculado, tal como se muestra en la imagen 9. Otra forma de visualizar un traceroute es mediante el mapa, mismo que indica con precisión todos los saltos de red que se han dado, así como se indica en la imagen 10, este tipo de visualización realmente permite al SRE visualizar el enrutamiento que se realiza desde una localidad hacia el destino final. Finalmente, los RTT pueden ser visualizados como un promedio de mediciones por país, donde el eje X muestra la fecha de realización de la prueba y el eje Y muestra el promedio diario de RTT calculada, mostrada en la imagen 11.
 
-**Imagen 12: Análisis de un traceroute por parte de la inteligencia artificial**
+**Análisis de un traceroute por parte de la inteligencia artificial**
 
-
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2FlattraceAI.png?alt=media&token=6a5b094e-a694-405a-ba6f-ae36fdb9a507)
 
 En cuanto a la inteligencia artificial, los dos módulos permiten realizar un análisis automático, este análisis está disponible desde las rutas /graph-latency y /graph-trace. El modelo Gemini analiza los datos y es capaz de detectar anomalías en las mediciones tal como se muestra en la imagen 12, qué es un ejemplo de un análisis realizado por la IA, en el mismo la inteligencia artificial detecta inconsistencias de enrutamiento para varias mediciones tipo traceroute desde Brasil hacia un host no especificado. Adicional, el ingeniero es capaz de realizar preguntas a la inteligencia artificial sobre el análisis realizado.
 
