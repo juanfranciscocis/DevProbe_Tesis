@@ -1,6 +1,7 @@
 ## Índice
 
 - [Introducción](#introducción)
+- [Requisitos](#requisitos)
 - [Instalación](#instalación)
 - [Características por módulo (Manual de Usuario)](#características)
 - - [My Team](#my-team)
@@ -15,12 +16,53 @@
 
 ## Introducción
 
+Este readme describe el funcionamiento detallado del aplicativo DevProbe encontrado 
+en la sección [características por módulo](#características-por-módulo-manual-de-usuario).
+para instalar el aplicativo se debe seguir los pasos descritos en la sección [instalación](#instalación). 
+Adicionalmente, para acceder a la API y sus funcionalidades se debe seguir los pasos descritos en la
+sección [Manual de Usuario de la API](#manual-de-usuario-de-la-api).
+
+## Requisitos
+
+Para poder instalar el proyecto, se debe seguir los siguientes pasos:
+
+1. Instalar Node.js (https://nodejs.org/)
+2. Instalar Angular v17  (https://angular.io/)
+3. Instalar Ionic Framework (https://ionicframework.com/docs)
+4. Instalar Firebase CLI (https://firebase.google.com/docs/cli)
+
 ## Instalación
 
+El aplicativo es un proyecto de Angular, que hace uso de la librería IONIC.
+
+El proceso de instalación es el siguiente:
+
+Es necesario tener instaladas las siguientes [dependencias](#requisitos).
+
+1. Clonar el repositorio o descargar el zip.
+2. Instalar las dependencias con `npm install`
+3. Iniciar el servidor de desarrollo con `ionic serve`
+4. Abrir el navegador en `http://localhost:8100/`
+
+**Nota: El aplicativo NO requiere que servidor REST API esté corriendo**
+
+###  Extras:
+**En caso de querer modificar el proyecto de Firebase por uno personal, se debe seguir los siguientes pasos:**
+
+1. Crear una cuenta en [firebase](https://firebase.google.com/).
+2. Crear un proyecto en [firebase dashboard](https://console.firebase.google.com/).
+3. Inicializar Firebase Auth en el Dashboard de Firebase. [Más información](https://firebase.google.com/docs/auth/).
+4. Inicializar Firestore en el Dashboard de Firebase [Más información](https://firebase.google.com/docs/firestore/).
+5. Inicializar Firebase Storage en el Dashboard de Firebase [Más información](https://firebase.google.com/docs/storage/).
+6. Inicializar Gemini, Vertex en el Dashboard de Firebase [Más información](https://firebase.google.com/docs/vertex-ai/).
+7. Se debe modificar el archivo `firebase.json` en la raíz del proyecto. En este archivo se debe agregar las credenciales de Firebase Auth, Firestore, y Firebase Storage, mismas
+que se encuentran en el Dashboard de Firebase.
+
+**El aplicativo está disponible para instalar en un celular iOS o Android gracias a Capacitor JS, para ello se debe seguir el siguiente [tutorial](https://ionicframework.com/docs/developing/ios.).**
 
 ## Características por módulo
 
-En este manual de usuario se describen las características de cada módulo de la app, para cada módulo se detallan las funcionalidades que ofrece,.
+En este manual de usuario se describen las características de cada módulo de la app, para cada módulo se detallan las funcionalidades que ofrece.
 
 #### **My Team**
 
@@ -222,9 +264,7 @@ Para concluir la imagen 23 muestra la pantalla de postmortem del incidente, dond
 
 ## Manual de Usuario de la API
 
-<a href="https://github.com/juanfranciscocis/DevProbeApi">
-    <button >Ir a la documentación de laAPI</button>
-</a>
+El manual de usuario e implementación de la API se encuentra en el siguiente [link](https://github.com/juanfranciscocis/DevProbeApi).
 
 
 
