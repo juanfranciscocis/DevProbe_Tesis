@@ -73,6 +73,12 @@ Con respecto a esta primera versión, no existe la posibilidad de restringir acc
 En futuras versiones de la PWA, se planea introducir controles más granulares sobre los permisos de acceso y la gestión de roles dentro de los equipos. Esto permitirá designar a un administrador que podrá asignar diferentes niveles de acceso a los miembros, como la capacidad de realizar cambios, eliminar datos o acceder a ciertos módulos de manera restringida. Asimismo, se implementarán funcionalidades de auditoría que registrarán las acciones realizadas por cada miembro, lo que brindará mayor transparencia y control sobre las modificaciones hechas en el sistema.
 
 **Imagen 2: Página Team Members**
+
+![](./README_IMAGES/myteam1.png)
+
+![](https://firebasestorage.googleapis.com/v0/b/devprobe-89481.appspot.com/o/Readme-pwa%2Fmyteam1.png?alt=media&token=20485de7-a2ea-4d10-a616-d865c15e7813)
+
+
 La ruta /myteam es la que almacena la lógica de la pantalla Team Members que se muestra en la imagen 2. Esta ruta implementa una instancia del servicio TeamsService, este servicio es capaz de actualizar, obtener y eliminar a miembros de un equipo.
 
 Por su lado, TeamsService implementa una instancia del servicio AuthService, este servicio maneja la única instancia de Firebase Authentication que es la capaz de realizar la autenticación de los usuarios dentro de la PWA. Firebase Authentication se encarga de verificar la identidad de los usuarios mediante la autenticación por correo electrónico. Una vez autenticados, AuthService permite obtener los tokens de autenticación necesarios para validar las acciones de los usuarios al interactuar con el servicio TeamsService.
