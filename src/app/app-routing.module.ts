@@ -219,6 +219,11 @@ const routes: Routes = [
     loadChildren: () => import('./pages/incident_manager/incident-postmortem/incident-postmortem.module').then( m => m.IncidentPostmortemPageModule),
     ...canActivate(redirectUnauthorizedToLogin),
   },
+  {
+    path: 'choose-step',
+    loadChildren: () => import('./pages/main_graphs/choose-step/choose-step.module').then( m => m.ChooseStepPageModule),
+    ...canActivate(redirectUnauthorizedToLogin),
+  },
 
 
 

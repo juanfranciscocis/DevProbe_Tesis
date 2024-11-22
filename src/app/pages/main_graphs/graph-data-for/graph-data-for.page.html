@@ -5,16 +5,14 @@
     <app-title [title]="'Graph Data For'"></app-title>
 
     <ion-row class="lg:m-10 md:m-10">
-      <ion-col size="12" size-md="6" size-lg="6" class="flex flex-row justify-center">
-        <ion-card class="w-full h-60 p-6 flex flex-col justify-center items-center" (click)="goToLatencyGraph()">
-          <h1 class="text-6xl font-bold text-blue-500">Latency</h1>
-        </ion-card>
-      </ion-col>
-      <ion-col size="12" size-md="6" size-lg="6" class="flex flex-row justify-center">
-        <ion-card class="w-full h-60 p-6 flex flex-col justify-center items-center" (click)="goToTraceGraph()">
-          <h1 class="text-6xl font-bold text-blue-500">Trace</h1>
-        </ion-card>
-      </ion-col>
+
+      @for (metric of metrics; track metric){
+        <ion-col size="12" size-md="6" size-lg="6" class="flex flex-row justify-center">
+          <ion-card class="w-full h-60 p-6 flex flex-col justify-center items-center" (click)="goToGraph(metric)">
+            <h1 class="text-6xl font-bold text-blue-500">{{metric}}</h1>
+          </ion-card>
+        </ion-col>
+      }
     </ion-row>
   </ion-grid>
 

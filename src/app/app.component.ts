@@ -26,9 +26,9 @@ export class AppComponent implements OnInit {
    */
   menuItems = [
     {
-      title: 'Home',
+      title: 'Analytics',
       url: '/home',
-      icon: 'home'
+      icon: 'analytics'
     },
     {
       title: 'Model The Product',

@@ -109,6 +109,7 @@ responseTimeOptions: EChartsOption = {
   }
 
   async ionViewWillEnter() {
+    try {
     await this.showLoading();
     this.getParams();
     await this.getHistoryResults().then(() => {
@@ -117,6 +118,9 @@ responseTimeOptions: EChartsOption = {
       this.responseTime();
     });
     await this.hideLoading();
+    } catch (error) {
+      await this.hideLoading();
+    }
   }
 
   getParams() {
